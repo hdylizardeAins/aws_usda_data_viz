@@ -1,0 +1,16 @@
+target/
+
+.DS_Store
+
+# eclipse stuff
+.project
+.settings/
+.classpath
+
+#ignore npm-generated files
+node_modules/
+node/
+steelblue-web/src/main/webapp/js/*
+steelblue-web/src/main/js/css/element/*.css
+!steelblue-web/src/main/js/css/element/index.css
+steelblue-web/src/main/webapp/dev.html

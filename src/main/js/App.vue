@@ -1,7 +1,6 @@
 <template>
     <div class="main-container">
-        <proposal-panel/>
-        <map-panel/>
+        <main-container></main-container>
     </div>
 </template>
 

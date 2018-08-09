@@ -1,0 +1,623 @@
+/*-
+ * #%L
+ * STEELBLUE Web Services
+ * %%
+ * Copyright (C) 2016 - 2018 Harmonia Holdings Group, LLC
+ * %%
+ * STatistical Exploitation of Every Lesson By Learning and Uncovering Exemplars
+ * (STEELBLUE)
+ * -
+ * Copyright (C) 2016 - 2018 Harmonia Holdings Group, LLC.
+ * All rights reserved.
+ * -
+ * SBIR DATA RIGHTS
+ * Topic Number: NA
+ * Contract No.: N00014-16-C-1022
+ * Contractor Name: HARMONIA HOLDINGS GROUP LLC
+ * Contractor Address: 2020 Kraft Dr. Ste. 2400 Blacksburg, VA 24060
+ * Expiration of SBIR Data Rights Period: 01/07/2026
+ * -
+ * GOVERNMENT RIGHTS: The Government's rights to use, modify, reproduce, release, perform, display, or disclose technical data or computer
+ * software marked with this legend are restricted as provided in paragraph (b)(4) of DFARS 252-227-7018, Rights in
+ * Noncommercial Technical Data and Computer Software-Small Business Innovative Research (SBIR) Program.
+ * -
+ * DISTRIBUTION STATEMENT C: Distribution authorized to U.S. Government agencies and their Contractors (Operational Use) (26 Mar 2015).
+ * Other requests for this document shall be referred to the Office of Naval Research / Program Officer listed in the contract.
+ * -
+ * Contributors:
+ *    Harmonia Holdings Group, LLC - Initial implementation including API.
+ * #L%
+ */
+.el-input__inner::-moz-placeholder {
+    opacity: 1;
+}
+
+.el-tabs__nav-wrap {
+    height: 43px; /* Fix visual bug in IE when switching tabs */
+}
+
+/* Use Font Awesome icons in place of ElementJS ones */
+[class*=" el-icon-"], [class^=el-icon-] {
+    font-family: 'FontAwesome'!important;
+}
+
+/* Tabs */
+.el-tabs__item {
+    color: #000000DD;
+    border-bottom: 1px solid #0000001F;
+}
+
+.el-tabs__item.is-active {
+    border-bottom: 2px solid #047CC0 !important;
+}
+
+.el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+    border: none;
+}
+
+.el-tabs--card>.el-tabs__header .el-tabs__item {
+    transition: none;
+}
+
+/* Checkbox */
+.el-checkbox__inner::after {
+    left: 3.5px;
+    top: 0.25px;
+}
+
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {
+    border-color: #7d7d7d;
+}
+
+.el-checkbox__input.is-disabled + .el-checkbox__label {
+    color: #7d7d7d;
+}
+
+/* Tree */
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    background-color: #C2DBF4;
+}
+
+.el-tree--highlight-current .el-tree-node > .el-tree-node__content:hover {
+    background-color: #DEEDF7;
+}
+
+.el-tree-node__expand-icon.expanded {
+    border-left-color: #000000dd;
+}
+
+.el-tree-node__expand-icon.expanded:hover {
+    border-left-color: #000000dd;
+}
+
+.el-tree-node__expand-icon {
+    border-left-color: #0000007f;
+}
+
+.el-tree-node__label {
+    font-size: 11px;
+    margin-top: -3px;
+}
+
+.el-tree-node__content>.el-checkbox {
+    margin-top: -3px;
+}
+
+.el-tree-node__content>.el-tree-node__expand-icon {
+    margin-top: -3px;
+}
+
+/* Dialog */
+.el-dialog__title {
+    font-weight: 400;
+    color: #000000DF;
+}
+
+/* Pagination */
+.el-pagination .el-pager li {
+    color: #047CC0;
+    border: none;
+}
+
+.el-pagination .el-pager li.active {
+    background-color: #F2F2F2;
+    color: #00000090;
+}
+
+.el-pagination .btn-prev, .el-pagination .btn-next {
+    border: none;
+    color: #047CC0;
+}
+
+.el-pagination .btn-next .el-icon, .el-pagination .btn-prev .el-icon {
+    font-size: 25px;
+}
+
+.el-pagination button.disabled {
+    color: #00000061;
+}
+
+.el-pager li.btn-quicknext, .el-pager li.btn-quickprev {
+    line-height: 42px;
+}
+
+.el-pager li.btn-quicknext:hover, .el-pager li.btn-quickprev:hover {
+    font-size: 25px;
+}
+
+/* Button */
+.el-button--primary:hover {
+    background-color: #175D8D;
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-button--primary:active {
+    background-color: #1C496D;
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-button--primary {
+    font-weight: bold;
+    box-shadow: 0 2px 5px #BDBDBD;
+}
+
+.el-button--small,.el-button--large,.el-button--mini {
+    font-weight: normal;
+}
+
+.el-button .fa {
+    font-size: 13px;
+    /* Style guide says 10px, but doesn't look good & doesn't match their screenshots */
+    padding-right: 5px;
+}
+
+.el-button.is-disabled {
+    box-shadow: none;
+    background-color: #f0f0f0;
+    border-color: #f0f0f0;
+    color: #9e9e9e;
+}
+
+/* Add class to comply with DCGS-N Style Guide: cancel button */
+.el-button.cancel {
+    color: #6f6f6f;
+    background-color: #F2F2F2;
+    border-color: #F2F2F2;
+}
+
+.el-button.cancel:hover {
+    background-color: #d0d0d0;
+    border-color: #d0d0d0;
+    /* Not directly from the style guide, which doesn't specify hovered cancel button */
+}
+
+.el-button.cancel:active {
+    background-color: #b0b0b0;
+    border-color: #b0b0b0;
+    /* Not directly from the style guide, which doesn't specify active cancel button */
+}
+
+/* Add class to comply with DCGS-N Style Guide: secondary button */
+.el-button.secondary {
+    border-color: #1C496D;
+    background-color: #1C496D;
+}
+
+.el-button.secondary:hover {
+    background-color: #1D364D;
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-button.secondary:active {
+    background-color: #1B2834;
+    box-shadow: 0 2px 5px #999999;
+}
+
+/* Radio buttons */
+.el-radio__inner::after {
+    width: 8px;
+    height: 8px;
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+    border-color: #2c3e50;
+    background: #2c3e50;
+}
+
+.el-radio__input.is-disabled .el-radio__inner {
+    background-color: #7d7d7d;
+}
+
+.el-radio__input.is-disabled.is-checked .el-radio__inner {
+    background-color: #7d7d7d;
+}
+
+.el-radio__input.is-disabled.is-checked .el-radio__inner {
+    border-color: #7d7d7d;
+}
+
+.el-radio__input.is-disabled .el-radio__inner {
+    border-color: #7d7d7d;
+}
+
+.el-radio__input.is-disabled + .el-radio__label {
+    color: #7d7d7d;
+}
+
+/* Date picker */
+.el-date-table {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.el-date-table td.current:not(.disabled) {
+    color: #000;
+    border-radius: 17px;
+}
+
+.el-date-table td:hover {
+    border-radius: 17px;
+}
+
+.el-date-table td.today {
+    color: #000000;
+}
+
+.el-date-picker__header {
+    font-weight: bold;
+}
+
+.el-year-table td.current:not(.disabled) .cell {
+    color: #000;
+    border-radius: 17px;
+}
+
+.el-month-table td.current:not(.disabled) .cell {
+    color: #000;
+    border-radius: 17px;
+}
+
+.el-picker-panel__icon-btn {
+    color: #00000090;
+}
+
+.el-year-table td .cell {
+    font-weight: bold;
+}
+
+.el-year-table td .cell:hover {
+    border-radius: 17px;
+}
+
+.el-month-table td .cell {
+    font-weight: bold;
+}
+
+.el-month-table td .cell:hover {
+    border-radius: 17px;
+}
+
+.el-input__icon {
+    color: #00000090;
+}
+
+.el-picker-panel {
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-picker-panel__btn:hover {
+    background-color: #175D8D;
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-picker-panel__btn:active {
+    background-color: #1C496D;
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-picker-panel__btn {
+    font-size: 11px;
+    box-shadow: 0 2px 5px #BDBDBD;
+    background-color: #047cc0;
+    color: white;
+}
+
+/* Menu */
+.el-menu-item.is-active {
+    color: #fff;
+}
+
+.el-menu li {
+    font-weight: bold;
+}
+
+.el-submenu .el-menu-item {
+    color: #000000DE;
+    font-weight: normal;
+}
+
+.el-submenu .el-menu-item:hover {
+    background-color: #eceff1;
+}
+
+.el-menu--horizontal .el-submenu .el-submenu__icon-arrow {
+    color: #ffffff;
+    padding-left: 5px;
+    font-size: 20px;
+}
+
+.el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
+    transform: none;
+}
+
+/* Dropdown menu */
+.el-icon--right {
+    font-size: 18px;
+}
+
+.el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: #eceff1;
+    color: #000000DE;
+}
+
+.el-dropdown-menu__item {
+    color: #000000DE;
+}
+
+/* Notifications */
+.el-notification {
+    box-shadow: 0 2px 5px #999999;
+}
+
+.el-notification__title {
+    font-weight: bold;
+}
+
+.el-notification__closeBtn {
+    color: #767676;
+}
+
+.el-notification__closeBtn:hover {
+    color: #047cc0;
+}
+
+.el-notification.info {
+    background-color: #e6f2f8;
+    border: 1px solid #047cc0;
+}
+
+.el-notification .el-icon-information {
+    color: #047cc0;
+}
+
+.el-notification.info .el-notification__content {
+    color: #047cc0;
+}
+
+.el-notification.info .el-notification__title {
+    color: #047cc0;
+}
+
+.el-notification.success {
+    background-color: #e8f8f5;
+    border: 1px solid #18bc9c;
+}
+
+.el-notification.success .el-notification__content {
+    color: #18bc9c;
+}
+
+.el-notification.success .el-notification__title {
+    color: #18bc9c;
+}
+
+.el-notification .el-icon-circle-check:before {
+    content: "\f00c";
+}
+
+.el-notification.warning {
+    background-color: #fdf5e7;
+    border: 1px solid #f39c12;
+}
+
+.el-notification.warning .el-notification__content {
+    color: #f39c12;
+}
+
+.el-notification.warning .el-notification__title {
+    color: #f39c12;
+}
+
+.el-notification.error {
+    background-color: #fcedeb;
+    border: 1px solid #e74c3c;
+}
+
+.el-notification.error .el-notification__content {
+    color: #e74c3c;
+}
+
+.el-notification.error .el-notification__title {
+    color: #e74c3c;
+}
+
+/* Message Box */
+.el-message-box .el-message-box__content {
+    color: #000000;
+    opacity: .87;
+}
+
+/* Table */
+.el-table tr {
+    height: 50px;
+}
+
+.el-table__body tr.current-row>td {
+    background: #c2dbf4;
+}
+
+.el-table--enable-row-hover .el-table__body tr:hover>td {
+    background-color: #DEEDF7;
+}
+
+/* Icons */
+.el-icon-arrow-down:before {
+    content: "\f107";
+}
+
+.el-icon-arrow-left:before {
+    content: "\f104";
+}
+
+.el-icon-arrow-right:before {
+    content: "\f105";
+}
+
+.el-icon-arrow-up:before {
+    content: "\f106";
+}
+
+.el-icon-caret-bottom:before {
+    content: "\f0d7";
+}
+
+.el-icon-caret-left:before {
+    content: "\f0d9";
+}
+
+.el-icon-caret-right:before {
+    content: "\f0da";
+}
+
+.el-icon-caret-top:before {
+    content: "\f0d8";
+}
+
+.el-icon-check:before {
+    content: "\f00c";
+}
+
+.el-icon-circle-check:before {
+    content: "\f058";
+}
+
+.el-icon-circle-close:before {
+    content: "\f057";
+}
+
+.el-icon-circle-cross:before {
+    content: "\f057";
+}
+
+.el-icon-close:before {
+    content: "\f00d";
+}
+
+.el-icon-upload:before {
+    content: "\f0ee";
+}
+
+.el-icon-d-arrow-left:before {
+    content: "\f100";
+}
+
+.el-icon-d-arrow-right:before {
+    content: "\f101";
+}
+
+.el-icon-d-caret:before {
+    content: "\f0dc";
+}
+
+.el-icon-date:before {
+    content: "\f073";
+}
+
+.el-icon-delete:before {
+    content: "\f1f8";
+}
+
+.el-icon-document:before {
+    content: "\f016";
+}
+
+.el-icon-edit:before {
+    content: "\f040";
+}
+
+.el-icon-information:before {
+    content: "\f05a";
+}
+
+.el-icon-loading:before {
+    content: "\f110";
+}
+
+.el-icon-menu:before {
+    content: "\f142";
+}
+
+.el-icon-message:before {
+    content: "\f0e0";
+}
+
+.el-icon-minus:before {
+    content: "\f068";
+}
+
+.el-icon-more:before {
+    content: "\f141";
+}
+
+.el-icon-picture:before {
+    content: "\f03e";
+}
+
+.el-icon-plus:before {
+    content: "\f067";
+}
+
+.el-icon-search:before {
+    content: "\f002";
+}
+
+.el-icon-setting:before {
+    content: "\f013";
+}
+
+.el-icon-share:before {
+    content: "\f1e0";
+}
+
+.el-icon-star-off:before {
+    content: "\f006";
+}
+
+.el-icon-star-on:before {
+    content: "\f005";
+}
+
+.el-icon-time:before {
+    content: "\f017";
+}
+
+.el-icon-warning:before {
+    content: "\f071";
+}
+
+.el-icon-delete2:before {
+    content: "\f014";
+}
+
+.el-icon-upload2:before {
+    content: "\f093";
+}
+
+.el-icon-view:before {
+    content: "\f00e";
+}
+
+/* Progress Bars */
+.el-progress-bar__inner {
+    background-color: #F39C12;  /* Change background color to orange for DCGS-N compliance. Changes all progress bars, but for now we only use this in the Narrative Panel. */
+}

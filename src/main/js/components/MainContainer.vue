@@ -1,13 +1,16 @@
 <template>
     <div>
-        <p>Main Container</p>
+        <logo-banner />
+        <div class="main-container">
+        </div>
     </div>
 </template>
 
 <script>
-
+import LogoBanner from './LogoBanner.vue'
 export default {
     components: {
+        LogoBanner
     },
     mounted() {
 
@@ -16,6 +19,5 @@ export default {
     }
 }
 </script>
-
 <style>
 </style>

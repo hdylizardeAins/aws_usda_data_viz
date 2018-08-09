@@ -1,6 +1,6 @@
 <template>
     <div id="data-set-panel">
-        <el-table ref="multipleTable" :data="datasets" style="width: 100%" stripe @selection-change="handleSelectionChange">
+        <el-table ref="multipleTable" :data="datasets" style="width: 100%" stripe border @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"/>
             <el-table-column property="name" label="Name" width="120">
                 <template slot-scope="scope">

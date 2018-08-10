@@ -14,7 +14,7 @@
         <el-menu-item index="4">ANALYTICS and VISUALIZATION LIBRARY</el-menu-item>
         <el-menu-item index="5"><img src="../../webapp/js/images/question.png"></el-menu-item>
       </el-menu>
-    </div>    
+    </div> 
 </template>
 <script>
 export default {

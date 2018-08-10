@@ -9,10 +9,10 @@
                 <div id="newWorkDiv" v-if="activeIndex == 2" key="newWork">
                     <el-main >
                         <el-row>
-                            <el-col span="12" push="2">
+                            <el-col span="10" offset="2">
                                 <datasets-panel />
                             </el-col>
-                            <el-col span="12" pull="2" >
+                            <el-col span="10">
                                 <visualization />
                             </el-col>
                         </el-row>

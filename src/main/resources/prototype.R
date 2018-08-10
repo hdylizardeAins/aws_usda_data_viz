@@ -18,8 +18,9 @@ if (length(args)==0) {
 } else {
   action = args[1]
   inputFile = args[2]
-  outputFile = args[3]
-  mydata <- read.csv("~/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/geneticEngineeringAdoption.csv")
+  outputDir = args[3]
+  #mydata <- read.csv("~/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/geneticEngineeringAdoption.csv")
+  mydata <- read.csv(inputFile)
   if(action == "plot"){
     png(file = "myplot.png", bg = "transparent")
     plot(mydata)

@@ -20,28 +20,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
+	private static final String GENETIC_ENGINEERING_ADOPTION_CSV = "geneticEngineeringAdoption.csv";
+	private static final String PROTOTYPE_R = "prototype.R";
 	private static final String COLUMNS = "columns";
 	private static final String REGRESSION = "regression";
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
 	private static final String RSCRIPT = "Rscript ";
-	//private static final String R_SCRIPT_LOC = "/home/ewimberley/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/prototype.R";
 	private static final String MESSAGE_FORMAT = "Hello %s!";
 	
 	private String scriptLoc;
 	
 	public AnalyticsController() {
+		scriptLoc = RSCRIPT + " " + getPathToFile(PROTOTYPE_R);
+	}
+
+	private String  getPathToFile(String fileName) {
 		ClassLoader classLoader = getClass().getClassLoader();
-		URL url = classLoader.getResource("prototype.R");
+		URL url = classLoader.getResource(fileName);
 		File file = new File(url.getFile());
-		scriptLoc = file.getAbsolutePath();
+		return file.getAbsolutePath();
 	}
 
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + scriptLoc;
+		String cmd = scriptLoc;
+		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, PLOT, inputFile);
+			String response = runR(cmd, PLOT, inputLoc, "");
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -51,9 +57,10 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "regression", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + scriptLoc;
+		String cmd = scriptLoc;
+		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, REGRESSION, inputFile);
+			String response = runR(cmd, REGRESSION, inputLoc, "");
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -63,9 +70,10 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "summary", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity summary(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + scriptLoc;
+		String cmd = scriptLoc;
+		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, SUMMARY, inputFile);
+			String response = runR(cmd, SUMMARY, inputLoc, "");
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -75,9 +83,10 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + scriptLoc;
+		String cmd = scriptLoc;
+		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, COLUMNS, inputFile);
+			String response = runR(cmd, COLUMNS, inputLoc, "");
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -85,9 +94,11 @@ public class AnalyticsController {
 		}
 	}
 
-	private String runR(String cmd, String action, String inputFile) throws IOException, InterruptedException {
+	private String runR(String cmd, String action, String inputFile, String outputFile) throws IOException, InterruptedException {
 		Runtime run = Runtime.getRuntime();
-		Process pr = run.exec(cmd + " " + action);
+		String exec = cmd + " " + action + " " + inputFile;
+		System.out.println(exec);
+		Process pr = run.exec(exec);
 		pr.waitFor();
 		BufferedReader buf = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 		String data = "";
@@ -101,6 +112,14 @@ public class AnalyticsController {
 
 	}
 
+	private String getInputPath(String inputFile) {
+		String inputLoc = "";
+		if(GENETIC_ENGINEERING_ADOPTION_CSV.equals(inputFile)) {
+			inputLoc = getPathToFile(GENETIC_ENGINEERING_ADOPTION_CSV);
+		}
+		return inputLoc;
+	}
+	
 	private String createResponse(String name) {
 		return new JSONObject().put("Output", String.format(MESSAGE_FORMAT, name)).toString();
 	}

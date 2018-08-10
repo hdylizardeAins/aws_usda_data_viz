@@ -6,19 +6,21 @@
                 <custom-nav @nav-select="handleNavSelect" />
             </el-header>
             <el-container class="body-container">
-                <div id="paddedBodyDiv">
-                    <div id="newWorkDiv" v-if="activeIndex == 2" key="newWork">
-                        <el-aside style="max-width: 400px;" >
-                            <datasets-panel />
-                        </el-aside>
-                        <el-main>
-                            <visualization />
-                        </el-main>
-                    </div>
-                    <el-main style="flex:1;" v-else key="underConstruction">
-                        <p style="text-align:center;">Page Under Construction</p>
+                <div id="newWorkDiv" v-if="activeIndex == 2" key="newWork">
+                    <el-main >
+                        <el-row>
+                            <el-col span="12" push="2">
+                                <datasets-panel />
+                            </el-col>
+                            <el-col span="12" pull="2" >
+                                <visualization />
+                            </el-col>
+                        </el-row>
                     </el-main>
                 </div>
+                <el-main style="flex:1;" v-else key="underConstruction">
+                    <p style="text-align:center;">Page Under Construction</p>
+                </el-main>
             </el-container>
         </el-container>
     </div>
@@ -53,24 +55,4 @@ export default {
 }
 </script>
 <style>
-.body-container {
-    display: flex;
-}
-
-#newWorkDiv {
-    display:inline-flex;
-    flex: 1;
-}
-
-#newWorkDiv > * {
-    display: inline-flex;
-    flex: auto;
-}
-
-#paddedBodyDiv {
-    padding: 0 100px;
-    display: flex;
-    flex: 1;
-}
-
 </style>

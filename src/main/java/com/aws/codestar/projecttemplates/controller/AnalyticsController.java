@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
+	private static final String PLOT_OUTPUT_DIR = "/var/www/html";
 	private static final String GENETIC_ENGINEERING_ADOPTION_CSV = "geneticEngineeringAdoption.csv";
 	private static final String PROTOTYPE_R = "prototype.R";
 	private static final String COLUMNS = "columns";
@@ -47,7 +48,7 @@ public class AnalyticsController {
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, PLOT, inputLoc, "");
+			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -96,7 +97,7 @@ public class AnalyticsController {
 
 	private String runR(String cmd, String action, String inputFile, String outputFile) throws IOException, InterruptedException {
 		Runtime run = Runtime.getRuntime();
-		String exec = cmd + " " + action + " " + inputFile;
+		String exec = cmd + " " + action + " " + inputFile + " " + outputFile;
 		System.out.println(exec);
 		Process pr = run.exec(exec);
 		pr.waitFor();

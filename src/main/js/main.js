@@ -5,11 +5,11 @@ import App from './App.vue'
 import store from './stores/Stores.js'
 import 'font-awesome/css/font-awesome.min.css'
 
-// //Our Element.js theme (auto-generated with element-theme tool)
-// import './css/element/index.css'
+//Our Element.js theme (auto-generated with element-theme tool)
+import './css/element/index.css'
 
-// //Our manual Element.js theme overrides
-// import './css/elementui-theme.css'
+//Our manual Element.js theme overrides
+import './css/elementui-theme.css'
 
 //Our CSS
 import './css/global.css'

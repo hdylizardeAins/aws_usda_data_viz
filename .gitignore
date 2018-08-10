@@ -10,7 +10,8 @@ target/
 #ignore npm-generated files
 node_modules/
 node/
-steelblue-web/src/main/webapp/js/*
-steelblue-web/src/main/js/css/element/*.css
-!steelblue-web/src/main/js/css/element/index.css
-steelblue-web/src/main/webapp/dev.html
+src/main/webapp/js/*
+!src/main/webapp/js/images
+src/main/js/css/element/*.css
+!src/main/js/css/element/index.css
+src/main/webapp/dev.html

@@ -1,17 +1,17 @@
 {
-  "name": "steelblue",
+  "name": "usda-data-visualization",
   "version": "1.0.4",
-  "description": "STatistical Exploitation of Every Lesson By Learning and Uncovering Exemplars",
-  "main": "steelblue-web/src/main/webapp/index.jsp",
+  "description": "USDA Data Visualization",
+  "main": "./src/main/webapp/index.html",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot -d",
     "build": "cross-env NODE_ENV=development webpack --progress --hide-modules",
     "prod": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "theme": "et --config steelblue-web/src/main/js/theme/element-variables.css --minimize --out steelblue-web/src/main/js/css/element"
+    "theme": "et --config ./src/main/js/theme/element-variables.css --minimize --out ./src/main/js/css/element"
   },
   "dependencies": {
     "vue": "^2.5.11",
-    "element-ui": "legacy"
+    "element-ui": "2.4.5"
   },
   "browserslist": [
     "> 1%",

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
+	private static final String COLUMNS = "columns";
 	private static final String REGRESSION = "regression";
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
@@ -25,32 +26,68 @@ public class AnalyticsController {
 	private static final String R_SCRIPT_LOC = "/home/ewimberley/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/prototype.R";
 	private static final String MESSAGE_FORMAT = "Hello %s!";
 
-	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity helloWorldPost(@RequestParam(value = "action") String action, @RequestParam(value = "dataFile") String name) {
-		String rAction = "";
-		if(action.equals(PLOT)){
-			rAction = PLOT; 
-		} else if(action.equals(SUMMARY)){
-			rAction = SUMMARY;
-		} else if(action.equals(REGRESSION)){
-			rAction = REGRESSION;
-		}
-		String cmd = RSCRIPT + R_SCRIPT_LOC + " " + rAction;
-		Runtime run = Runtime.getRuntime();
+	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile) {
+		String cmd = RSCRIPT + R_SCRIPT_LOC;
 		try {
-			Process pr = run.exec(cmd);
-			pr.waitFor();
-			BufferedReader buf = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-			String line = "";
-			while ((line = buf.readLine()) != null) {
-				System.out.println(line);
-			}
-			return ResponseEntity.ok(createResponse(name));
+			String response = runR(cmd, PLOT, inputFile);
+			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().build();
 		}
-		
+	}
+
+	@RequestMapping(path = "regression", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile) {
+		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		try {
+			String response = runR(cmd, REGRESSION, inputFile);
+			return ResponseEntity.ok(response);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+	@RequestMapping(path = "summary", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity summary(@RequestParam(value = "inputFile") String inputFile) {
+		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		try {
+			String response = runR(cmd, SUMMARY, inputFile);
+			return ResponseEntity.ok(response);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
+		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		try {
+			String response = runR(cmd, COLUMNS, inputFile);
+			return ResponseEntity.ok(response);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+	private String runR(String cmd, String action, String inputFile) throws IOException, InterruptedException {
+		Runtime run = Runtime.getRuntime();
+		Process pr = run.exec(cmd + " " + action);
+		pr.waitFor();
+		BufferedReader buf = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+		String data = "";
+		String line = "";
+		while ((line = buf.readLine()) != null) {
+			System.out.println(line);
+			data = line.substring(0, line.length());
+		}
+		return data;
+		// return ResponseEntity.ok(createResponse(name));
+
 	}
 
 	private String createResponse(String name) {

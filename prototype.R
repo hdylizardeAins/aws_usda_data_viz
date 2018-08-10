@@ -28,6 +28,10 @@ if (length(args)==0) {
     summary(mydata)
   } else if(action == "regression"){
     linearMod <- lm(ValuePerAcre ~ USGECropPercentCorn, data=mydata)
-    print(linearMod)
+    #print(linearMod)
+    cat(paste("{\"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}"))
+  } else if(action == "columns"){
+    #print(colnames(mydata))
+    cat(paste("{\"columns\":[\"", paste(colnames(mydata), collapse = "\",\""), "\"]}"))
   }
 }

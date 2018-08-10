@@ -1,8 +1,10 @@
 package com.aws.codestar.projecttemplates.controller;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +25,21 @@ public class AnalyticsController {
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
 	private static final String RSCRIPT = "Rscript ";
-	private static final String R_SCRIPT_LOC = "/home/ewimberley/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/prototype.R";
+	//private static final String R_SCRIPT_LOC = "/home/ewimberley/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/prototype.R";
 	private static final String MESSAGE_FORMAT = "Hello %s!";
+	
+	private String scriptLoc;
+	
+	public AnalyticsController() {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URL url = classLoader.getResource("prototype.R");
+		File file = new File(url.getFile());
+		scriptLoc = file.getAbsolutePath();
+	}
 
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		String cmd = RSCRIPT + scriptLoc;
 		try {
 			String response = runR(cmd, PLOT, inputFile);
 			return ResponseEntity.ok(response);
@@ -40,7 +51,7 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "regression", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		String cmd = RSCRIPT + scriptLoc;
 		try {
 			String response = runR(cmd, REGRESSION, inputFile);
 			return ResponseEntity.ok(response);
@@ -52,7 +63,7 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "summary", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity summary(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		String cmd = RSCRIPT + scriptLoc;
 		try {
 			String response = runR(cmd, SUMMARY, inputFile);
 			return ResponseEntity.ok(response);
@@ -64,7 +75,7 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
-		String cmd = RSCRIPT + R_SCRIPT_LOC;
+		String cmd = RSCRIPT + scriptLoc;
 		try {
 			String response = runR(cmd, COLUMNS, inputFile);
 			return ResponseEntity.ok(response);

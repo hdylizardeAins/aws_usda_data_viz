@@ -9,10 +9,11 @@
                 <div id="newWorkDiv" v-if="activeIndex == 2" key="newWork">
                     <el-main >
                         <el-row>
-                            <el-col span="10" offset="2">
+                            <el-col :span="10" :offset="2">
                                 <datasets-panel />
+                                <analytics-panel />
                             </el-col>
-                            <el-col span="10">
+                            <el-col :span="10">
                                 <visualization />
                             </el-col>
                         </el-row>
@@ -27,6 +28,7 @@
 </template>
 
 <script>
+import AnalyticsPanel from './AnalyticsPanel.vue';
 import CustomHeader from './CustomHeader.vue';
 import CustomNav from './CustomNav.vue';
 import DatasetsPanel from './DatasetsPanel.vue';
@@ -37,6 +39,7 @@ export default {
         CustomHeader,
         CustomNav,
         DatasetsPanel,
+        AnalyticsPanel,
         Visualization
     },
     data(){

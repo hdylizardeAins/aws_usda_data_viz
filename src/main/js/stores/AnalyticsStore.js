@@ -19,7 +19,8 @@ var analyticsStore = {
             },
             {
                 name: "TBD",
-                description: "Currently unsupported."
+                description: "Currently unsupported.",
+                unselectable: true
             }
         ]
     },

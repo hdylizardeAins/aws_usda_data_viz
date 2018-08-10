@@ -4,9 +4,9 @@
             <el-row>2. Choose Analytics</el-row>
             <el-row>
                 <el-col>
-                    <el-table ref="analyticsTable" :data="analytics" style="width: 100%" stripe border @selection-change="handleSelectionChange">
-                        <el-table-column :selectable="isSelectable" type="selection" width="55"/>
-                        <el-table-column property="name" label="Name" width="220px">
+                    <el-table ref="analyticsTable" :data="analytics" stripe @selection-change="handleSelectionChange">
+                        <el-table-column :selectable="isSelectable" type="selection" width="30px"/>
+                        <el-table-column property="name" label="Name" >
                             <template slot-scope="scope">
                                 <strong>{{ scope.row.name }}</strong>
                                 <br/>
@@ -54,13 +54,14 @@ export default {
             this.multipleSelection = val;
         },
         isSelectable(row){
-            return row.name !== "TBD";
+            return !row.unselectable;
         }
     }
 };
 </script>
 <style>
 #analytics-panel {
-    padding-top: 10px;    
+    padding: 10px;    
+    margin-top: 4px;
 }
 </style>

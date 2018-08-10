@@ -8,12 +8,12 @@
             <el-container class="body-container">
                 <div id="newWorkDiv" v-if="activeIndex == 2" key="newWork">
                     <el-main >
-                        <el-row>
-                            <el-col :span="10" :offset="2">
+                        <el-row class="responsive-flex-row" type="flex" >
+                            <el-col class="left-panels-flex" :span="12">
                                 <datasets-panel />
                                 <analytics-panel />
                             </el-col>
-                            <el-col :span="10">
+                            <el-col class="right-panels-flex" :span="12">
                                 <visualization />
                             </el-col>
                         </el-row>
@@ -58,4 +58,24 @@ export default {
 }
 </script>
 <style>
+#newWorkDiv {
+    padding-right: 200px;
+    padding-left: 200px;
+}
+
+.responsive-flex-row {
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.left-panels-flex {
+    min-width: 500px;
+    max-width: 745px;
+}
+
+.right-panels-flex {
+    min-width: 500px;
+    max-width: 745px;
+    
+}
 </style>

@@ -68,8 +68,8 @@ export default {
 <style>
 #analytics-panel {
     border: solid 1px gray;
-    padding: 10px;    
-    margin-top: 4px;
+    padding: 4px;    
+    margin: 2px;
 }
 
 .analytic_next_btn {

@@ -23,7 +23,7 @@ public class AnalyticsController {
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
 	private static final String RSCRIPT = "Rscript ";
-	private static final String R_SCRIPT_LOC = "/home/ewimberley/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/prototype.R";
+	private static final String R_SCRIPT_LOC = "/home/ewimberley/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/prototype.R";
 	private static final String MESSAGE_FORMAT = "Hello %s!";
 
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")

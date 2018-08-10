@@ -11,6 +11,7 @@ target/
 node_modules/
 node/
 src/main/webapp/js/*
+!src/main/webapp/js/images
 src/main/js/css/element/*.css
 !src/main/js/css/element/index.css
 src/main/webapp/dev.html

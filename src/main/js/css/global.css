@@ -1,0 +1,234 @@
+@font-face {
+    font-family: 'OpenSans';
+    font-style: normal;
+    font-weight: 300;
+    src: url("./fonts/OpenSans.woff2") format('woff2'), url("./fonts/OpenSans.woff") format('woff');
+}
+
+body {
+    font-family: "OpenSans", Helvetica, Arial, sans-serif;
+    margin: 1px;
+}
+
+button {
+    font-family: "OpenSans", Helvetica, Arial, sans-serif;
+}
+
+.pull-right {
+    float: right;
+}
+
+/* Font Awesome icons */
+
+.fa {
+    margin: 2px 0
+}
+
+/* Links */
+
+a {
+    color: #047CC0;
+}
+
+a:active,
+a:visited {
+    color: #175D8D;
+}
+
+a:hover {
+    color: #1C496D;
+}
+
+/* Proposal area (left side of screen) */
+
+div.main-proposal {
+    min-width: 170px;
+    width: 35%;
+    height: 100%;
+    float: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.el-button {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+div.option-buttons {
+    display: flex;
+    flex-direction: row;
+    padding: 2px;
+    flex-wrap: wrap;
+}
+
+#proposal-button-header {
+    padding: 15px;
+}
+
+/* Map area (right side of screen) */
+
+div.main-map {
+    min-width: 480px;
+    width: 65%;
+    height: 100%;
+    float: left;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+div.el-tabs__header {
+    margin: 0px;
+    /* Fix weird margin below tabs */
+}
+
+#map-container {
+    flex: 1;
+}
+
+div.map-tabs {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/*Works consistently in Chrome, IE 11, and FF. Seems to work in Edge
+  except for the leaflet map which is still selected.*/
+
+.unselectable {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Add a scrollbar to the list view if needed, make the list fill the remaining area */
+
+div.task-list {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 37px;
+    border-top: 1px solid #ddd;
+}
+
+.el-tabs__content {
+    overflow-y: auto;
+}
+
+/* We get a duplicate scrollbar, so hide it */
+
+div.el-tree {
+    overflow: hidden;
+    border-top-width: 0px;
+    margin-right: 0px;
+    margin-bottom: 2px;
+    margin-top: -1px;
+}
+
+/* Style nodes a bit */
+
+div.el-tree-node {
+    border-top-width: 1px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+    border-color: #d1d9e4;
+    border-style: solid;
+}
+
+.symbol-tree-view {
+    margin-bottom: -5.5px;
+    padding-left: 10px;
+}
+
+.mission-tree-view {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-bottom: -3.5px;
+}
+
+#upload-excel {
+    display: inline-block;
+}
+
+div.optimizer-setting {
+    display: flex;
+    flex-direction: row;
+}
+
+div.optimizer-setting:hover {
+    background-color: #eceff1;
+}
+
+div.optimizer-setting>span {
+    float: left;
+    flex: 1;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+div.optimizer-setting input {
+    float: right;
+}
+
+div.timeline-panel {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+div.el-dialog__wrapper {
+    overflow-x: hidden;
+}
+
+div.el-message-box__wrapper {
+    overflow-y: auto;
+}
+
+/*split.js styles */
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    cursor: row-resize;
+}
+
+.splitter-vertical {
+    flex-direction: column;
+}
+
+.splitter-horizontal {
+    flex-direction: row;
+}
+
+/*END split.js styles */
+
+/* ExportDropdown styling */
+
+.fakelink {
+    text-decoration: none;
+    width: 100%;
+    color: black;
+    display: block;
+    font-size: 10.5pt;
+    padding: 5px;
+}
+
+/* Asset Property Data Editor Styling */
+
+.editor-tall {
+    height: 150%;
+}

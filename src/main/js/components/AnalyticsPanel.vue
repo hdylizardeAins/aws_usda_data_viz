@@ -17,8 +17,8 @@
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :offset="22" >
-                    <el-button type="primary" :disabled="nextBtnDisabled" >Next</el-button>
+                <el-col :span="3" :offset="21" >
+                    <el-button class="analytic_next_btn" type="primary" @click="handleNextClick" >Next</el-button>
                 </el-col>
             </el-row>
         </el-container>
@@ -36,8 +36,8 @@ export default {
         analytics: function() {
             return this.$store.getters.analytics;
         },
-        nextBtnDisabled: function(){
-            return this.multipleSelection.length == 0;
+        selectedAnalyticNames: function(){
+            return this.multipleSelection.map(a => a.name);
         }
     },
     methods: {
@@ -55,13 +55,24 @@ export default {
         },
         isSelectable(row){
             return !row.unselectable;
+        },
+        handleNextClick(){
+            this.updatedAnalyticStore();
+        },
+        updatedAnalyticStore(){
+            this.$store.commit('updateAnalyticsSelection', this.selectedAnalyticNames)
         }
     }
 };
 </script>
 <style>
 #analytics-panel {
+    border: solid 1px gray;
     padding: 10px;    
     margin-top: 4px;
+}
+
+.analytic_next_btn {
+    width: 100%;
 }
 </style>

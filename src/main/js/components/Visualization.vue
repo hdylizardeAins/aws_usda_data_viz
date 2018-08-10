@@ -16,11 +16,11 @@
                     </el-tabs>
                 </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
                 <el-col :offset="22" >
                     <el-button type="primary" :disabled="nextBtnDisabled" >Next</el-button>
                 </el-col>
-            </el-row>
+            </el-row> -->
         </el-container>
     </div>
 </template>
@@ -30,19 +30,38 @@ export default {
     data() {
         return {
             editableTabsValue2: '1',
-            editableTabs2: [
-                {
-                    title: 'Analysis 1',
-                    name: '1',
-                    content: 'Analysis 1 content'
-                },
-                {
-                    title: 'Analysis 2',
-                    name: '2',
-                    content: 'Analysis 2 content'
-                }
-            ],
             tabIndex: 1
+        }
+    },
+    computed: {
+        selectedAnalytics: function(){
+            return this.$store.getters.selectedAnalytics;
+        },
+        editableTabs2: function(){
+            
+            if (this.selectedAnalytics.length == 0){
+                
+                return //TODO: this isn't showing up in UI even though the block is entere
+                    [
+                        {
+                            title: 'No Analytic',
+                            name: 'No Analytic',
+                            content: 'Please select 1 or more Analytics and click Next'
+                        }
+                    ]
+            }
+            else{
+                let tabs = [];
+                for (let a of this.selectedAnalytics){
+                    let contentStr = "Content for " + a.name;
+                    tabs.push({
+                        title: a.name,
+                        name: a.name,
+                        content: contentStr
+                    })
+                }
+                return tabs;
+            }
         }
     },
     methods: {

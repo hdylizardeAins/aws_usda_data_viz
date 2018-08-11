@@ -20,7 +20,9 @@
           </el-table-column>
       </el-table>
       <el-row>
-        <el-col :offset="21" :span="3"><el-button type="primary" style="width: 100%" :disabled="nextButtonDisabled">Next</el-button></el-col>
+        <el-col :offset="21" :span="3">
+          <el-button type="primary" style="width: 100%; margin-bottom:2px">Next</el-button>
+        </el-col>
       </el-row>
     </div>
 </template>
@@ -47,7 +49,7 @@ export default {
        console.log(this.selectedDataset);
       return this.selectedDataset !== null;
     },
-    handleSelectionChange(val) {
+    handleSelectionChange: function(val) {
         this.selectedDataset = val;
     },
   },

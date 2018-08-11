@@ -12,6 +12,8 @@
                             :name="item.name"
                         >
                         {{item.content}}
+                        <variables-panel></variables-panel>
+                        <graph-panel></graph-panel>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -21,7 +23,14 @@
 </template>
 
 <script>
+import VariablesPanel from './VariablesPanel.vue';
+import GraphPanel from './GraphPanel.vue';
+
 export default {
+    components: {
+        VariablesPanel,
+        GraphPanel
+    },
     data() {
         return {
             currentTab: 'No Analytic'

@@ -6,13 +6,12 @@
                 <el-col>
                     <el-tabs v-model="currentTab" type="card">
                         <el-tab-pane
-                            v-for="item in editableTabs2"
-                            :key="item.name"
-                            :label="item.title"
-                            :name="item.name"
+                            v-for="analytic in selectedAnalytics"
+                            :key="analytic.name"
+                            :label="analytic.name"
+                            :name="analytic.name"
                         >
-                        {{item.content}}
-                        <variables-panel></variables-panel>
+                        <variables-panel :analytic="analytic"></variables-panel>
                         <graph-panel></graph-panel>
                         </el-tab-pane>
                     </el-tabs>
@@ -39,30 +38,6 @@ export default {
     computed: {
         selectedAnalytics: function(){
             return this.$store.getters.selectedAnalytics;
-        },
-        editableTabs2: function(){
-            
-            if (this.selectedAnalytics.length == 0){
-                return [
-                        {
-                            title: 'No Analytic',
-                            name: 'No Analytic',
-                            content: 'Please select 1 or more Analytics and click Next'
-                        }
-                    ]
-            }
-            else{
-                let tabs = [];
-                for (let a of this.selectedAnalytics){
-                    let contentStr = "Content for " + a.name;
-                    tabs.push({
-                        title: a.name,
-                        name: a.name,
-                        content: contentStr
-                    })
-                }
-                return tabs;
-            }
         }
     },
     methods: {

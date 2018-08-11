@@ -2,7 +2,7 @@
     <el-form>
         <h4>3a. Choose Variables</h4>
         <el-row>
-            <el-col id="x-axis" :span="11" style="border-style:solid; border-width: 1px; border-color: grey; padding: 4px; margin: 2px">
+            <el-col class="bordered-panel" id="x-axis" :span="11">
                 X Axis
                 <el-checkbox-group v-model="form.type">
                     <el-checkbox label="x variable 1" name="type"></el-checkbox>
@@ -10,7 +10,7 @@
                     <el-checkbox label="x variable 3" name="type"></el-checkbox>
                 </el-checkbox-group>
             </el-col>
-            <el-col id="y-axis" :span="11" style="border-style:solid; border-width: 1px; border-color: grey; padding: 4px; margin: 2px">
+            <el-col class="bordered-panel" id="y-axis" :span="11">
                 Y Axis
                 <el-checkbox-group v-model="form.type">
                     <el-checkbox label="y variable 1" name="type"></el-checkbox>

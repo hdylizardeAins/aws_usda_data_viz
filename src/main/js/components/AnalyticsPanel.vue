@@ -1,5 +1,5 @@
 <template>
-    <div id="analytics-panel">
+    <div id="analytics-panel" class="bordered-panel">
         <el-container>
             <el-row>2. Choose Analytics</el-row>
             <el-row>
@@ -66,12 +66,6 @@ export default {
 };
 </script>
 <style>
-#analytics-panel {
-    border: solid 1px gray;
-    padding: 4px;    
-    margin: 2px;
-}
-
 .analytic_next_btn {
     width: 100%;
 }

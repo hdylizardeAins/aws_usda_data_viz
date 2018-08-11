@@ -1,5 +1,5 @@
 <template>
-    <div id="data-set-panel" style="border-style:solid; border-width: 1px; border-color: grey; padding: 4px; margin: 2px">
+    <div id="data-set-panel" class="bordered-panel">
       <el-row>
         <el-col :span="20">1. Choose Dataset</el-col>
         <el-col :span="4"><el-button style="width: 100%" disabled>Import</el-button></el-col>
@@ -21,7 +21,7 @@
       </el-table>
       <el-row>
         <el-col :offset="21" :span="3">
-          <el-button type="primary" style="width: 100%; margin-bottom:2px">Next</el-button>
+          <el-button type="primary" style="width: 100%">Next</el-button>
         </el-col>
       </el-row>
     </div>

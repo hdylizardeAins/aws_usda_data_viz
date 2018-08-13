@@ -45,7 +45,8 @@ public class AnalyticsController {
 		String inputLoc = getInputPath(inputFile);
 		try {
 			//String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
-			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " " + columns);
+			String columnsFiltered = columns.replaceAll("[^A-Za-z0-9,]", "");
+			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " " + columnsFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -54,11 +55,13 @@ public class AnalyticsController {
 	}
 
 	@RequestMapping(path = "regression", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile) {
+	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, REGRESSION, inputLoc, "");
+			String xFiltered = x.replaceAll("[^A-Za-z0-9,]", "");
+			String yFiltered = y.replaceAll("[^A-Za-z0-9,]", "");
+			String response = runR(cmd, REGRESSION, inputLoc, PLOT_OUTPUT_DIR + " linear " + xFiltered + " " + yFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();

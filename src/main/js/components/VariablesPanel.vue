@@ -25,6 +25,7 @@
 
 <script>
 import deepCopy from './DeepCopy.js';
+import EventBus from './EventBus.vue';
 
 export default {
     props: [
@@ -40,22 +41,34 @@ export default {
     },
     methods: {
         submitForm() {
+            EventBus.$emit("waitForExecution");
             let analyticToSubmit = deepCopy(this.analytic);
             analyticToSubmit.xVars = deepCopy(this.formData.xVars);
             analyticToSubmit.yVars = deepCopy(this.formData.yVars);
+            let dataset = deepCopy(this.$store.getters.selectedDataset);
             let payload = {
-                analytic: analyticToSubmit,
-                datasetFilePath: this.$store.getters.selectedDataset.filePath,
+                analyticName: analyticToSubmit.name,
+                datasetFilePath: dataset.filePath,
                 callback: {
-                      failure: function(err) {
+                    failure: function(err) {
                         this.$notify.error({
-                          message: "Unable to generate analytic: " + err.message,
-                          customClass: "error",
-                          duration: 5000,
-                          title: "Error"
+                            message: "Unable to generate analytic: " + err.message,
+                            customClass: "error",
+                            duration: 5000,
+                            title: "Error"
                         });
-                      }.bind(this)
-                    }
+                        EventBus.$emit("executionFinished");
+                    }.bind(this),
+                    success: function(response){
+                        //Update the executions store
+                        this.$store.commit('updateExecutions', {
+                            datasetName: dataset.name,
+                            analyticName: analyticToSubmit.name,
+                            imagePath: response.data.outputFile //TODO: this is just the filename - update with relative path on the server
+                        });
+                        EventBus.$emit("executionFinished");
+                    }.bind(this)
+                }
             }
             this.$store.dispatch("requestAnalyticExec", payload);
         }

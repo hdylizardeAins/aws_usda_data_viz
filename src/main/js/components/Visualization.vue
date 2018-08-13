@@ -11,12 +11,12 @@
                             :label="analytic.name"
                             :name="analytic.name"
                         >
-                        <variables-panel :analytic="analytic"></variables-panel>
-                        <graph-panel></graph-panel>
+                            <variables-panel :analytic="analytic"></variables-panel>
+                            <graph-panel :analytic="analytic"></graph-panel>
                         </el-tab-pane>
-                        <div :v-if="currentTab === ''">
+                        <el-row v-if="selectedAnalytics.length === 0">
                             <p style="text-align: center;">Please select a Dataset and one or more Analytics.</p>
-                        </div>
+                        </el-row>
                     </el-tabs>
                 </el-col>
             </el-row>

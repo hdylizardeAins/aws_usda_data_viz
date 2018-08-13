@@ -13,8 +13,7 @@ var analyticsStore = {
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: true,
                 multiSelectY: true,
-                selected: false,
-                imagePath: "" 
+                selected: false
             },
             {
                 name: "Plot",
@@ -26,8 +25,7 @@ var analyticsStore = {
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: true,
                 multiSelectY: false,
-                selected: false,
-                imagePath: ""
+                selected: false
             },
             {
                 name: "Regression",
@@ -39,8 +37,7 @@ var analyticsStore = {
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: false,
                 multiSelectY: false,
-                selected: false,
-                imagePath: ""
+                selected: false
             },
             {
                 name: "Summary",
@@ -50,15 +47,13 @@ var analyticsStore = {
                 yVars: [],
                 multiSelectX: true,
                 multiSelectY: true,
-                selected: false,
-                imagePath: ""
+                selected: false
             },
             {
                 name: "TBD",
                 description: "Currently unsupported.",
                 unselectable: true,
-                selected: false,
-                imagePath: ""
+                selected: false
             }
         ]
     },
@@ -88,19 +83,29 @@ var analyticsStore = {
         }
     },
     actions: {
+        /**
+         * @param context
+         * @param payload object of the form:
+         *   {
+         *     analyticName: "name of analytic to execute",
+         *     datasetFilePath: "path to file for the dataset",
+         *     callback: {
+         *        failure: function //handler for failed request,
+         *        success: function //handler for successful request
+         *     }
+         *   }
+         */
         requestAnalyticExec: function(context, payload) {
-            axios.get('/analytics/' + payload.analytic.name.toLowerCase(), {
+            axios.get('/analytics/' + payload.analyticName.toLowerCase(), {
                 params: {
                     inputFile: payload.datasetFilePath
                 }
             })
             .then(function (response) {
-                payload.analytic.imagePath = response.data.outputFile;
-                context.commit('updateAnalytic', payload.analytic);
-                callback.success(config, response);
+                payload.callback.success(response);
             })
             .catch(function (error) {
-                console.log(error); //TODO: figure out error handling
+                payload.callback.failure(error);
             });
         }
     }

@@ -28,7 +28,6 @@ public class AnalyticsController {
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
 	private static final String RSCRIPT = "Rscript ";
-	private static final String MESSAGE_FORMAT = "Hello %s!";
 	
 	private String scriptLoc;
 	
@@ -36,19 +35,12 @@ public class AnalyticsController {
 		scriptLoc = RSCRIPT + " " + getPathToFile(PROTOTYPE_R);
 	}
 
-	private String  getPathToFile(String fileName) {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URL url = classLoader.getResource(fileName);
-		File file = new File(url.getFile());
-		return file.getAbsolutePath();
-	}
-
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile) {
+	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "columns") String columns) {
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR);
+			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -95,9 +87,9 @@ public class AnalyticsController {
 		}
 	}
 
-	private String runR(String cmd, String action, String inputFile, String outputFile) throws IOException, InterruptedException {
+	private String runR(String cmd, String action, String inputFile, String params) throws IOException, InterruptedException {
 		Runtime run = Runtime.getRuntime();
-		String exec = cmd + " " + action + " " + inputFile + " " + outputFile;
+		String exec = cmd + " " + action + " " + inputFile + " " + params;
 		System.out.println(exec);
 		Process pr = run.exec(exec);
 		pr.waitFor();
@@ -121,7 +113,11 @@ public class AnalyticsController {
 		return inputLoc;
 	}
 	
-	private String createResponse(String name) {
-		return new JSONObject().put("Output", String.format(MESSAGE_FORMAT, name)).toString();
+	private String getPathToFile(String fileName) {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URL url = classLoader.getResource(fileName);
+		File file = new File(url.getFile());
+		return file.getAbsolutePath();
 	}
+
 }

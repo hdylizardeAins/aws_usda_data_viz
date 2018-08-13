@@ -9,22 +9,26 @@
 
 #install.packages("caret")
 library(caret)
+library(ggplot2)
 #installOrIncludeLib("caret")
 
 args = commandArgs(trailingOnly=TRUE)
 
 if (length(args)==0) {
-  stop("No arguments")
+  stop("Wrong number of arguments.")
 } else {
-  action = args[1]
-  inputFile = args[2]
-  outputDir = args[3]
-  #mydata <- read.csv("~/Documents/workspace-sts-3.9.5.RELEASE/aws_usda_data_viz/src/main/resources/geneticEngineeringAdoption.csv")
+  action <- args[1]
+  inputFile <- args[2]
+  outputDir <- args[3] #use only for plot
+  columns <- args[4] #use only for plot
+  regressionType = args[3] #use only for regressions
   mydata <- read.csv(inputFile)
   if(action == "plot"){
+    columns <- c(unlist(strsplit(columns,",")))
+    filteredData <- mydata[columns]
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
-    plot(mydata)
+    plot(filteredData)
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "summary"){
@@ -34,7 +38,6 @@ if (length(args)==0) {
     #print(linearMod)
     cat(paste("{\"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}", collapse = "", sep = ""))
   } else if(action == "columns"){
-    #print(colnames(mydata))
     cat(paste("{\"columns\":[\"", paste(colnames(mydata), collapse = "\",\""), "\"]}", collapse = "", sep = ""))
   }
 }

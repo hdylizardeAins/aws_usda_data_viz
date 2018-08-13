@@ -10,7 +10,7 @@
         </el-input>
       </el-row>
       <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" :selectable="isSelectable"/>
+          <el-table-column type="selection" :selectable="isSelectable" :max="1"/>
           <el-table-column prop="name">
               <template slot-scope="scope">
                   <strong>{{ scope.row.name }}</strong>
@@ -21,7 +21,7 @@
       </el-table>
       <el-row>
         <el-col :offset="21" :span="3">
-          <el-button type="primary" style="width: 100%" >Next</el-button>
+          <el-button type="primary" style="width: 100%" :disabled="nextbuttonDisabled" @click="handleNextClick">Next</el-button>
         </el-col>
       </el-row>
     </div>
@@ -38,7 +38,7 @@ export default {
           value: ""
         }
       ],
-      selectedDataset: null
+      selectedDatasets: []
     };
   },
   computed: {
@@ -47,18 +47,25 @@ export default {
     },
     nextbuttonDisabled: function() {
         //TODO: unused, consider removing
-      return this.selectedDataset !== null;
+      return this.selectedDatasets === null || this.selectedDatasets.length < 1;
     }
+  },
+  created() {
+    this.$store.dispatch("loadColumns", {
+      failure: function(error) {
+
+      }
+    })
   },
   methods: {
     isSelectable(row){
         return !row.unselectable;
     },
     handleSelectionChange: function(val) {
-        this.selectedDataset = val;
+        this.selectedDatasets = val;
     },
     handleNextClick(){
-        this.$store.commit("updateDatasetSelection", selectedDataset.name);
+        this.$store.commit("updateSelectedDatasets", this.selectedDatasets);
     }
   }
 };

@@ -6,15 +6,15 @@
                 <el-col>
                     <el-tabs v-model="currentTab" type="card">
                         <el-tab-pane
-                            v-for="analytic in selectedAnalytics"
-                            :key="analytic.name"
-                            :label="analytic.name"
-                            :name="analytic.name"
+                            v-for="execution in selectedExecutions"
+                            :key="execution.analytic.name + execution.dataset.name"
+                            :label="execution.analytic.name  + ' - ' + execution.dataset.name"
+                            :name="execution.analytic.name + execution.dataset.name"
                         >
-                            <variables-panel :analytic="analytic"></variables-panel>
-                            <graph-panel :analytic="analytic"></graph-panel>
+                            <variables-panel :execution="execution"></variables-panel>
+                            <graph-panel :execution="execution"></graph-panel>
                         </el-tab-pane>
-                        <el-row v-if="selectedAnalytics.length === 0">
+                        <el-row v-if="selectedExecutions.length === 0">
                             <p style="text-align: center;">Please select a Dataset and one or more Analytics.</p>
                         </el-row>
                     </el-tabs>
@@ -41,12 +41,15 @@ export default {
     computed: {
         selectedAnalytics: function(){
             return this.$store.getters.selectedAnalytics;
+        },
+        selectedExecutions: function() {
+            return this.$store.getters.executions;
         }
     },
     watch: {
-        selectedAnalytics: function(newAnalytics){
-            let first = newAnalytics[0];
-            this.currentTab = first ? first.name : "";
+        selectedExecutions: function(newExecutions){
+            let first = newExecutions[0];
+            this.currentTab = first ? (first.analytic.name + first.dataset.name) : "";
         }
     },
     methods: {

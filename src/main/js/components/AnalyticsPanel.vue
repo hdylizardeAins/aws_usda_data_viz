@@ -1,5 +1,5 @@
 <template>
-    <div id="analytics-panel" class="bordered-panel">
+    <div v-show="visible" id="analytics-panel" class="bordered-panel">
         <el-container>
             <el-row>2. Choose Analytics</el-row>
             <el-row>
@@ -18,7 +18,7 @@
             </el-row>
             <el-row>
                 <el-col :span="3" :offset="21" >
-                    <el-button class="analytic_next_btn" type="primary" @click="handleNextClick" >Next</el-button>
+                    <el-button class="analytic_next_btn" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">Next</el-button>
                 </el-col>
             </el-row>
         </el-container>
@@ -36,8 +36,17 @@ export default {
         analytics: function() {
             return this.$store.getters.analytics;
         },
-        selectedAnalyticNames: function(){
+        selectedAnalyticNames: function() {
             return this.multipleSelection.map(a => a.name);
+        },
+        nextButtonDisabled: function() {
+            return this.multipleSelection.length < 1;
+        },
+        selectedDatasets: function() {
+            return this.$store.getters.selectedDatasets || [];
+        },
+        visible: function() {
+            return this.selectedDatasets.length > 0;
         }
     },
     methods: {
@@ -58,9 +67,35 @@ export default {
         },
         handleNextClick(){
             this.updatedAnalyticStore();
+            this.updateExecutionsStore();
         },
         updatedAnalyticStore(){
-            this.$store.commit('updateAnalyticsSelection', this.selectedAnalyticNames)
+            this.$store.commit('updateAnalyticsSelection', this.selectedAnalyticNames);
+        },
+        /**
+         * Create a new set of collections based on the selected analytics and update the store
+         */
+        updateExecutionsStore() {
+            /**
+             * Add the selected analytics to the execution store for each of the currently selected datasets
+             */
+            let selectedAnalytics = this.$store.getters.selectedAnalytics;
+
+            for(let datasetIndex in this.selectedDatasets) {
+                for (let analyticIndex in selectedAnalytics) {
+                    let payload = {
+                        dataset: this.selectedDatasets[datasetIndex],
+                        analytic: selectedAnalytics[analyticIndex]
+                    };
+                    if(selectedAnalytics[analyticIndex].requiresXY) {
+                        payload.xVars = [];
+                        payload.yVars = [];
+                    } else {
+                        payload.columns = [];
+                    }
+                    this.$store.commit('updateExecution', payload);
+                }
+            }
         }
     }
 };

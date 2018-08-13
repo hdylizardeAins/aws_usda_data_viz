@@ -1,3 +1,6 @@
+import Vue from 'vue';
+import axios from 'axios';
+
 var datasetsStore = {
     state: {
         datasets: [
@@ -6,7 +9,7 @@ var datasetsStore = {
                 description: "this is a dataset",
                 filePath: "geneticEngineeringAdoption.csv",
                 filetype: "type",
-                selected: true
+                selected: false
             },
             {
                 name: "Corn Cost Return",
@@ -26,16 +29,36 @@ var datasetsStore = {
     },
     getters: {
         datasets: state => state.datasets,
-        selectedDataset: state => state.datasets.find(d => d.selected)
+        selectedDatasets: state => state.datasets.filter(d => d.selected) || []
     },
     mutations: {
-        updateDatasetSelection: function (state, dataSetName) {
+        updateSelectedDatasets: function (state, datasets) {
             state.datasets.forEach(d => {
-                d.selected = dataSetName === d.name;
+                d.selected = datasets.includes(d);
             });
+        },
+        updateColumns: function (state, payload) {
+            let dataset = state.datasets.find(d => d.name === payload.name);
+
+            if(dataset !== undefined) {
+                Vue.set(dataset, 'columns',payload.columns);
+            }
+        }
+    },
+    actions: {
+        loadColumns: function(context, callback) {
+            let datasets = context.state.datasets;
+            for (let i in datasets) {
+                axios.get('/analytics/columns', {params: {inputFile: datasets[i].filePath}})
+                    .then(function(response) {
+                        context.commit("updateColumns", {name: datasets[i].name, columns: JSON.parse(response.data)});
+                    })
+                    .catch(function() {
+                        
+                    })
+            }
         }
     }
-    
 };
 
 export default datasetsStore;

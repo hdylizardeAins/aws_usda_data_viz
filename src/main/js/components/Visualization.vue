@@ -14,6 +14,9 @@
                         <variables-panel :analytic="analytic"></variables-panel>
                         <graph-panel></graph-panel>
                         </el-tab-pane>
+                        <div :v-if="currentTab === ''">
+                            <p style="text-align: center;">Please select a Dataset and one or more Analytics.</p>
+                        </div>
                     </el-tabs>
                 </el-col>
             </el-row>
@@ -32,12 +35,18 @@ export default {
     },
     data() {
         return {
-            currentTab: 'No Analytic'
+            currentTab: ""
         }
     },
     computed: {
         selectedAnalytics: function(){
             return this.$store.getters.selectedAnalytics;
+        }
+    },
+    watch: {
+        selectedAnalytics: function(newAnalytics){
+            let first = newAnalytics[0];
+            this.currentTab = first ? first.name : "";
         }
     },
     methods: {

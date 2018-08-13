@@ -21,7 +21,7 @@
       </el-table>
       <el-row>
         <el-col :offset="21" :span="3">
-          <el-button type="primary" style="width: 100%">Next</el-button>
+          <el-button type="primary" style="width: 100%" >Next</el-button>
         </el-col>
       </el-row>
     </div>
@@ -46,17 +46,20 @@ export default {
       return this.$store.getters.datasets;
     },
     nextbuttonDisabled: function() {
-       console.log(this.selectedDataset);
+        //TODO: unused, consider removing
       return this.selectedDataset !== null;
+    }
+  },
+  methods: {
+    isSelectable(row){
+        return !row.unselectable;
     },
     handleSelectionChange: function(val) {
         this.selectedDataset = val;
     },
-  },
-  methods: {
-    isSelectable(row){
-            return !row.unselectable;
-        }
+    handleNextClick(){
+        this.$store.commit("updateDatasetSelection", selectedDataset.name);
+    }
   }
 };
 </script>

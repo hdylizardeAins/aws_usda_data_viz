@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import axios from 'axios';
 
 var analyticsStore = {
     state: {
@@ -12,31 +13,34 @@ var analyticsStore = {
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: true,
                 multiSelectY: true,
-                selected: false
+                selected: false,
+                imagePath: "" 
             },
             {
                 name: "Plot",
                 description: "A simple scatter plot.",
-                // Load from back-end in the future
+                //TODO: Load from back-end in the future
                 columns: ["Year","USGECropPercentCorn","ValuePerAcre","OperatingCostsPerAcre","SeedCostsPerAcre"],
                 xVars: [],
                 yVars: [],
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: true,
                 multiSelectY: false,
-                selected: false
+                selected: false,
+                imagePath: ""
             },
             {
                 name: "Regression",
                 description: "A linear regression.",
-                // Load from back-end in the future
+                //TODO:  Load from back-end in the future
                 columns: ["Year","USGECropPercentCorn","ValuePerAcre","OperatingCostsPerAcre","SeedCostsPerAcre"],
                 xVars: [],
                 yVars: [],
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: false,
                 multiSelectY: false,
-                selected: false
+                selected: false,
+                imagePath: ""
             },
             {
                 name: "Summary",
@@ -46,13 +50,15 @@ var analyticsStore = {
                 yVars: [],
                 multiSelectX: true,
                 multiSelectY: true,
-                selected: false
+                selected: false,
+                imagePath: ""
             },
             {
                 name: "TBD",
                 description: "Currently unsupported.",
                 unselectable: true,
-                selected: false
+                selected: false,
+                imagePath: ""
             }
         ]
     },
@@ -72,7 +78,7 @@ var analyticsStore = {
             });
 
             // Copy fields that exist in the new analytic and the existing one
-            if (analyticToUpdate !== null) {
+            if (existAnalyticIndex >= 0) {
                 for (let key in newAnalytic) {
                     if (state.analytics[existAnalyticIndex].hasOwnProperty(key)) {
                         Vue.set(state.analytics[existAnalyticIndex], key, newAnalytic[key]);
@@ -82,8 +88,20 @@ var analyticsStore = {
         }
     },
     actions: {
-        requestAnalytic: function (context, payload) {
-            context.commit("updateAnalytic", payload.analytic);
+        requestAnalyticExec: function(context, payload) {
+            axios.get('/analytics/' + payload.analytic.name.toLowerCase(), {
+                params: {
+                    inputFile: payload.datasetFilePath
+                }
+            })
+            .then(function (response) {
+                payload.analytic.imagePath = response.data.outputFile;
+                context.commit('updateAnalytic', payload.analytic);
+                callback.success(config, response);
+            })
+            .catch(function (error) {
+                console.log(error); //TODO: figure out error handling
+            });
         }
     }
 };

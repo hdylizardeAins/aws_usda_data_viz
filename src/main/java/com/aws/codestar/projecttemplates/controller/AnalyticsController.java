@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.harmonia.properties.AppProperties;
+
 /**
  * Basic Spring web service controller that handles all GET requests.
  */
@@ -20,14 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
-	private static final String PLOT_OUTPUT_DIR = "/var/www/html";
+	private static final String PLOT_OUTPUT_DIR = AppProperties.RSCRIPT_OUTPUT_DIR;
 	private static final String GENETIC_ENGINEERING_ADOPTION_CSV = "geneticEngineeringAdoption.csv";
 	private static final String PROTOTYPE_R = "prototype.R";
 	private static final String COLUMNS = "columns";
 	private static final String REGRESSION = "regression";
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
-	private static final String RSCRIPT = "Rscript ";
+	private static final String RSCRIPT = AppProperties.RSCRIPT_LOCATION;
 	private static final String MESSAGE_FORMAT = "Hello %s!";
 	
 	private String scriptLoc;
@@ -40,7 +42,7 @@ public class AnalyticsController {
 		ClassLoader classLoader = getClass().getClassLoader();
 		URL url = classLoader.getResource(fileName);
 		File file = new File(url.getFile());
-		return file.getAbsolutePath();
+		return "\"" + file.getAbsolutePath() + "\"";
 	}
 
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")

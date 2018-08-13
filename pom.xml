@@ -17,6 +17,8 @@
         <junit.platform.version>1.2.0</junit.platform.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
         <npmTarget>build</npmTarget>
+        <rscript.location>Rscript</rscript.location>
+        <rscript.output.dir>/var/www/html</rscript.output.dir>
     </properties>
 
     <dependencies>
@@ -123,5 +125,15 @@
             </plugin>
             </plugins>
         <finalName>ROOT</finalName>
+        <resources>
+        	<resource>
+	                <directory>src/main/resources</directory>
+	                <filtering>false</filtering>
+	        </resource>
+	        <resource>
+	                <directory>src/main/resources/properties</directory>
+	                <filtering>true</filtering>
+	        </resource>
+        </resources>
     </build>
 </project>

@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import deepCopy from './DeepCopy.js';
+
 export default {
     props: [
         "analytic"
@@ -38,10 +40,13 @@ export default {
     },
     methods: {
         submitForm() {
-            this.formData.name = this.analytic.name;
+            let analyticToSubmit = deepCopy(this.analytic);
+            analyticToSubmit.xVars = deepCopy(this.formData.xVars);
+            analyticToSubmit.yVars = deepCopy(this.formData.yVars);
             let payload = {
-                analytic: this.formData,
-                handler: {
+                analytic: analyticToSubmit,
+                datasetFilePath: this.$store.getters.selectedDataset.filePath,
+                callback: {
                       failure: function(err) {
                         this.$notify.error({
                           message: "Unable to generate analytic: " + err.message,

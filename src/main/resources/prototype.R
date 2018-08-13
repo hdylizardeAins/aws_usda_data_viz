@@ -8,8 +8,8 @@
 #}
 
 #install.packages("caret")
-library(caret)
-library(ggplot2)
+invisible(library(caret))
+invisible(library(ggplot2))
 #installOrIncludeLib("caret")
 
 args = commandArgs(trailingOnly=TRUE)
@@ -20,11 +20,11 @@ if (length(args)==0) {
   action <- args[1]
   inputFile <- args[2]
   outputDir <- args[3] #use only for plot
-  columns <- args[4] #use only for plot
+  columnsParam <- args[4] #use only for plot
   regressionType = args[3] #use only for regressions
   mydata <- read.csv(inputFile)
   if(action == "plot"){
-    columns <- c(unlist(strsplit(columns,",")))
+    columns <- c(unlist(strsplit(columnsParam,",")))
     filteredData <- mydata[columns]
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")

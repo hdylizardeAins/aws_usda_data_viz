@@ -2,20 +2,40 @@ var datasetsStore = {
     state: {
         datasets: [
             {
-                name: "dataset 1",
+                name: "Genetic  Engineering Adoption",
                 description: "this is a dataset",
-                filetype: "type"
+                filePath: "geneticEngineeringAdoption.csv",
+                filetype: "type",
+                selected: true
             },
             {
-                name: "dataset 2",
+                name: "Corn Cost Return",
                 description: "this is a dataset",
-                filetype: "type"
+                filePath: "CornCostReturn.xlsx",
+                filetype: "type",
+                selected: false
+            },
+            {
+                name: "All Tables GE Crops",
+                description: "this is a dataset",
+                filePath: "alltablesGEcrops.csv",
+                filetype: "type",
+                selected: false
             }
         ]
     },
     getters: {
-        datasets: state => state.datasets
+        datasets: state => state.datasets,
+        selectedDataset: state => state.datasets.find(d => d.selected)
+    },
+    mutations: {
+        updateDatasetSelection: function (state, dataSetName) {
+            state.datasets.forEach(d => {
+                d.selected = dataSetName === d.name;
+            });
+        }
     }
+    
 };
 
 export default datasetsStore;

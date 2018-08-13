@@ -65,7 +65,7 @@ module.exports = {
         contentBase: path.resolve(__dirname, './src/main/webapp/'),
         port: 8081,
         proxy: {
-            '/api': {
+            '/analytics': {
                 target: 'http://localhost:8080/',
                 secure: false
             }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.harmonia.properties.AppProperties;
+
 /**
  * Basic Spring web service controller that handles all GET requests.
  */
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
+	//private static final String PLOT_OUTPUT_DIR = AppProperties.RSCRIPT_OUTPUT_DIR;
 	private static final String PLOT_OUTPUT_DIR = "/var/www/html";
 	private static final String GENETIC_ENGINEERING_ADOPTION_CSV = "geneticEngineeringAdoption.csv";
 	private static final String PROTOTYPE_R = "prototype.R";
@@ -28,6 +31,7 @@ public class AnalyticsController {
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
 	private static final String RSCRIPT = "Rscript ";
+	//private static final String RSCRIPT = AppProperties.RSCRIPT_LOCATION;
 	
 	private String scriptLoc;
 	
@@ -40,7 +44,8 @@ public class AnalyticsController {
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {
-			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
+			//String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
+			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " " + columns);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -94,8 +99,15 @@ public class AnalyticsController {
 		Process pr = run.exec(exec);
 		pr.waitFor();
 		BufferedReader buf = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-		String data = "";
 		String line = "";
+		
+		//print errors
+		BufferedReader errBuf = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+		while ((line = errBuf.readLine()) != null) {
+			System.err.println(line);
+		}
+		
+		String data = "";
 		while ((line = buf.readLine()) != null) {
 			System.out.println(line);
 			data = line.substring(0, line.length());

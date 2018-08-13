@@ -12,12 +12,13 @@
   "dependencies": {
     "vue": "^2.5.11",
     "element-ui": "2.4.5",
-    "vue-data-tables": "3.4.3"
+    "vue-data-tables": "3.4.3",
+    "axios": "^0.18.0"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not ie <= 8"
+    "not ie <= 10"
   ],
   "devDependencies": {
     "axios": "^0.18.0",

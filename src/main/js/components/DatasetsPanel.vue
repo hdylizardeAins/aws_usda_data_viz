@@ -1,38 +1,65 @@
 <template>
-    <div id="data-set-panel">
-        <el-table ref="multipleTable" :data="datasets" style="width: 100%" stripe border @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"/>
-            <el-table-column property="name" label="Name" width="120">
-                <template slot-scope="scope">
-                    <strong>{{ scope.row.name }}</strong>
-                    <br/>
-                    <small>{{ scope.row.description }}</small>
-                </template>
-            </el-table-column>
-    </el-table>
+    <div id="data-set-panel" class="bordered-panel">
+      <el-row>
+        <el-col :span="20">1. Choose Dataset</el-col>
+        <el-col :span="4"><el-button style="width: 100%" disabled>Import</el-button></el-col>
+      </el-row>
+      <el-row>
+        <el-input>
+          <template slot="append"><el-button type="primary" icon="el-icon-search"></el-button></template>
+        </el-input>
+      </el-row>
+      <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" :selectable="isSelectable"/>
+          <el-table-column prop="name">
+              <template slot-scope="scope">
+                  <strong>{{ scope.row.name }}</strong>
+                  <br/>
+                  <small>{{ scope.row.description }}</small>
+              </template>
+          </el-table-column>
+      </el-table>
+      <el-row>
+        <el-col :offset="21" :span="3">
+          <el-button type="primary" style="width: 100%" >Next</el-button>
+        </el-col>
+      </el-row>
     </div>
 </template>
 
 <script>
+
 export default {
-    computed: {
-        datasets: function() {
-            return this.$store.getters.datasets;
+  data() {
+    return {
+      filters: [
+        {
+          prop: "name",
+          value: ""
         }
+      ],
+      selectedDataset: null
+    };
+  },
+  computed: {
+    datasets: function() {
+      return this.$store.getters.datasets;
     },
-    methods: {
-        toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
-        }
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      }
+    nextbuttonDisabled: function() {
+        //TODO: unused, consider removing
+      return this.selectedDataset !== null;
     }
+  },
+  methods: {
+    isSelectable(row){
+        return !row.unselectable;
+    },
+    handleSelectionChange: function(val) {
+        this.selectedDataset = val;
+    },
+    handleNextClick(){
+        this.$store.commit("updateDatasetSelection", selectedDataset.name);
+    }
+  }
 };
 </script>

@@ -43,7 +43,7 @@ if (length(args)==0) {
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
     linearMod <- lm(as.formula(paste(yName, xName, sep= "~")), data=mydata)
-    plot(mydata[,xName], mydata[,yName])
+    plot(mydata[,xName], mydata[,yName], xlab=xName, ylab=yName)
     abline(linearMod)
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}", collapse = "", sep = ""))
@@ -52,7 +52,7 @@ if (length(args)==0) {
     yName = args[5]
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
-    scatter.smooth(x=mydata[,xName], y=mydata[,yName], main=as.formula(paste(yName, xName, sep= "~")))
+    scatter.smooth(x=mydata[,xName], y=mydata[,yName], main=as.formula(paste(yName, xName, sep= "~")), xlab=xName, ylab=yName)
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "columns"){

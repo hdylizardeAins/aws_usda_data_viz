@@ -47,7 +47,7 @@ public class AnalyticsController {
 		String inputLoc = getInputPath(inputFile);
 		try {
 			//String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
-			String columnsFiltered = columns.replaceAll("[^A-Za-z0-9,]", "");
+			String columnsFiltered = columns.replaceAll("[^A-Za-z0-9,.]", "");
 			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " " + columnsFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
@@ -61,8 +61,8 @@ public class AnalyticsController {
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {
-			String xFiltered = x.replaceAll("[^A-Za-z0-9]", "");
-			String yFiltered = y.replaceAll("[^A-Za-z0-9]", "");
+			String xFiltered = x.replaceAll("[^A-Za-z0-9.]", "");
+			String yFiltered = y.replaceAll("[^A-Za-z0-9.]", "");
 			String response = runR(cmd, REGRESSION, inputLoc, PLOT_OUTPUT_DIR + " linear " + xFiltered + " " + yFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
@@ -76,8 +76,8 @@ public class AnalyticsController {
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {
-			String xFiltered = x.replaceAll("[^A-Za-z0-9]", "");
-			String yFiltered = y.replaceAll("[^A-Za-z0-9]", "");
+			String xFiltered = x.replaceAll("[^A-Za-z0-9.]", "");
+			String yFiltered = y.replaceAll("[^A-Za-z0-9.]", "");
 			String response = runR(cmd, TREND, inputLoc, PLOT_OUTPUT_DIR + " " + xFiltered + " " + yFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {

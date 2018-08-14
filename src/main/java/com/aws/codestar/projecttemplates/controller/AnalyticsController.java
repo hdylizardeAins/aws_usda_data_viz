@@ -22,7 +22,7 @@ import com.harmonia.properties.AppProperties;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
-	private static final String CORN_COST_RESTURN_CSV = "CornCostReturnMR.csv";
+	private static final String CORN_COST_RESTURN_CSV = "reducedCornCostReturn.csv";
 	private static final String ALLTABLES_G_ECROPS_CSV = "alltablesGEcrops.csv";
 	private static final String NOFILE = "NOFILE";
 	private static final String TREND = "trend";
@@ -41,6 +41,7 @@ public class AnalyticsController {
 		scriptLoc = RSCRIPT + " " + getPathToFile(PROTOTYPE_R);
 	}
 
+	//TODO Add functionality to select multiple data sets that are compatible before running analytics
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "columns") String columns) {
 		String cmd = scriptLoc;
@@ -101,6 +102,8 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
+		// TODO Allow the clients to filter the dataset before retrieving the available
+		// columns for the graphs
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {

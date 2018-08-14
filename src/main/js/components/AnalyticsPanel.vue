@@ -81,6 +81,9 @@ export default {
              */
             let selectedAnalytics = this.$store.getters.selectedAnalytics;
 
+            //Prune any old executions that dont use the selected analytics
+            this.$store.commit('pruneExecutionsByAnalyticNames', selectedAnalytics.map(a => a.name));
+
             for(let datasetIndex in this.selectedDatasets) {
                 for (let analyticIndex in selectedAnalytics) {
                     let payload = {

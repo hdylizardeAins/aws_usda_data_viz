@@ -3,15 +3,7 @@ import axios from 'axios';
 
 var analyticsStore = {
     state: {
-        analytics: [{
-                name: "No Plot",
-                description: "Does not perform any analysis of data.",
-                requiresXY: false,
-                // These booleans indicate whether the user is allowed to select more than 1 X or Y value
-                multiSelectX: true,
-                multiSelectY: true,
-                selected: false
-            },
+        analytics: [
             {
                 name: "Plot",
                 description: "A simple scatter plot.",

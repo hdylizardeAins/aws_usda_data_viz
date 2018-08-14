@@ -24,6 +24,14 @@ var executionsStore = {
             else {
                 found.imagePath = execution.imagePath;
             }
+        },
+        pruneExecutionsByDatasetNames: function (state, datasetNames){
+            let pruned = state.executions.filter(exec => datasetNames.includes(exec.dataset.name));
+            state.executions = pruned;
+        },
+        pruneExecutionsByAnalyticNames: function (state, analyticNames){
+            let pruned = state.executions.filter(exec => analyticNames.includes(exec.analytic.name));
+            state.executions = pruned;
         }
     },
     actions: {

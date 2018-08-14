@@ -14,7 +14,7 @@ var datasetsStore = {
             {
                 name: "Corn Cost Return",
                 description: "this is a dataset",
-                filePath: "CornCostReturnMR.csv",
+                filePath: "reducedCornCostReturn.csv",
                 filetype: "type",
                 selected: false
             },

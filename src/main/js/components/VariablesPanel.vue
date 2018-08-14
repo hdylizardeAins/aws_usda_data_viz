@@ -34,6 +34,8 @@
 import deepCopy from './DeepCopy.js';
 import EventBus from './EventBus.vue';
 
+const apachePort = "8080";
+
 export default {
     props: [
         "execution"
@@ -77,10 +79,11 @@ export default {
                     }.bind(this),
                     success: function(response){
                         //Update the executions store
+                        let path = window.location.host + ":" + apachePort + "/" + response.data.outputFile;
                         this.$store.commit('updateExecutions', {
                             dataset: execution.dataset,
                             analytic: execution.analytic,
-                            imagePath: response.data.outputFile //TODO: this is just the filename - update with relative path on the server
+                            imagePath: path
                         });
                         EventBus.$emit("executionFinished");
                     }.bind(this)

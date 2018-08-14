@@ -46,14 +46,16 @@ export default {
       return this.$store.getters.datasets;
     },
     nextbuttonDisabled: function() {
-        //TODO: unused, consider removing
       return this.selectedDatasets === null || this.selectedDatasets.length < 1;
     }
   },
   created() {
     this.$store.dispatch("loadColumns", {
-      failure: function(error) {
-
+      failure: function(err) {
+        console.log(err); //TODO: debug
+      },
+      success: function(){
+        //We could potentially use this to send an event to let the Variables panel know columns finished loading (if we need to)
       }
     })
   },

@@ -1,5 +1,5 @@
 <template>
-    <el-form :model="executionFormData" label-position="top">
+    <el-form v-loading="loading" :model="executionFormData" label-position="top">
         <h4>3a. Choose Variables</h4>
         <el-row v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
@@ -45,6 +45,11 @@ export default {
             executionFormData: this.execution
         }
     },
+    computed:{
+        loading: function(){
+            return false; //TODO: replace this with a condition that returns true until the execution has the columns from the back end if applicable to the analytic
+        }
+    },
     watch: {
         execution: function(newExecution) {
             this.executionFormData = Object.assign({}, this.executionFormData, deepCopy(newExecution));
@@ -64,6 +69,7 @@ export default {
                 params.columns = executionToSubmit.columns.join();
             }
 
+            let self = this;
             let payload = {
                 analyticName: executionToSubmit.analytic.name,
                 params: params,
@@ -79,10 +85,10 @@ export default {
                     }.bind(this),
                     success: function(response){
                         //Update the executions store
-                        let path = window.location.host + ":" + apachePort + "/" + response.data.outputFile;
-                        this.$store.commit('updateExecutions', {
-                            dataset: execution.dataset,
-                            analytic: execution.analytic,
+                        let path = window.location.protocol + "//" + window.location.hostname + ":" + apachePort + "/" + response.data.outputFile;
+                        this.$store.commit('updateExecution', {
+                            dataset: self.execution.dataset,
+                            analytic: self.execution.analytic,
                             imagePath: path
                         });
                         EventBus.$emit("executionFinished");

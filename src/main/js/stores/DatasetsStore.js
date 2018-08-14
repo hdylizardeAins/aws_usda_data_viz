@@ -11,13 +11,13 @@ var datasetsStore = {
                 filetype: "type",
                 selected: false
             },
-            {
-                name: "Corn Cost Return",
-                description: "this is a dataset",
-                filePath: "CornCostReturn.xlsx",
-                filetype: "type",
-                selected: false
-            },
+            // { TODO: uncomment when Eric has updated backend that can handle columns for the excel workbook
+            //     name: "Corn Cost Return",
+            //     description: "this is a dataset",
+            //     filePath: "CornCostReturn.xlsx",
+            //     filetype: "type",
+            //     selected: false
+            // },
             {
                 name: "All Tables GE Crops",
                 description: "this is a dataset",
@@ -51,10 +51,11 @@ var datasetsStore = {
             for (let i in datasets) {
                 axios.get('/analytics/columns', {params: {inputFile: datasets[i].filePath}})
                     .then(function(response) {
-                        context.commit("updateColumns", {name: datasets[i].name, columns: JSON.parse(response.data)});
+                        context.commit("updateColumns", {name: datasets[i].name, columns: response.data.columns});
+                        callback.success(response);
                     })
-                    .catch(function() {
-                        
+                    .catch(function(error) {
+                        callback.failure(error);
                     })
             }
         }

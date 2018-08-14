@@ -68,6 +68,7 @@ export default {
     },
     handleNextClick(){
         this.$store.commit("updateSelectedDatasets", this.selectedDatasets);
+        this.$store.commit("pruneExecutionsByDatasetNames", this.selectedDatasets.map(sd => sd.name));
     }
   }
 };

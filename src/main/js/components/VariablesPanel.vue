@@ -3,17 +3,25 @@
         <h4>3a. Choose Variables</h4>
         <el-row v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
-                <el-form-item prop="yVars" label="X Axis">
-                    <el-checkbox-group v-model="executionFormData.xVars" :max="1">
-                        <el-checkbox v-for="column in executionFormData.dataset.columns" :key="column" :label="column" name="name"></el-checkbox>
-                    </el-checkbox-group>
+                <el-form-item prop="xVars" label="X Axis">
+                    <el-select v-model="execution.xVars" placeholder="Select X">
+                        <el-option
+                            v-for="item in filteredXAxis"
+                            :key="item"
+                            :label="item"
+                            :value="item" />
+                    </el-select>
                 </el-form-item>
             </el-col>
             <el-col class="bordered-panel" id="y-axis" :span="11">
                 <el-form-item prop="yVars" label="Y Axis">
-                    <el-checkbox-group v-model="execution.yVars" :max="1">
-                        <el-checkbox v-for="column in executionFormData.dataset.columns" :key="column" :label="column" name="column"></el-checkbox>
-                    </el-checkbox-group>
+                    <el-select v-model="execution.yVars" placeholder="Select Y">
+                        <el-option
+                            v-for="item in filteredYAxis"
+                            :key="item"
+                            :label="item"
+                            :value="item" />
+                    </el-select>
                 </el-form-item>
             </el-col>
         </el-row>
@@ -25,7 +33,7 @@
                 </el-form-item>
         </el-row>
         <el-row>
-            <el-button type="primary" @click="submitForm">Run Analytic</el-button>
+            <el-button type="primary" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
         </el-row>
     </el-form>
 </template>
@@ -46,8 +54,26 @@ export default {
         }
     },
     computed:{
+        filteredXAxis: function(){
+            if (this.execution.dataset.columns){
+                return this.execution.dataset.columns.filter(c => !(this.executionFormData.yVars && this.executionFormData.yVars.includes(c)));
+            }
+            return []
+        },
+        filteredYAxis: function(){
+            if (this.execution.dataset.columns){
+                return this.execution.dataset.columns.filter(c => !(this.executionFormData.xVars && this.executionFormData.xVars.includes(c)));
+            }
+            return []
+        },
         loading: function(){
             return false; //TODO: replace this with a condition that returns true until the execution has the columns from the back end if applicable to the analytic
+        },
+        runButtonDisabled: function(){
+            if (this.executionFormData.analytic.requiresXY){
+                return !(this.executionFormData.xVars && this.executionFormData.xVars.length > 0 && this.executionFormData.yVars && this.executionFormData.yVars.length > 0);
+            }
+            return this.executionFormData.columns.length == 0;
         }
     },
     watch: {

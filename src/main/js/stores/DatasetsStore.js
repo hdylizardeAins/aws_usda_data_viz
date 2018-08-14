@@ -48,14 +48,23 @@ var datasetsStore = {
     actions: {
         loadColumns: function(context, callback) {
             let datasets = context.state.datasets;
+            let completedCount = 0;
             for (let i in datasets) {
                 axios.get('/analytics/columns', {params: {inputFile: datasets[i].filePath}})
                     .then(function(response) {
                         context.commit("updateColumns", {name: datasets[i].name, columns: response.data.columns});
                         callback.success(response);
+                        completedCount++;
+                        if (completedCount == datasets.length){
+                            callback.allComplete();
+                        }
                     })
                     .catch(function(error) {
                         callback.failure(error);
+                        completedCount++;
+                        if (completedCount == datasets.length){
+                            callback.allComplete();
+                        }
                     })
             }
         }

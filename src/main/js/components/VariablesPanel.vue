@@ -1,5 +1,5 @@
 <template>
-    <el-form v-loading="loading" :model="executionFormData" label-position="top">
+    <el-form :model="executionFormData" label-position="top">
         <h4>3a. Choose Variables</h4>
         <el-row v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
@@ -65,9 +65,6 @@ export default {
                 return this.execution.dataset.columns.filter(c => !(this.executionFormData.xVars && this.executionFormData.xVars.includes(c)));
             }
             return []
-        },
-        loading: function(){
-            return false; //TODO: replace this with a condition that returns true until the execution has the columns from the back end if applicable to the analytic
         },
         runButtonDisabled: function(){
             if (this.executionFormData.analytic.requiresXY){

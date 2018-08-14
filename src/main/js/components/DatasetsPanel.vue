@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import EventBus from './EventBus.vue';
 
 export default {
   data() {
@@ -49,13 +50,17 @@ export default {
       return this.selectedDatasets === null || this.selectedDatasets.length < 1;
     }
   },
-  created() {
+  mounted() {
+    EventBus.$emit('columnLoadStart'); //Variables panel displays loading spinner
     this.$store.dispatch("loadColumns", {
       failure: function(err) {
-        console.log(err); //TODO: debug
+        console.log(err); //TODO: debug        
       },
       success: function(){
-        //We could potentially use this to send an event to let the Variables panel know columns finished loading (if we need to)
+        //Do nothing
+      },
+      allComplete: function(){
+        EventBus.$emit('columnLoadStop'); //Variables panel removes loading spinner
       }
     })
   },

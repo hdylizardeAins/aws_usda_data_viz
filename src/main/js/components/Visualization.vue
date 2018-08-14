@@ -1,6 +1,6 @@
 <template>
-    <div id="visualization-panel">
-        <el-container>
+    <div id="visualization-panel" v-show="visible">
+        <el-container >
             <el-row>3. View and Tailor Visualizations</el-row>
             <el-row>
                 <el-col>
@@ -11,7 +11,7 @@
                             :label="execution.analytic.name  + ' - ' + execution.dataset.name"
                             :name="execution.analytic.name + execution.dataset.name"
                         >
-                            <variables-panel :execution="execution"></variables-panel>
+                            <variables-panel v-loading="variablePanelLoading" :execution="execution"></variables-panel>
                             <graph-panel :execution="execution"></graph-panel>
                         </el-tab-pane>
                         <el-row v-if="selectedExecutions.length === 0">
@@ -27,6 +27,7 @@
 <script>
 import VariablesPanel from './VariablesPanel.vue';
 import GraphPanel from './GraphPanel.vue';
+import EventBus from './EventBus.vue'
 
 export default {
     components: {
@@ -35,8 +36,13 @@ export default {
     },
     data() {
         return {
-            currentTab: ""
+            currentTab: "",
+            variablePanelLoading: false
         }
+    },
+    created(){
+        EventBus.$on("columnLoadStart", () => this.variablePanelLoading = true);
+        EventBus.$on("columnLoadStop", () => this.variablePanelLoading = false);
     },
     computed: {
         selectedAnalytics: function(){
@@ -44,7 +50,10 @@ export default {
         },
         selectedExecutions: function() {
             return this.$store.getters.executions;
-        }
+        },
+        visible: function(){
+            return this.selectedExecutions.length > 0;
+        },
     },
     watch: {
         selectedExecutions: function(newExecutions){

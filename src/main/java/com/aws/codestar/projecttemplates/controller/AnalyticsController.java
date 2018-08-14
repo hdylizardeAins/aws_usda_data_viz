@@ -102,8 +102,6 @@ public class AnalyticsController {
 
 	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
-		// TODO Allow the clients to filter the dataset before retrieving the available
-		// columns for the graphs
 		String cmd = scriptLoc;
 		String inputLoc = getInputPath(inputFile);
 		try {

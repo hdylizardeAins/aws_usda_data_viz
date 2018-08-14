@@ -2,8 +2,12 @@ package com.aws.codestar.projecttemplates.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aws.codestar.projecttemplates.api.DataSet;
@@ -99,6 +104,35 @@ public class DataSetController {
 			dataSet.setFileName(filePath);
 			dataSet.setDisplayName(displayName);
 			return ResponseEntity.ok(dataSet);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Retrieves the values of the columns that can be used for filtering
+	 *
+	 * @param inputFile the file to use for retrieving the column's values
+	 * @return a list of values for the filtering column
+	 */
+	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
+		try {
+			Set<String> valueList = Collections.emptySet();
+			if (inputFile.endsWith(EXCEL_EXTENTION)) {
+				final String column = "Item2";
+				Map<String, List<String>> filters = new HashMap<>();
+				filters.put("Region", Arrays.asList("U.S. total"));
+				valueList = FileUtils.retrieveExcelColumnValues(inputFile, DEFAULT_SHEET_NAME, column, filters);
+			} else if (inputFile.endsWith(CSV_EXTENSION)) {
+				final String column = "Variety";
+				Map<String, List<String>> filters = new HashMap<>();
+				filters.put("State", Arrays.asList("U.S."));
+				filters.put("Crop", Arrays.asList("Corn"));
+				valueList = FileUtils.retrieveCSVColumnValues(inputFile, column, filters);
+			}
+			return ResponseEntity.ok(valueList);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

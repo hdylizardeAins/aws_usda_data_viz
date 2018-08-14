@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -46,6 +47,7 @@ public class FileUtils {
 	private static final String NON_ALPHANUMBERIC_REGEX = "[^A-Za-z0-9]";
 	private static final String EXCEL_SHEET_NAME = "Data Sheet (machine readable)";
 	private static final String EXCEL_FILE = "CornCostReturn.xlsx";
+	private static final String EXCEL_CSV_FILE = "CornCostReturnMR.csv";
 	private static final char OUTPUT_CSV_DELIMITER = ',';
 	private static final String CSV_FILE = "alltablesGEcrops.csv";
 	private final static ByteOrderMark[] EXCLUSION_BOM_ARR = new ByteOrderMark[] { ByteOrderMark.UTF_8,
@@ -68,14 +70,16 @@ public class FileUtils {
 			excelFilters.put("Item2",
 					Arrays.asList("Total, operating costs", "Seed", "Total, gross value of production"));
 
-			final RowSortedTable<String, String, String> excelGraph = FileUtils.excelToGraph(EXCEL_FILE,
-					EXCEL_SHEET_NAME, excelPivotIdx, excelColumnIdx, excelValueIdx, excelFilters);
+			final RowSortedTable<String, String, String> excelGraph = FileUtils.csvToGraph(EXCEL_CSV_FILE,
+					excelPivotIdx, excelColumnIdx, excelValueIdx, excelFilters);
+//			final RowSortedTable<String, String, String> excelGraph = FileUtils.excelToGraph(EXCEL_FILE,
+//					EXCEL_SHEET_NAME, excelPivotIdx, excelColumnIdx, excelValueIdx, excelFilters);
 
-			Map<String, List<String>> excelColumnFilters = new HashMap<>();
-			excelColumnFilters.put("Region", Arrays.asList("U.S. total"));
-			Set<String> values = FileUtils.retrieveExcelColumnValues(EXCEL_FILE, EXCEL_SHEET_NAME, excelColumnIdx,
-					excelColumnFilters);
-			System.out.println(values);
+//			Map<String, List<String>> excelColumnFilters = new HashMap<>();
+//			excelColumnFilters.put("Region", Arrays.asList("U.S. total"));
+//			Set<String> values = FileUtils.retrieveExcelColumnValues(EXCEL_FILE, EXCEL_SHEET_NAME, excelColumnIdx,
+//					excelColumnFilters);
+//			System.out.println(values);
 
 			String csvPivotIdx = "Year";
 			String csvColumnIdx = "Unit";
@@ -89,16 +93,20 @@ public class FileUtils {
 			final RowSortedTable<String, String, String> csvGraph = FileUtils.csvToGraph(CSV_FILE, csvPivotIdx,
 					csvColumnIdx, csvValueIdx, csvFilters);
 
-			Map<String, List<String>> csvColumnFilters = new HashMap<>();
-			csvColumnFilters.put("State", Arrays.asList("U.S."));
-			csvColumnFilters.put("Crop", Arrays.asList("Corn"));
-			Set<String> values1 = FileUtils.retrieveCSVColumnValues(CSV_FILE, "Variety", csvColumnFilters);
-			System.out.println(values1);
+//			Map<String, List<String>> csvColumnFilters = new HashMap<>();
+//			csvColumnFilters.put("State", Arrays.asList("U.S."));
+//			csvColumnFilters.put("Crop", Arrays.asList("Corn"));
+//			Set<String> values1 = FileUtils.retrieveCSVColumnValues(CSV_FILE, "Variety", csvColumnFilters);
+//			System.out.println(values1);
 
-			final RowSortedTable<String, String, String> mergedGraph = FileUtils.mergeGraphsByPivot(excelGraph,
+			RowSortedTable<String, String, String> emtpyGraph = TreeBasedTable.create();
+
+			final RowSortedTable<String, String, String> mergedGraph = FileUtils.mergeGraphsByPivot(emtpyGraph,
 					csvGraph);
+			final RowSortedTable<String, String, String> finalMergedGraph = FileUtils.mergeGraphsByPivot(excelGraph,
+					mergedGraph);
 
-			final StringBuilder out = FileUtils.graphToCSV(excelPivotIdx, mergedGraph);
+			final StringBuilder out = FileUtils.graphToCSV(excelPivotIdx, finalMergedGraph);
 
 			System.out.println(out);
 		} catch (Exception e) {
@@ -117,7 +125,9 @@ public class FileUtils {
 			final RowSortedTable<String, String, String> graph1, final RowSortedTable<String, String, String> graph2) {
 		// Identify the graph nodes that are different between the graphs that are being
 		// merged
-		Set<String> differencePivotSet = Sets.symmetricDifference(graph1.rowKeySet(), graph2.rowKeySet());
+		Set<String> differencePivotSet = !graph1.isEmpty() && !graph2.isEmpty()
+				? Sets.symmetricDifference(graph1.rowKeySet(), graph2.rowKeySet())
+				: Collections.emptySet();
 
 		final RowSortedTable<String, String, String> merged = TreeBasedTable.create();
 		// Merge the graphs

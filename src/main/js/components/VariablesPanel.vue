@@ -89,8 +89,8 @@ export default {
                 inputFile: executionToSubmit.dataset.filePath,
             };
             if(executionToSubmit.analytic.requiresXY) {
-                params.x = executionToSubmit.xVars[0];
-                params.y = executionToSubmit.yVars[0];
+                params.x = executionToSubmit.xVars;
+                params.y = executionToSubmit.yVars;
             } else {
                 params.columns = executionToSubmit.columns.join();
             }

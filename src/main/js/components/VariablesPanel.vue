@@ -4,14 +4,14 @@
         <el-row v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
                 <el-form-item prop="yVars" label="X Axis">
-                    <el-checkbox-group v-model="executionFormData.xVars">
+                    <el-checkbox-group v-model="executionFormData.xVars" :max="1">
                         <el-checkbox v-for="column in executionFormData.dataset.columns" :key="column" :label="column" name="name"></el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
             </el-col>
             <el-col class="bordered-panel" id="y-axis" :span="11">
                 <el-form-item prop="yVars" label="Y Axis">
-                    <el-checkbox-group v-model="execution.yVars">
+                    <el-checkbox-group v-model="execution.yVars" :max="1">
                         <el-checkbox v-for="column in executionFormData.dataset.columns" :key="column" :label="column" name="column"></el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
@@ -34,7 +34,7 @@
 import deepCopy from './DeepCopy.js';
 import EventBus from './EventBus.vue';
 
-const apachePort = "8080";
+const apachePort = "9980"; //TODO: 8080
 
 export default {
     props: [
@@ -63,8 +63,8 @@ export default {
                 inputFile: executionToSubmit.dataset.filePath,
             };
             if(executionToSubmit.analytic.requiresXY) {
-                params.xVars = executionToSubmit.xVars;
-                params.yVars = executionToSubmit.yVars;
+                params.x = executionToSubmit.xVars[0];
+                params.y = executionToSubmit.yVars[0];
             } else {
                 params.columns = executionToSubmit.columns.join();
             }
@@ -85,7 +85,10 @@ export default {
                     }.bind(this),
                     success: function(response){
                         //Update the executions store
-                        let path = window.location.protocol + "//" + window.location.hostname + ":" + apachePort + "/" + response.data.outputFile;
+                        let path = "";
+                        if (response.data.outputFile){
+                            path = window.location.protocol + "//" + window.location.hostname + ":" + apachePort + "/" + response.data.outputFile;
+                        }
                         this.$store.commit('updateExecution', {
                             dataset: self.execution.dataset,
                             analytic: self.execution.analytic,

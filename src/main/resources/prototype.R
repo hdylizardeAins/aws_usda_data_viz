@@ -48,7 +48,14 @@ if (length(args)==0) {
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}", collapse = "", sep = ""))
   } else if(action == "trend"){
-    scatter.smooth(x=USGECropPercentCorn, y=ValuePerAcre, main="ValuePerAcre ~ USGECropPercentCorn")
+    regressionType = args[4]
+    xName = args[5]
+    yName = args[6]
+    imgName <- as.character(length(list.files(outputDir)))
+    png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
+    scatter.smooth(x=mydata[,xName], y=mydata[,yName], main=as.formula(paste(yName, xName, sep= "~")))
+    invisible(dev.off())
+    cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "columns"){
     cat(paste("{\"columns\":[\"", paste(colnames(mydata), collapse = "\",\""), "\"]}", collapse = "", sep = ""))
   }

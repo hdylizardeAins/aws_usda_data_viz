@@ -11,12 +11,11 @@
       </el-row>
       <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
           <el-table-column type="selection" :selectable="isSelectable" :max="1"/>
-          <el-table-column prop="name">
-              <template slot-scope="scope">
-                  <strong>{{ scope.row.name }}</strong>
-                  <br/>
-                  <small>{{ scope.row.description }}</small>
-              </template>
+          <el-table-column prop="name" />>
+          <el-table-column align="right">
+            <template slot-scope="scope">
+              <el-button @click="handleViewClick(scope.row)">View</el-button>
+            </template>
           </el-table-column>
       </el-table>
       <el-row>
@@ -24,13 +23,18 @@
           <el-button type="primary" style="width: 100%" :disabled="nextbuttonDisabled" @click="handleNextClick">Next</el-button>
         </el-col>
       </el-row>
+      <csv-viewer v-show="showCsv"></csv-viewer>
     </div>
 </template>
 
 <script>
 import EventBus from './EventBus.vue';
+import CsvViewer from './CsvViewer.vue';
 
 export default {
+  components: [
+    CsvViewer
+  ],
   data() {
     return {
       filters: [
@@ -39,7 +43,8 @@ export default {
           value: ""
         }
       ],
-      selectedDatasets: []
+      selectedDatasets: [],
+      showCsv: false
     };
   },
   computed: {
@@ -74,6 +79,9 @@ export default {
     handleNextClick(){
         this.$store.commit("updateSelectedDatasets", this.selectedDatasets);
         this.$store.commit("pruneExecutionsByDatasetNames", this.selectedDatasets.map(sd => sd.name));
+    },
+    handleViewClick(row){
+      console.log(row);
     }
   }
 };

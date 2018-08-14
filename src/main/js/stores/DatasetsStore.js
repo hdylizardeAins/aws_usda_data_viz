@@ -11,13 +11,13 @@ var datasetsStore = {
                 filetype: "type",
                 selected: false
             },
-            // { TODO: uncomment when Eric has updated backend that can handle columns for the excel workbook
-            //     name: "Corn Cost Return",
-            //     description: "this is a dataset",
-            //     filePath: "CornCostReturn.xlsx",
-            //     filetype: "type",
-            //     selected: false
-            // },
+            {
+                name: "Corn Cost Return",
+                description: "this is a dataset",
+                filePath: "CornCostReturnMR.csv",
+                filetype: "type",
+                selected: false
+            },
             {
                 name: "All Tables GE Crops",
                 description: "this is a dataset",

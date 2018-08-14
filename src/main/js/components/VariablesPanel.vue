@@ -34,7 +34,7 @@
 import deepCopy from './DeepCopy.js';
 import EventBus from './EventBus.vue';
 
-const apachePort = "9980"; //TODO: 8080
+const apachePort = "8080";
 
 export default {
     props: [

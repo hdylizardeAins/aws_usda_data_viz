@@ -22,7 +22,10 @@ import com.harmonia.properties.AppProperties;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
-	//private static final String PLOT_OUTPUT_DIR = AppProperties.RSCRIPT_OUTPUT_DIR;
+	private static final String CORN_COST_RESTURN_CSV = "CornCostReturnMR.csv";
+	private static final String ALLTABLES_G_ECROPS_CSV = "alltablesGEcrops.csv";
+	private static final String NOFILE = "NOFILE";
+	private static final String TREND = "trend";
 	private static final String PLOT_OUTPUT_DIR = "/var/www/html";
 	private static final String GENETIC_ENGINEERING_ADOPTION_CSV = "geneticEngineeringAdoption.csv";
 	private static final String PROTOTYPE_R = "prototype.R";
@@ -31,7 +34,6 @@ public class AnalyticsController {
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
 	private static final String RSCRIPT = "Rscript ";
-	//private static final String RSCRIPT = AppProperties.RSCRIPT_LOCATION;
 	
 	private String scriptLoc;
 	
@@ -42,7 +44,7 @@ public class AnalyticsController {
 	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "columns") String columns) {
 		String cmd = scriptLoc;
-		String inputLoc = getPathToFile(inputFile);
+		String inputLoc = getInputPath(inputFile);
 		try {
 			//String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
 			String columnsFiltered = columns.replaceAll("[^A-Za-z0-9,]", "");
@@ -57,11 +59,26 @@ public class AnalyticsController {
 	@RequestMapping(path = "regression", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
-		String inputLoc = getPathToFile(inputFile);
+		String inputLoc = getInputPath(inputFile);
 		try {
-			String xFiltered = x.replaceAll("[^A-Za-z0-9,]", "");
-			String yFiltered = y.replaceAll("[^A-Za-z0-9,]", "");
+			String xFiltered = x.replaceAll("[^A-Za-z0-9]", "");
+			String yFiltered = y.replaceAll("[^A-Za-z0-9]", "");
 			String response = runR(cmd, REGRESSION, inputLoc, PLOT_OUTPUT_DIR + " linear " + xFiltered + " " + yFiltered);
+			return ResponseEntity.ok(response);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	@RequestMapping(path = TREND, method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity trend(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
+		String cmd = scriptLoc;
+		String inputLoc = getInputPath(inputFile);
+		try {
+			String xFiltered = x.replaceAll("[^A-Za-z0-9]", "");
+			String yFiltered = y.replaceAll("[^A-Za-z0-9]", "");
+			String response = runR(cmd, TREND, inputLoc, PLOT_OUTPUT_DIR + " " + xFiltered + " " + yFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -72,7 +89,7 @@ public class AnalyticsController {
 	@RequestMapping(path = "summary", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity summary(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = getPathToFile(inputFile);
+		String inputLoc = getInputPath(inputFile);
 		try {
 			String response = runR(cmd, SUMMARY, inputLoc, "");
 			return ResponseEntity.ok(response);
@@ -85,7 +102,7 @@ public class AnalyticsController {
 	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = getPathToFile(inputFile);
+		String inputLoc = getInputPath(inputFile);
 		try {
 			String response = runR(cmd, COLUMNS, inputLoc, "");
 			return ResponseEntity.ok(response);
@@ -118,6 +135,20 @@ public class AnalyticsController {
 		return data;
 		// return ResponseEntity.ok(createResponse(name));
 
+	}
+	
+	private String getInputPath(String inputFile) {
+		String inputLoc = "";
+		if(GENETIC_ENGINEERING_ADOPTION_CSV.equals(inputFile)) {
+			inputLoc = getPathToFile(GENETIC_ENGINEERING_ADOPTION_CSV);
+		} else if(ALLTABLES_G_ECROPS_CSV.equals(inputFile)) {
+			inputLoc = getPathToFile(ALLTABLES_G_ECROPS_CSV);
+		} else if(CORN_COST_RESTURN_CSV.equals(inputFile)) {
+			inputLoc = getPathToFile(CORN_COST_RESTURN_CSV);
+		} else {
+			inputLoc = NOFILE;
+		}
+		return inputLoc;
 	}
 	
 	private String getPathToFile(String fileName) {

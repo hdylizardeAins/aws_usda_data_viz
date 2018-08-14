@@ -95,13 +95,14 @@ public class DataSetController {
 
 			StringBuilder generatedCSVFile = FileUtils.graphToCSV(finalPivotColumn, finalGraph);
 			long time = System.nanoTime();
-			String filePath = PLOT_OUTPUT_DIR + GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX + time
-					+ GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
+			String fileName = GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX + time + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
+			String filePath = PLOT_OUTPUT_DIR + fileName;
+
 			String displayName = GENETIC_ENGINEERING_ADOPTION_DISPLAY_PREFIX + time;
 			File file = new File(filePath);
 			Files.asCharSink(file, Charsets.UTF_8).write(generatedCSVFile);
 			DataSet dataSet = new DataSet();
-			dataSet.setFileName(filePath);
+			dataSet.setFileName(fileName);
 			dataSet.setDisplayName(displayName);
 			return ResponseEntity.ok(dataSet);
 		} catch (IOException e) {
@@ -113,23 +114,19 @@ public class DataSetController {
 	/**
 	 * Retrieves the values of the columns that can be used for filtering
 	 *
-	 * @param inputFile the file to use for retrieving the column's values
+	 * @param dataSet the dataset to use for retrieving the column's values
 	 * @return a list of values for the filtering column
 	 */
-	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
+	@RequestMapping(path = "columns", method = RequestMethod.POST, produces = APPLICATION_JSON)
+	public ResponseEntity columns(@RequestBody FilteredDataSet dataSet) {
 		try {
 			Set<String> valueList = Collections.emptySet();
+			String inputFile = dataSet.getFileName();
+			String column = dataSet.getGroupColumn();
+			Map<String, List<String>> filters = dataSet.getFilters();
 			if (inputFile.endsWith(EXCEL_EXTENTION)) {
-				final String column = "Item2";
-				Map<String, List<String>> filters = new HashMap<>();
-				filters.put("Region", Arrays.asList("U.S. total"));
 				valueList = FileUtils.retrieveExcelColumnValues(inputFile, DEFAULT_SHEET_NAME, column, filters);
 			} else if (inputFile.endsWith(CSV_EXTENSION)) {
-				final String column = "Variety";
-				Map<String, List<String>> filters = new HashMap<>();
-				filters.put("State", Arrays.asList("U.S."));
-				filters.put("Crop", Arrays.asList("Corn"));
 				valueList = FileUtils.retrieveCSVColumnValues(inputFile, column, filters);
 			}
 			return ResponseEntity.ok(valueList);

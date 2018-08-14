@@ -14,7 +14,7 @@ var datasetsStore = {
             {
                 name: "Corn Cost Return",
                 description: "this is a dataset",
-                filePath: "CornCostReturn.xlsx",
+                filePath: "CornCostReturnMR.csv",
                 filetype: "type",
                 selected: false
             },
@@ -51,10 +51,11 @@ var datasetsStore = {
             for (let i in datasets) {
                 axios.get('/analytics/columns', {params: {inputFile: datasets[i].filePath}})
                     .then(function(response) {
-                        context.commit("updateColumns", {name: datasets[i].name, columns: JSON.parse(response.data)});
+                        context.commit("updateColumns", {name: datasets[i].name, columns: response.data.columns});
+                        callback.success(response);
                     })
-                    .catch(function() {
-                        
+                    .catch(function(error) {
+                        callback.failure(error);
                     })
             }
         }

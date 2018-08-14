@@ -22,7 +22,7 @@ import com.harmonia.properties.AppProperties;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
-	private static final String CORN_COST_RESTURN_CSV = "CornCostResturn.csv";
+	private static final String CORN_COST_RESTURN_CSV = "CornCostReturnMR.csv";
 	private static final String ALLTABLES_G_ECROPS_CSV = "alltablesGEcrops.csv";
 	private static final String NOFILE = "NOFILE";
 	private static final String TREND = "trend";

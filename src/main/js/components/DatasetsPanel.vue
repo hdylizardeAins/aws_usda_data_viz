@@ -23,7 +23,7 @@
           <el-button type="primary" style="width: 100%" :disabled="nextbuttonDisabled" @click="handleNextClick">Next</el-button>
         </el-col>
       </el-row>
-      <csv-viewer v-show="showCsv"></csv-viewer>
+      <!-- <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>-->
     </div>
 </template>
 
@@ -32,9 +32,9 @@ import EventBus from './EventBus.vue';
 import CsvViewer from './CsvViewer.vue';
 
 export default {
-  components: [
+  components: {
     CsvViewer
-  ],
+  },
   data() {
     return {
       filters: [

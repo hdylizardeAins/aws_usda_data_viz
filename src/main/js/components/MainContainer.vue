@@ -24,7 +24,6 @@
                 </el-main>
             </el-container>
         </el-container>
-        <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>
     </div>
 </template>
 

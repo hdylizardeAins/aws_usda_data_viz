@@ -2,8 +2,12 @@ package com.aws.codestar.projecttemplates.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aws.codestar.projecttemplates.api.DataSet;
@@ -90,15 +95,41 @@ public class DataSetController {
 
 			StringBuilder generatedCSVFile = FileUtils.graphToCSV(finalPivotColumn, finalGraph);
 			long time = System.nanoTime();
-			String filePath = PLOT_OUTPUT_DIR + GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX + time
-					+ GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
+			String fileName = GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX + time + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
+			String filePath = PLOT_OUTPUT_DIR + fileName;
+
 			String displayName = GENETIC_ENGINEERING_ADOPTION_DISPLAY_PREFIX + time;
 			File file = new File(filePath);
 			Files.asCharSink(file, Charsets.UTF_8).write(generatedCSVFile);
 			DataSet dataSet = new DataSet();
-			dataSet.setFileName(filePath);
+			dataSet.setFileName(fileName);
 			dataSet.setDisplayName(displayName);
 			return ResponseEntity.ok(dataSet);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Retrieves the values of the columns that can be used for filtering
+	 *
+	 * @param dataSet the dataset to use for retrieving the column's values
+	 * @return a list of values for the filtering column
+	 */
+	@RequestMapping(path = "columns", method = RequestMethod.POST, produces = APPLICATION_JSON)
+	public ResponseEntity columns(@RequestBody FilteredDataSet dataSet) {
+		try {
+			Set<String> valueList = Collections.emptySet();
+			String inputFile = dataSet.getFileName();
+			String column = dataSet.getGroupColumn();
+			Map<String, List<String>> filters = dataSet.getFilters();
+			if (inputFile.endsWith(EXCEL_EXTENTION)) {
+				valueList = FileUtils.retrieveExcelColumnValues(inputFile, DEFAULT_SHEET_NAME, column, filters);
+			} else if (inputFile.endsWith(CSV_EXTENSION)) {
+				valueList = FileUtils.retrieveCSVColumnValues(inputFile, column, filters);
+			}
+			return ResponseEntity.ok(valueList);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -48,9 +48,8 @@ if (length(args)==0) {
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}", collapse = "", sep = ""))
   } else if(action == "trend"){
-    regressionType = args[4]
-    xName = args[5]
-    yName = args[6]
+    xName = args[4]
+    yName = args[5]
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
     scatter.smooth(x=mydata[,xName], y=mydata[,yName], main=as.formula(paste(yName, xName, sep= "~")))

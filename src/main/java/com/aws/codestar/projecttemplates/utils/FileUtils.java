@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
@@ -18,6 +19,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -26,7 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeBasedTable;
@@ -58,9 +59,6 @@ public class FileUtils {
 	public static void main(String[] args) {
 
 		try {
-
-			// TODO Retrieve files to merge from the client as well as the pivot and the
-			// filter information
 			String excelPivotIdx = "Year";
 			String excelColumnIdx = "Item2";
 			String excelValueIdx = "Value";
@@ -73,6 +71,12 @@ public class FileUtils {
 			final RowSortedTable<String, String, String> excelGraph = FileUtils.excelToGraph(EXCEL_FILE,
 					EXCEL_SHEET_NAME, excelPivotIdx, excelColumnIdx, excelValueIdx, excelFilters);
 
+			Map<String, List<String>> excelColumnFilters = new HashMap<>();
+			excelColumnFilters.put("Region", Arrays.asList("U.S. total"));
+			Set<String> values = FileUtils.retrieveExcelColumnValues(EXCEL_FILE, EXCEL_SHEET_NAME, excelColumnIdx,
+					excelColumnFilters);
+			System.out.println(values);
+
 			String csvPivotIdx = "Year";
 			String csvColumnIdx = "Unit";
 			String csvValueIdx = "Value";
@@ -84,6 +88,12 @@ public class FileUtils {
 
 			final RowSortedTable<String, String, String> csvGraph = FileUtils.csvToGraph(CSV_FILE, csvPivotIdx,
 					csvColumnIdx, csvValueIdx, csvFilters);
+
+			Map<String, List<String>> csvColumnFilters = new HashMap<>();
+			csvColumnFilters.put("State", Arrays.asList("U.S."));
+			csvColumnFilters.put("Crop", Arrays.asList("Corn"));
+			Set<String> values1 = FileUtils.retrieveCSVColumnValues(CSV_FILE, "Variety", csvColumnFilters);
+			System.out.println(values1);
 
 			final RowSortedTable<String, String, String> mergedGraph = FileUtils.mergeGraphsByPivot(excelGraph,
 					csvGraph);
@@ -154,14 +164,121 @@ public class FileUtils {
 	}
 
 	/**
+	 * Generates a map containing the column Id for its respective header column.
+	 *
+	 * @param dataFormatter formatter for the header column's values
+	 * @param headerRow     the row containing the header
+	 * @return a map containing the column Id for each header column.
+	 */
+	private static Map<String, Integer> generateHeaderColumnIndexMap(DataFormatter dataFormatter, Row headerRow) {
+		// Retrieve the header row and map each header column to its column index
+		Map<String, Integer> headerToCol = new HashMap<>();
+		Iterator<Cell> cells = headerRow.cellIterator();
+		while (cells.hasNext()) {
+			Cell cell = cells.next();
+			String value = dataFormatter.formatCellValue(cell);
+			int colIdx = cell.getColumnIndex();
+			headerToCol.put(value, colIdx);
+		}
+		return headerToCol;
+	}
+
+	/**
+	 * Retrieves the distinct values contained in the column of a excel spreadsheet
+	 *
+	 * @param filePath       the path to the excel file
+	 * @param excelSheetName the name of the sheet which contains the column
+	 * @param column         the column to retrieve the values from
+	 * @param filters        the filters to apply to the excel file
+	 * @return a set containing the possible values of the column
+	 * @throws IOException if there is an error reading the excel file
+	 */
+	public static Set<String> retrieveExcelColumnValues(String filePath, String excelSheetName, String column,
+			Map<String, List<String>> filters) throws IOException {
+
+		// TODO Determine if the file is excel and if not throw exception
+		final Set<String> values = new TreeSet<String>();
+		try (InputStream stream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+				XSSFWorkbook wb = new XSSFWorkbook(stream);) {
+
+			XSSFSheet sheet = wb.getSheet(excelSheetName);
+
+			// Determine where the first row of data begins
+			int headerRowIdx = sheet.getFirstRowNum();
+			int lastRowIdx = sheet.getLastRowNum();
+			int firstRowIdx = headerRowIdx < lastRowIdx ? headerRowIdx + 1 : lastRowIdx;
+
+			DataFormatter dataFormatter = new DataFormatter();
+
+			// Retrieve the header row and the column index of the selected column
+			Row headerRow = sheet.getRow(headerRowIdx);
+
+			Map<String, Integer> headerToCol = generateHeaderColumnIndexMap(dataFormatter, headerRow);
+
+			int columnId = headerToCol.getOrDefault(column, -1);
+			if (columnId != -1) {
+
+				// Process each row
+				for (int r = firstRowIdx; r <= lastRowIdx; r++) {
+					XSSFRow row = sheet.getRow(r);
+
+					boolean keepRow = shouldKeepExcelRow(row, filters, headerToCol, dataFormatter);
+
+					// If row is to be kept, add it to the graph
+					if (keepRow) {
+
+						Cell cell = row.getCell(columnId);
+						String cellValue = dataFormatter.formatCellValue(cell);
+						if (StringUtils.isNotBlank(cellValue)) {
+							values.add(cellValue.trim());
+						}
+					}
+				}
+			}
+		}
+
+		return values;
+	}
+
+	/**
+	 * Determines if the row should be kept based on the collection of filters to be
+	 * applied to each column of the row
+	 *
+	 * @param row           the row to check
+	 * @param filters       the filters to use for determining if the row should be
+	 *                      kept
+	 * @param headerToCol   the map of headers to column ids
+	 * @param dataFormatter formatter for the values in the cells
+	 * @return True if the row should be kept, otherwise False
+	 */
+	private static boolean shouldKeepExcelRow(XSSFRow row, Map<String, List<String>> filters,
+			Map<String, Integer> headerToCol, DataFormatter dataFormatter) {
+		boolean keepRow = true;
+		// Determine if the row should be kept based on the filters
+		for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+			String columnFilter = entry.getKey();
+			List<String> criteria = entry.getValue();
+			int columnFilterId = headerToCol.get(columnFilter);
+			Cell cell = row.getCell(columnFilterId);
+			String cellValue = dataFormatter.formatCellValue(cell);
+			if (!criteria.contains(cellValue.trim())) {
+				keepRow = false;
+				break;
+			}
+		}
+		return keepRow;
+	}
+
+	/**
 	 * Transforms the content of a excel file into a table graph based on the
 	 * filters and the key structured specified.
 	 *
-	 * @param filePath    the path to the excel file
-	 * @param rowKey      the column to use as the row key
-	 * @param columnKey   the column to use for the column key
-	 * @param valueColumn the column to use for the value
-	 * @param filters     the filters to apply to the excel file
+	 * @param filePath       the path to the excel file
+	 * @param excelSheetName the name of the sheet containing the data to convert
+	 * @param rowKey         the column to use as the row key
+	 * @param columnKey      the column to use for the column key
+	 * @param valueColumn    the column to use for the value
+	 * @param filters        the filters to apply to the excel file
 	 * @return a filtered Table graph
 	 * @throws IOException if there is an error reading the excel file
 	 */
@@ -184,45 +301,27 @@ public class FileUtils {
 
 			// Retrieve the header row and map each header column to its column index
 			Row headerRow = sheet.getRow(headerRowIdx);
-			Map<String, Integer> headerToCol = new HashMap<>();
-			Iterator<Cell> cells = headerRow.cellIterator();
-			while (cells.hasNext()) {
-				Cell cell = cells.next();
-				String value = dataFormatter.formatCellValue(cell);
-				int colIdx = cell.getColumnIndex();
-				headerToCol.put(value, colIdx);
-			}
+			Map<String, Integer> headerToCol = generateHeaderColumnIndexMap(dataFormatter, headerRow);
+
+			int pivotId = headerToCol.get(rowKey);
+			int columnId = headerToCol.get(columnKey);
+			int valueId = headerToCol.get(valueColumn);
 
 			// Process each row
 			for (int r = firstRowIdx; r <= lastRowIdx; r++) {
 				XSSFRow row = sheet.getRow(r);
-				boolean keepRow = true;
 
-				// Determine if the row should be kept based on the filters
-				for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
-					String column = entry.getKey();
-					List<String> criteria = entry.getValue();
-					int columnId = headerToCol.get(column);
-					Cell cell = row.getCell(columnId);
-					String cellValue = dataFormatter.formatCellValue(cell);
-					if (!criteria.contains(cellValue)) {
-						keepRow = false;
-						break;
-					}
-				}
+				boolean keepRow = shouldKeepExcelRow(row, filters, headerToCol, dataFormatter);
 
 				// If row is to be kept, add it to the graph
 				if (keepRow) {
 
-					int pivotId = headerToCol.get(rowKey);
 					Cell pivotCell = row.getCell(pivotId);
 					String pivotCellStr = dataFormatter.formatCellValue(pivotCell);
 
-					int columnId = headerToCol.get(columnKey);
 					Cell columnCell = row.getCell(columnId);
 					String columnCellStr = dataFormatter.formatCellValue(columnCell);
 
-					int valueId = headerToCol.get(valueColumn);
 					Cell valueCell = row.getCell(valueId);
 					String valueCellStr = dataFormatter.formatCellValue(valueCell);
 
@@ -231,6 +330,42 @@ public class FileUtils {
 			}
 		}
 		return graph;
+	}
+
+	/**
+	 * Retrieves the distinct values contained in the column of a csv file
+	 *
+	 * @param filePath the path to the csv file
+	 * @param column   the column to retrieve the values from
+	 * @param filters  the filters to apply to the csv file
+	 * @return a set containing the possible values of the column
+	 * @throws IOException if there is an error reading the csv file
+	 */
+	public static Set<String> retrieveCSVColumnValues(String filePath, String column, Map<String, List<String>> filters)
+			throws IOException {
+
+		// TODO Determine if the file is csv and if not throw exception
+		final Set<String> values = new TreeSet<String>();
+		try (InputStream stream2 = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+				Reader reader = new InputStreamReader(new BOMInputStream(stream2, false, EXCLUSION_BOM_ARR));
+				CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());) {
+
+			// Retrieve csv records
+			Iterable<CSVRecord> records = parser.getRecords();
+
+			// Process each record
+			for (CSVRecord record : records) {
+
+				boolean keepRecord = shouldKeepCSVRecord(record, filters);
+				if (keepRecord) {
+					String columnValue = record.get(column);
+					if (StringUtils.isNotBlank(columnValue)) {
+						values.add(columnValue.trim());
+					}
+				}
+			}
+		}
+		return values;
 	}
 
 	/**
@@ -258,18 +393,7 @@ public class FileUtils {
 
 			// Process each record
 			for (CSVRecord record : records) {
-				boolean keepRecord = true;
-
-				// Determine if the record should be kept based on the filters
-				for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
-					String column = entry.getKey();
-					List<String> criteria = entry.getValue();
-					String value = record.get(column);
-					if (!criteria.contains(value)) {
-						keepRecord = false;
-						break;
-					}
-				}
+				boolean keepRecord = shouldKeepCSVRecord(record, filters);
 
 				// If record is to be kept, add it to the graph
 				if (keepRecord) {
@@ -281,5 +405,30 @@ public class FileUtils {
 			}
 		}
 		return graph2;
+	}
+
+	/**
+	 * Determines if the record should be kept based on the collection of filters to
+	 * be applied to each column of the record
+	 *
+	 * @param record  the record to check
+	 * @param filters the filters to use for determining if the record should be
+	 *                kept
+	 * @return True if the record should be kept, otherwise False
+	 */
+	private static boolean shouldKeepCSVRecord(CSVRecord record, Map<String, List<String>> filters) {
+		boolean keepRecord = true;
+
+		// Determine if the record should be kept based on the filters
+		for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+			String column = entry.getKey();
+			List<String> criteria = entry.getValue();
+			String value = record.get(column);
+			if (value == null || !criteria.contains(value.trim())) {
+				keepRecord = false;
+				break;
+			}
+		}
+		return keepRecord;
 	}
 }

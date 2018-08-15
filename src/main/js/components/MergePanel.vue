@@ -102,13 +102,6 @@ export default {
             title: "Error"
           });
         }
-      } else {
-        this.$notify.error({
-          message: "You cannot merge more than two datasets at a time",
-          customClass: "error",
-          duration: 5000,
-          title: "Error"
-        });
       }
     },
     handleDatasetASelection: function(val) {
@@ -126,18 +119,20 @@ export default {
       let payload = {
         data: [dataset1.mergeData, dataset2.mergeData],
         success: function() {
-          this.closeMerge();
-        },
+          this.$refs.datasetATable.clearSelection();
+          this.$refs.datasetBTable.clearSelection();
+          this.$emit("reloadColumns");
+          this.$emit("hideMergeDialog");
+        }.bind(this),
         failure: function() {
 
-        }
+        }.bind(this)
       };
       this.$store.dispatch("mergeDatasets", payload);
     },
     closeMerge: function() {
-      console.log("closing");
       this.$refs.datasetATable.clearSelection();
-      // this.$refs.datasetBTable.clearSelection();
+      this.$refs.datasetBTable.clearSelection();
       this.$emit("hideMergeDialog");
     }
   }

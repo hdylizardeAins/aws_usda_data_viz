@@ -25,7 +25,7 @@ public class AnalyticsController {
 	private static final String CORN_COST_RESTURN_CSV = "reducedCornCostReturn.csv";
 	private static final String ALLTABLES_G_ECROPS_CSV = "alltablesGEcrops.csv";
 	private static final String NOFILE = "NOFILE";
-	private static final String TREND = "trend";
+	private static final String TREND = "trend-line";
 	private static final String PLOT_OUTPUT_DIR = "/var/www/html";
 	private static final String GENETIC_ENGINEERING_ADOPTION_CSV = "geneticEngineeringAdoption.csv";
 	private static final String PROTOTYPE_R = "prototype.R";

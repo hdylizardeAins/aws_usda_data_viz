@@ -12,7 +12,13 @@
       <el-row v-loading="isLoading">
         <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
             <el-table-column type="selection" prop="selected" :selectable="isSelectable" :max="1"/>
-            <el-table-column prop="name" />
+            <el-table-column prop="name" label="Name" />
+            <el-table-column prop="mergeable" label="Mergeable">
+            <template slot-scope="scope">
+              <p v-if="scope.row.mergeable">yes</p>
+              <p v-else>no</p>
+            </template>
+          </el-table-column>
             <el-table-column align="right">
             <template slot-scope="scope">
               <el-button @click="handleViewClick(scope.row)">View</el-button>
@@ -33,7 +39,7 @@
       </el-row>
       <!-- <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>-->
       <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
-        <merge-panel @hideMergeDialog="hideMergeDialog"></merge-panel>
+        <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
       </el-dialog>
     </div>
 </template>
@@ -77,7 +83,14 @@ export default {
   mounted() {
     EventBus.$emit('columnLoadStart'); //Variables panel displays loading spinner
     this.updateLoadingOperations(+1);
-    this.$store.dispatch("loadColumns", {
+    this.loadColumns();
+  },
+  methods: {
+    isSelectable(row) {
+      return !row.unselectable;
+    },
+    loadColumns() {
+      this.$store.dispatch("loadAllColumns", {
       failure: function(err) {
         this.updateLoadingOperations(-1);
         console.log(err); //TODO: debug        
@@ -89,10 +102,6 @@ export default {
         EventBus.$emit('columnLoadStop'); //Variables panel removes loading spinner
       }
     });
-  },
-  methods: {
-    isSelectable(row) {
-      return !row.unselectable;
     },
     updateLoadingOperations(numOperations) {
       this.loadingOperationsCounter += numOperations;
@@ -118,8 +127,6 @@ export default {
     },
     hideMergeDialog() {
       this.mergeVisible = false;
-      this.$refs.datasetsTable.clearSelection();
-      this.$store.commit("updateSelectedDatasets", this.selectedDatasets);
     },
     handleMerge() {
       if(this.selectedDatasets.length !== 2) {

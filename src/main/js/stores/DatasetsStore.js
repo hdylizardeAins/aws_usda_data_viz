@@ -64,7 +64,8 @@ var datasetsStore = {
     },
     getters: {
         datasets: state => state.datasets,
-        selectedDatasets: state => state.datasets.filter(d => d.selected) || []
+        selectedDatasets: state => state.datasets.filter(d => d.selected) || [],
+        getDataset: (state) => (name) => state.datsets.find(d => d.name === name)
     },
     mutations: {
         updateSelectedDatasets: function (state, datasets) {
@@ -103,27 +104,55 @@ var datasetsStore = {
         }
     },
     actions: {
-        loadColumns: function(context, callback) {
+        loadAllColumns: function(context, callback) {
+            debugger
             let datasets = context.state.datasets;
             let completedCount = 0;
             for (let i in datasets) {
                 axios.get('/analytics/columns', {params: {inputFile: datasets[i].filePath}})
                     .then(function(response) {
                         context.commit("updateColumns", {name: datasets[i].name, columns: response.data.columns});
+                        if (typeof (callback.success) === 'function') {
                         callback.success(response);
+                        }
                         completedCount++;
                         if (completedCount == datasets.length){
                             callback.allComplete();
                         }
                     })
                     .catch(function(error) {
+                        if (typeof (callback.error) === 'function') {
                         callback.failure(error);
+                        }
                         completedCount++;
                         if (completedCount == datasets.length){
+                            if (typeof (callback.allComplete) === 'function') {
                             callback.allComplete();
+                            }
                         }
                     })
             }
+        },
+        loadColumn: function (context, payload) {
+            axios.get('/analytics/columns', {
+                    params: {
+                        inputFile: payload.dataset.filePath
+                    }
+                })
+                .then(function (response) {
+                    context.commit("updateColumns", {
+                        name: payload.dataset.name,
+                        columns: response.data.columns
+                    });
+                    if (typeof (payload.success) === 'function') {
+                        payload.success(response);
+                    }
+                })
+                .catch(function (error) {
+                    if (typeof (payload.error) === 'function') {
+                        payload.failure(error);
+                    }
+                })
         },
         loadMergeColumns: function(context, payload) {
             axios.post('/datasets/columns', payload.dataset.mergeColumnsPayload)
@@ -138,7 +167,10 @@ var datasetsStore = {
         mergeDatasets: function(context, payload) {
             axios.post('/datasets/merge', payload.data)
                 .then((response) => {
+
+                    context.commit("updateSelectedDatasets", []);
                     context.commit("addDataset", {name: response.data.displayName, filePath: response.data.fileName});
+                    // Load the columns for the new dataset
                     payload.success();
                 })
                 .catch(() => {

@@ -41,8 +41,7 @@
 <script>
 import deepCopy from './DeepCopy.js';
 import EventBus from './EventBus.vue';
-
-const apachePort = "8080";
+import Constants from './Constants.js';
 
 export default {
     props: [
@@ -110,7 +109,7 @@ export default {
                         //Update the executions store
                         let path = "";
                         if (response.data.outputFile){
-                            path = window.location.protocol + "//" + window.location.hostname + ":" + apachePort + "/" + response.data.outputFile;
+                            path = Constants.getApacheUrlPrefix() + response.data.outputFile;
                         }
                         this.$store.commit('updateExecution', {
                             dataset: self.execution.dataset,

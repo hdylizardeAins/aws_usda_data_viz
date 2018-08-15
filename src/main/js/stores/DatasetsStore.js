@@ -6,21 +6,18 @@ var datasetsStore = {
         datasets: [
             {
                 name: "Genetic  Engineering Adoption",
-                description: "this is a dataset",
                 filePath: "geneticEngineeringAdoption.csv",
                 filetype: "type",
                 selected: false
             },
             {
                 name: "Corn Cost Return",
-                description: "this is a dataset",
                 filePath: "reducedCornCostReturn.csv",
                 filetype: "type",
                 selected: false
             },
             {
                 name: "All Tables GE Crops",
-                description: "this is a dataset",
                 filePath: "alltablesGEcrops.csv",
                 filetype: "type",
                 selected: false

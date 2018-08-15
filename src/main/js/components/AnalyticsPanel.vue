@@ -6,13 +6,7 @@
                 <el-col>
                     <el-table ref="analyticsTable" :data="analytics" stripe @selection-change="handleSelectionChange">
                         <el-table-column :selectable="isSelectable" type="selection" width="30px"/>
-                        <el-table-column property="name" label="Name" >
-                            <template slot-scope="scope">
-                                <strong>{{ scope.row.name }}</strong>
-                                <br/>
-                                <small>{{ scope.row.description }}</small>
-                            </template>
-                        </el-table-column>
+                        <el-table-column property="name" label="Name" />>
                     </el-table>
                 </el-col>
             </el-row>

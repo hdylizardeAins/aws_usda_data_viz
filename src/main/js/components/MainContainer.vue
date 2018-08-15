@@ -24,7 +24,6 @@
                 </el-main>
             </el-container>
         </el-container>
-        <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>
     </div>
 </template>
 
@@ -34,7 +33,7 @@ import CustomHeader from './CustomHeader.vue';
 import CustomNav from './CustomNav.vue';
 import DatasetsPanel from './DatasetsPanel.vue';
 import Visualization from './Visualization.vue';
-import CsvViewer from './CsvViewer.vue';
+
 
 export default {
     components: {
@@ -42,8 +41,7 @@ export default {
         CustomNav,
         DatasetsPanel,
         AnalyticsPanel,
-        Visualization,
-        CsvViewer
+        Visualization
     },
     data(){
         return {

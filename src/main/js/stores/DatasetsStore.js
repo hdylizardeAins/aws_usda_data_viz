@@ -1,17 +1,9 @@
 import Vue from 'vue';
 import axios from 'axios';
-import { resolve } from 'upath';
 
 var datasetsStore = {
     state: {
         datasets: [
-            {
-                name: "Genetic Engineering Adoption",
-                filePath: "geneticEngineeringAdoption.csv",
-                filetype: "CSV",
-                selected: false,
-                data: ""
-            },
             {
                 name: "Corn Cost Return",
                 filePath: "reducedCornCostReturn.csv",

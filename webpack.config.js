@@ -64,16 +64,11 @@ module.exports = {
         overlay: true,
         contentBase: path.resolve(__dirname, './src/main/webapp/'),
         port: 8081,
-        proxy: {
-            '/analytics': {
-                target: 'http://localhost:8080/',
-                secure: false
-            },
-            '/datasets': {
-                target: 'http://localhost:8080/',
-                secure: false
-            }
-        },
+        proxy: [{
+            context:['/analytics', '/datasets'],
+            target: 'http://localhost:8080/',
+            secure: false
+        }],
         historyApiFallback: {
             index: 'dev.html',
         },

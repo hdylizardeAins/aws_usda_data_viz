@@ -9,7 +9,7 @@
           <template slot="append"><el-button type="primary" icon="el-icon-search"></el-button></template>
         </el-input>
       </el-row>
-      <el-row v-loading="isLoading">
+      <el-row>
         <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
             <el-table-column type="selection" prop="selected" :selectable="isSelectable" :max="1"/>
             <el-table-column prop="name" label="Name" />
@@ -38,6 +38,7 @@
         </el-col>
       </el-row>
       <!-- <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>-->
+      <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
       <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
         <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
       </el-dialog>
@@ -66,7 +67,9 @@ export default {
       showCsv: false,
       mergeVisible: false,
       isLoading: false,
-      loadingOperationsCounter: 0
+      loadingOperationsCounter: 0,
+      showDatasetViewer: false,
+      viewedDataset: {}
     };
   },
   computed: {
@@ -166,7 +169,8 @@ export default {
       }
     },
     handleViewClick(row){
-      console.log(row);
+      this.viewedDataset = row;
+      this.showDatasetViewer = true;
     }
   }
 };

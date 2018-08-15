@@ -7,9 +7,10 @@ var datasetsStore = {
             {
                 name: "Corn Cost Return",
                 filePath: "reducedCornCostReturn.csv",
-                filetype: "type",
+                filetype: "CSV",
                 mergeable: true,
                 selected: false,
+                data: "",
                 mergeData: {
                     filters: {
                         Region: ["U.S. total"],
@@ -34,9 +35,10 @@ var datasetsStore = {
             {
                 name: "All Tables GE Crops",
                 filePath: "alltablesGEcrops.csv",
-                filetype: "type",
+                filetype: "CSV",
                 mergeable: true,
                 selected: false,
+                data: "",
                 mergeData: {
                     "filters": {
                         "State": ["U.S."],
@@ -87,6 +89,17 @@ var datasetsStore = {
                 Vue.set(dataset, 'mergeableColumns', payload.columns);
             }
         },
+        updateDatasetData: function (state, payload){
+            let dataset = state.datasets.find(ds => payload.filePath === ds.filePath);
+            if (dataset){
+                if (typeof dataset.data === 'undefined'){
+                    Vue.set(dataset, 'data', payload.data);
+                }
+                else{
+                    dataset.data = payload.data;
+                }
+        }
+    },
         addDataset: function(state, payload) {
             let found = state.datasets.find(d => d.name === payload.name);
 
@@ -105,25 +118,18 @@ var datasetsStore = {
     },
     actions: {
         loadAllColumns: function(context, callback) {
-            debugger
             let datasets = context.state.datasets;
             let completedCount = 0;
             for (let i in datasets) {
                 axios.get('/analytics/columns', {params: {inputFile: datasets[i].filePath}})
                     .then(function(response) {
                         context.commit("updateColumns", {name: datasets[i].name, columns: response.data.columns});
-                        if (typeof (callback.success) === 'function') {
-                        callback.success(response);
-                        }
                         completedCount++;
                         if (completedCount == datasets.length){
                             callback.allComplete();
                         }
                     })
                     .catch(function(error) {
-                        if (typeof (callback.error) === 'function') {
-                        callback.failure(error);
-                        }
                         completedCount++;
                         if (completedCount == datasets.length){
                             if (typeof (callback.allComplete) === 'function') {
@@ -133,6 +139,24 @@ var datasetsStore = {
                     })
             }
         },
+        loadDatasetData: function(context, ds) {
+            if (ds.filetype === 'CSV'){
+                axios.get('/datasets/data', {
+                    params:{
+                        file: ds.filePath
+                    },
+                    timeout:60000
+                })
+                .then(function(response){
+                    context.commit('updateDatasetData', {
+                        data: response.data,
+                        filePath: ds.filePath
+                    });
+                })
+                .catch(function(error){
+                })
+            }
+		},
         loadColumn: function (context, payload) {
             axios.get('/analytics/columns', {
                     params: {

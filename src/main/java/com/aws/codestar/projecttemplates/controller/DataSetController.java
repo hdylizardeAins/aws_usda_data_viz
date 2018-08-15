@@ -1,12 +1,15 @@
 package com.aws.codestar.projecttemplates.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,7 @@ import com.google.common.io.Files;
 @RequestMapping("/datasets")
 public class DataSetController {
 
+	private static final String TEXT_PLAIN = "text/plain";
 	private static final String OBJECT_NAME = "dataSet";
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String DELIMITER = ",";
@@ -149,6 +153,45 @@ public class DataSetController {
 		BeanPropertyBindingResult errors = new BeanPropertyBindingResult(filteredDataSet, OBJECT_NAME);
 		VALIDATOR.validate(filteredDataSet, errors);
 		return errors;
+	}
+
+	@RequestMapping(path = "data", method = RequestMethod.GET, produces = TEXT_PLAIN)
+	public ResponseEntity data(@RequestParam(value = "file") String file) {
+		return ResponseEntity.ok(getFileContents(file));
+	}
+
+	private String getFileContents(String fileName) {
+		if (fileName.endsWith(".csv")) {
+			String allowedPath = getPathToFile("prototype.R").getAbsolutePath();
+			allowedPath = getPathFromeFilePath(allowedPath);
+			String requestedPath = getPathToFile(fileName).getAbsolutePath();
+			requestedPath = getPathFromeFilePath(requestedPath);
+			if (requestedPath.equals(allowedPath)) {
+				String content;
+				try {
+					Scanner scan = new Scanner(getPathToFile(fileName));
+					content = scan.useDelimiter("\\Z").next();
+					scan.close();
+					return content;
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			return null;
+		}
+		return null;
+	}
+
+	private String getPathFromeFilePath(String path) {
+		return path.substring(0, path.lastIndexOf("/") + 1);
+	}
+
+	private File getPathToFile(String fileName) {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URL url = classLoader.getResource(fileName);
+		File file = new File(url.getFile());
+		return file;
 	}
 
 }

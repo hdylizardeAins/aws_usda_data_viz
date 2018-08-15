@@ -5,7 +5,10 @@ var analyticsStore = {
     state: {
         analytics: [
             {
+                displayName: "Plot",
                 name: "Plot",
+                description:"This visualization uses the R scatter plot function to plot two-dimensional data, as well as matrices of plots for visualizing more dimensions. It can be used to quickly find related features.",
+                link: "https://www.rdocumentation.org/packages/graphics/versions/3.5.1/topics/plot",
                 requiresXY: false,
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: true,
@@ -13,7 +16,10 @@ var analyticsStore = {
                 selected: false
             },
             {
-                name: "Regression",                
+                displayName: "Linear Regression",
+                name: "Regression",
+                description:"This analytic creates a linear regression, helpful for predicting future trends and relationships between variables.",
+                link: "https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lm",
                 requiresXY: true,
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: false,
@@ -21,7 +27,10 @@ var analyticsStore = {
                 selected: false
             },
             {
-                name: "Trend-Line",                
+                displayName: "Trend-Line",
+                name: "Trend-Line",      
+                description: "This visualization shows a trend-line on a scatter plot, which shows the average of a trend over time.",
+                link: "https://www.rdocumentation.org/packages/stats/versions/3.4.3/topics/scatter.smooth",
                 requiresXY: true,
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: false,
@@ -29,6 +38,7 @@ var analyticsStore = {
                 selected: false
             },
             {
+                displayName: "TBD",
                 name: "TBD",
                 unselectable: true,
                 selected: false

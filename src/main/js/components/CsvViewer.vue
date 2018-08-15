@@ -1,9 +1,9 @@
 <template>
     <el-dialog id="datasetViewer"
-                title='Data Set Viewer'
+                :title="title"
                 width="90%"
-                :visible.sync='showTable' >
-        <data-tables :data='tableData' :pagination-props='paginationDef' >
+                :visible='showTable' @close="handleClose">
+        <data-tables v-loading="loading" :data='tableData' :pagination-props='paginationDef' >
                     <el-table-column v-for='header in headers'
                                     :key='header.name'
                                     :prop='header.idx'
@@ -23,10 +23,10 @@ export default {
         DataTables
     },
     props:{
-        rawData: {
-            default: "",
+        dataset: {
+            default: {},
             required: true,
-            type: String
+            type: Object
         },
         showTable: {
             default: false,
@@ -42,37 +42,58 @@ export default {
                 pageSize: 20,
                 pageSizes: [5,10,20],
                 small: false,
-                background: true
+                background: true,
             }
         }
     },
+    watch:{
+        dataset: function(newDs, oldDs){
+           if (typeof newDs !== 'undefined' && newDs.name !== oldDs.name){
+            let self = this;
+            this.$store.dispatch('loadDatasetData', newDs)
+           }
+        }
+    },
     computed: {
-      ingested: function(){
-          return this.rawData === "" ? [[]] : ingestCsv(this.rawData);
-      },
-      headers: function(){
-          let count = 0;
-          return this.ingested[0].map(o => {
-              let countStr = "" + count;
-              let obj = {
-                  name: o,
-                  idx: countStr
-              };
-              count += 1;
-              return obj;
-          });
-      },
-      tableData: function(){
-          return this.ingested.slice(1).map(arr => 
-          {
-              let obj = {};
-              for (let i=0; i < arr.length; i++){
-                  let idxString = "" + i;
-                  obj[idxString] = arr[i];
-              }
-              return obj;
-          });
-      }
+        title: function(){
+            let tempTitle = "Dataset Viewer";
+            return (this.dataset.name && this.dataset.name.length > 0) ? tempTitle + " - " + this.dataset.name : tempTitle;
+        },
+        loading: function(){
+            let val = this.ingested[0].length === 0;
+            return val;
+        },
+        ingested: function(){
+          return this.dataset.data === "" ? [[]] : ingestCsv(this.dataset.data);
+        },
+        headers: function(){
+            let count = 0;
+            return this.ingested[0].map(o => {
+                let countStr = "" + count;
+                let obj = {
+                    name: o,
+                    idx: countStr
+                };
+                count += 1;
+                return obj;
+            });
+        },
+        tableData: function(){
+            return this.ingested.slice(1).map(arr => 
+            {
+                let obj = {};
+                for (let i=0; i < arr.length; i++){
+                    let idxString = "" + i;
+                    obj[idxString] = arr[i];
+                }
+                return obj;
+            });
+        }
+    },
+    methods: {
+        handleClose: function(){
+            this.$emit('csv-viewer-closed');
+        }
     }
 };
 </script>

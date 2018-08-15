@@ -23,7 +23,7 @@
           <el-button type="primary" style="width: 100%" :disabled="nextbuttonDisabled" @click="handleNextClick">Next</el-button>
         </el-col>
       </el-row>
-      <!-- <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>-->
+      <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
     </div>
 </template>
 
@@ -44,7 +44,8 @@ export default {
         }
       ],
       selectedDatasets: [],
-      showCsv: false
+      showDatasetViewer: false,
+      viewedDataset: {}
     };
   },
   computed: {
@@ -58,12 +59,6 @@ export default {
   mounted() {
     EventBus.$emit('columnLoadStart'); //Variables panel displays loading spinner
     this.$store.dispatch("loadColumns", {
-      failure: function(err) {
-        console.log(err); //TODO: debug        
-      },
-      success: function(){
-        //Do nothing
-      },
       allComplete: function(){
         EventBus.$emit('columnLoadStop'); //Variables panel removes loading spinner
       }
@@ -81,7 +76,8 @@ export default {
         this.$store.commit("pruneExecutionsByDatasetNames", this.selectedDatasets.map(sd => sd.name));
     },
     handleViewClick(row){
-      console.log(row);
+      this.viewedDataset = row;
+      this.showDatasetViewer = true;
     }
   }
 };

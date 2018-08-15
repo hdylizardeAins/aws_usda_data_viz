@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -74,6 +72,8 @@ public class DataSetController {
 				}
 
 				String inputFile = filteredDataSet.getFileName();
+				String inputPath = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+
 				String pivotColumn = filteredDataSet.getPivotColumn();
 				String groupColumn = filteredDataSet.getGroupColumn();
 				String valueColumn = filteredDataSet.getValueColumn();
@@ -81,10 +81,10 @@ public class DataSetController {
 
 				RowSortedTable<String, String, String> dataSetGraph = null;
 				if (inputFile.endsWith(EXCEL_EXTENTION)) {
-					dataSetGraph = FileUtils.excelToGraph(inputFile, DEFAULT_SHEET_NAME, pivotColumn, groupColumn,
+					dataSetGraph = FileUtils.excelToGraph(inputPath, DEFAULT_SHEET_NAME, pivotColumn, groupColumn,
 							valueColumn, filters);
 				} else if (inputFile.endsWith(CSV_EXTENSION)) {
-					dataSetGraph = FileUtils.csvToGraph(inputFile, pivotColumn, groupColumn, valueColumn, filters);
+					dataSetGraph = FileUtils.csvToGraph(inputPath, pivotColumn, groupColumn, valueColumn, filters);
 				} else {
 					// TODO return invalid extension message
 					return ResponseEntity.badRequest().build();
@@ -126,10 +126,11 @@ public class DataSetController {
 		try {
 			Set<String> valueList = Collections.emptySet();
 			String inputFile = dataSet.getFileName();
+			String inputPath = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
 			String column = dataSet.getGroupColumn();
 			Map<String, List<String>> filters = dataSet.getFilters();
 			if (inputFile.endsWith(EXCEL_EXTENTION)) {
-				valueList = FileUtils.retrieveExcelColumnValues(inputFile, DEFAULT_SHEET_NAME, column, filters);
+				valueList = FileUtils.retrieveExcelColumnValues(inputPath, DEFAULT_SHEET_NAME, column, filters);
 			} else if (inputFile.endsWith(CSV_EXTENSION)) {
 				valueList = FileUtils.retrieveCSVColumnValues(inputFile, column, filters);
 			}

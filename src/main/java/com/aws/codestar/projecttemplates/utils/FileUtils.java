@@ -1,9 +1,9 @@
 package com.aws.codestar.projecttemplates.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,74 +45,10 @@ public class FileUtils {
 
 	private static final String EMPTY_STRING = "";
 	private static final String NON_ALPHANUMBERIC_REGEX = "[^A-Za-z0-9]";
-	private static final String EXCEL_SHEET_NAME = "Data Sheet (machine readable)";
-	private static final String EXCEL_FILE = "CornCostReturn.xlsx";
-	private static final String EXCEL_CSV_FILE = "CornCostReturnMR.csv";
 	private static final char OUTPUT_CSV_DELIMITER = ',';
-	private static final String CSV_FILE = "alltablesGEcrops.csv";
 	private final static ByteOrderMark[] EXCLUSION_BOM_ARR = new ByteOrderMark[] { ByteOrderMark.UTF_8,
 			ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE };
-
-	/**
-	 * Example on how to use the methods of the class
-	 *
-	 * @param args arguments to the program
-	 */
-	public static void main(String[] args) {
-
-		try {
-			String excelPivotIdx = "Year";
-			String excelColumnIdx = "Item2";
-			String excelValueIdx = "Value";
-
-			Map<String, List<String>> excelFilters = new HashMap<>();
-			excelFilters.put("Region", Arrays.asList("U.S. total"));
-			excelFilters.put("Item2",
-					Arrays.asList("Total, operating costs", "Seed", "Total, gross value of production"));
-
-			final RowSortedTable<String, String, String> excelGraph = FileUtils.csvToGraph(EXCEL_CSV_FILE,
-					excelPivotIdx, excelColumnIdx, excelValueIdx, excelFilters);
-//			final RowSortedTable<String, String, String> excelGraph = FileUtils.excelToGraph(EXCEL_FILE,
-//					EXCEL_SHEET_NAME, excelPivotIdx, excelColumnIdx, excelValueIdx, excelFilters);
-
-//			Map<String, List<String>> excelColumnFilters = new HashMap<>();
-//			excelColumnFilters.put("Region", Arrays.asList("U.S. total"));
-//			Set<String> values = FileUtils.retrieveExcelColumnValues(EXCEL_FILE, EXCEL_SHEET_NAME, excelColumnIdx,
-//					excelColumnFilters);
-//			System.out.println(values);
-
-			String csvPivotIdx = "Year";
-			String csvColumnIdx = "Unit";
-			String csvValueIdx = "Value";
-
-			Map<String, List<String>> csvFilters = new HashMap<>();
-			csvFilters.put("State", Arrays.asList("U.S."));
-			csvFilters.put("Variety", Arrays.asList("All GE varieties"));
-			csvFilters.put("Crop", Arrays.asList("Corn"));
-
-			final RowSortedTable<String, String, String> csvGraph = FileUtils.csvToGraph(CSV_FILE, csvPivotIdx,
-					csvColumnIdx, csvValueIdx, csvFilters);
-
-//			Map<String, List<String>> csvColumnFilters = new HashMap<>();
-//			csvColumnFilters.put("State", Arrays.asList("U.S."));
-//			csvColumnFilters.put("Crop", Arrays.asList("Corn"));
-//			Set<String> values1 = FileUtils.retrieveCSVColumnValues(CSV_FILE, "Variety", csvColumnFilters);
-//			System.out.println(values1);
-
-			RowSortedTable<String, String, String> emtpyGraph = TreeBasedTable.create();
-
-			final RowSortedTable<String, String, String> mergedGraph = FileUtils.mergeGraphsByPivot(emtpyGraph,
-					csvGraph);
-			final RowSortedTable<String, String, String> finalMergedGraph = FileUtils.mergeGraphsByPivot(excelGraph,
-					mergedGraph);
-
-			final StringBuilder out = FileUtils.graphToCSV(excelPivotIdx, finalMergedGraph);
-
-			System.out.println(out);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private static final char LF = '\n';
 
 	/**
 	 * Merges two table graphs by their pivot column
@@ -155,7 +91,8 @@ public class FileUtils {
 
 		// Build a csv object from the graph
 		final StringBuilder out = new StringBuilder();
-		final CSVPrinter printer = CSVFormat.DEFAULT.withDelimiter(OUTPUT_CSV_DELIMITER).print(out);
+		final CSVPrinter printer = CSVFormat.DEFAULT.withDelimiter(OUTPUT_CSV_DELIMITER).withRecordSeparator(LF)
+				.print(out);
 
 		// Make header for the csv file
 		LinkedHashSet<String> sorted = new LinkedHashSet<String>();
@@ -208,7 +145,11 @@ public class FileUtils {
 
 		// TODO Determine if the file is excel and if not throw exception
 		final Set<String> values = new TreeSet<String>();
-		try (InputStream stream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+		if (filePath == null) {
+			return values;
+		}
+
+		try (InputStream stream = org.apache.commons.io.FileUtils.openInputStream(new File(filePath));
 				XSSFWorkbook wb = new XSSFWorkbook(stream);) {
 
 			XSSFSheet sheet = wb.getSheet(excelSheetName);
@@ -297,7 +238,11 @@ public class FileUtils {
 
 		// TODO Determine if the file is excel and if not throw exception
 		final RowSortedTable<String, String, String> graph = TreeBasedTable.create();
-		try (InputStream stream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+		if (filePath == null) {
+			return graph;
+		}
+
+		try (InputStream stream = org.apache.commons.io.FileUtils.openInputStream(new File(filePath));
 				XSSFWorkbook wb = new XSSFWorkbook(stream);) {
 
 			XSSFSheet sheet = wb.getSheet(excelSheetName);
@@ -356,7 +301,10 @@ public class FileUtils {
 
 		// TODO Determine if the file is csv and if not throw exception
 		final Set<String> values = new TreeSet<String>();
-		try (InputStream stream2 = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+		if (filePath == null) {
+			return values;
+		}
+		try (InputStream stream2 = org.apache.commons.io.FileUtils.openInputStream(new File(filePath));
 				Reader reader = new InputStreamReader(new BOMInputStream(stream2, false, EXCLUSION_BOM_ARR));
 				CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());) {
 
@@ -394,7 +342,10 @@ public class FileUtils {
 			String valueColumn, Map<String, List<String>> filters) throws IOException {
 		// TODO Determine if the file is csv and if not throw exception
 		final RowSortedTable<String, String, String> graph2 = TreeBasedTable.create();
-		try (InputStream stream2 = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+		if (filePath == null) {
+			return graph2;
+		}
+		try (InputStream stream2 = org.apache.commons.io.FileUtils.openInputStream(new File(filePath));
 				Reader reader = new InputStreamReader(new BOMInputStream(stream2, false, EXCLUSION_BOM_ARR));
 				CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());) {
 

@@ -4,7 +4,7 @@
             <el-row>3. View and Tailor Visualizations</el-row>
             <el-row>
                 <el-col>
-                    <el-tabs v-model="currentTab" type="card">
+                    <el-tabs v-model="currentTab" type="border-card">
                         <el-tab-pane
                             v-for="execution in selectedExecutions"
                             :key="execution.analytic.name + execution.dataset.name"
@@ -71,5 +71,10 @@ export default {
     border: solid 1px gray;
     padding: 4px;    
     margin: 2px;
+}
+</style>
+<style scoped>
+#visualization-panel >>> .el-tabs__item.is-active {
+    border-bottom: unset !important;
 }
 </style>

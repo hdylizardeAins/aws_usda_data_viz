@@ -6,7 +6,6 @@ var analyticsStore = {
         analytics: [
             {
                 name: "Plot",
-                description: "A simple scatter plot.",
                 requiresXY: false,
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: true,
@@ -14,8 +13,7 @@ var analyticsStore = {
                 selected: false
             },
             {
-                name: "Regression",
-                description: "A linear regression.",
+                name: "Regression",                
                 requiresXY: true,
                 // These booleans indicate whether the user is allowed to select more than 1 X or Y value
                 multiSelectX: false,
@@ -24,7 +22,6 @@ var analyticsStore = {
             },
             {
                 name: "Summary",
-                description: "A summary of the data using a matrix.",
                 requiresXY: false,
                 multiSelectX: true,
                 multiSelectY: true,
@@ -32,7 +29,6 @@ var analyticsStore = {
             },
             {
                 name: "TBD",
-                description: "Currently unsupported.",
                 unselectable: true,
                 selected: false
             }

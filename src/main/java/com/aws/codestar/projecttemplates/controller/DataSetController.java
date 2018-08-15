@@ -98,7 +98,7 @@ public class DataSetController {
 			String fileName = GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX + time + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
 			String filePath = PLOT_OUTPUT_DIR + fileName;
 
-			String displayName = GENETIC_ENGINEERING_ADOPTION_DISPLAY_PREFIX + time;
+			String displayName = GENETIC_ENGINEERING_ADOPTION_DISPLAY_PREFIX.trim();
 			File file = new File(filePath);
 			Files.asCharSink(file, Charsets.UTF_8).write(generatedCSVFile);
 			DataSet dataSet = new DataSet();

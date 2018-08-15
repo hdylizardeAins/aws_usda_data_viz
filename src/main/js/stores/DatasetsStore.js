@@ -5,16 +5,7 @@ var datasetsStore = {
     state: {
         datasets: [
             {
-                name: "Genetic  Engineering Adoption",
-                description: "this is a dataset",
-                filePath: "geneticEngineeringAdoption.csv",
-                filetype: "type",
-                mergeable: false,
-                selected: false
-            },
-            {
                 name: "Corn Cost Return",
-                description: "this is a dataset",
                 filePath: "reducedCornCostReturn.csv",
                 filetype: "type",
                 mergeable: true,
@@ -42,7 +33,6 @@ var datasetsStore = {
             },
             {
                 name: "All Tables GE Crops",
-                description: "this is a dataset",
                 filePath: "alltablesGEcrops.csv",
                 filetype: "type",
                 mergeable: true,
@@ -95,6 +85,21 @@ var datasetsStore = {
             if(dataset !== undefined) {
                 Vue.set(dataset, 'mergeableColumns', payload.columns);
             }
+        },
+        addDataset: function(state, payload) {
+            let found = state.datasets.find(d => d.name === payload.name);
+
+            if(found) {
+                return false;
+            } else {
+                state.datasets.push({
+                    name: payload.name,
+                filePath: payload.filePath,
+                filetype: "csv",
+                mergeable: false,
+                selected: true
+                })
+            }
         }
     },
     actions: {
@@ -133,6 +138,7 @@ var datasetsStore = {
         mergeDatasets: function(context, payload) {
             axios.post('/datasets/merge', payload.data)
                 .then((response) => {
+                    context.commit("addDataset", {name: response.data.displayName, filePath: response.data.fileName});
                     payload.success();
                 })
                 .catch(() => {

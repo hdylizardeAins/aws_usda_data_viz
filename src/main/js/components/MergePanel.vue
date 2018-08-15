@@ -1,30 +1,38 @@
 <template>
-    <el-form id="mergeForm" ref="mergeForm" :model="formdata" label-position="top">
-        <el-row>
-            <el-col class="bordered-panel" id="datasetA" :span="11">
-                <el-form-item prop="datasetA.columns" :label="formdata.datasetA.metadata.name">
-                    <el-checkbox-group v-model="formdata.datasetA.selectedColumns">
-                        <el-checkbox v-for="column in formdata.datasetA.metadata.mergeableColumns" :key="column" :label="column" name="name"></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
+    <el-container>
+        <el-row type="flex">
+            <el-col class="bordered-panel dataset-a-flex" id="datasetA" :span="11">
+              <h3>{{formdata.datasetA.metadata.name}}</h3>
+                  <el-table ref="datasetATable" :data="formdata.datasetA.metadata.mergeableColumns" :max-height="250" @selection-change="handleDatasetASelection">
+                      <el-table-column type="selection"/>
+                      <el-table-column>
+                        <template slot-scope="scope">
+                          {{scope.row}}
+                        </template>
+                      </el-table-column>
+                  </el-table>
             </el-col>
-            <el-col class="bordered-panel" id="y-axis" :span="11">
-                <el-form-item prop="datasetB.columns" :label="formdata.datasetB.metadata.name">
-                    <el-checkbox-group v-model="formdata.datasetB.selectedColumns">
-                        <el-checkbox v-for="column in formdata.datasetB.metadata.mergeableColumns" :key="column" :label="column" name="column"></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
+            <el-col class="bordered-panel dataset-b-flex" id="datasetB" :span="11">
+              <h3>{{formdata.datasetB.metadata.name}}</h3>
+                    <el-table ref="datasetBTable" :data="formdata.datasetB.metadata.mergeableColumns" :max-height="300" @selection-change="handleDatasetBSelection">
+                      <el-table-column type="selection"/>
+                      <el-table-column>
+                        <template slot-scope="scope">
+                          {{scope.row}}
+                        </template>
+                      </el-table-column>
+                  </el-table>
             </el-col>
         </el-row>
         <el-row>
           <el-col :offset="16" :span="4">
-            <el-button style="width: 100%" @click="submitMerge">Cancel</el-button>
+            <el-button style="width: 95%" @click="closeMerge">Cancel</el-button>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" style="width: 100%" @click="submitMerge">Merge</el-button>
           </el-col>
         </el-row>
-    </el-form>
+    </el-container>
 </template>
 
 <script>
@@ -95,8 +103,6 @@ export default {
           });
         }
       } else {
-        Vue.set(this.formdata.datasetA, metadata, null);
-        Vue.set(this.formdata.datasetB, metadata, null);
         this.$notify.error({
           message: "You cannot merge more than two datasets at a time",
           customClass: "error",
@@ -104,6 +110,12 @@ export default {
           title: "Error"
         });
       }
+    },
+    handleDatasetASelection: function(val) {
+      this.formdata.datasetA.selectedColumns = val;
+    },
+    handleDatasetBSelection: function(val) {
+      this.formdata.datasetB.selectedColumns = val;
     },
     submitMerge: function() {
       let dataset1 = deepCopy(this.formdata.datasetA.metadata);
@@ -114,14 +126,38 @@ export default {
       let payload = {
         data: [dataset1.mergeData, dataset2.mergeData],
         success: function() {
-          
+          this.closeMerge();
         },
         failure: function() {
 
         }
       };
       this.$store.dispatch("mergeDatasets", payload);
+    },
+    closeMerge: function() {
+      console.log("closing");
+      this.$refs.datasetATable.clearSelection();
+      // this.$refs.datasetBTable.clearSelection();
+      this.$emit("hideMergeDialog");
     }
   }
 };
 </script>
+
+<style>
+.responsive-flex-row {
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.dataset-a-flex {
+    min-width: 250px;
+    max-width: 500px;
+}
+
+.dataset-b-flex {
+    min-width: 250px;
+    max-width: 500px;
+    
+}
+</style>

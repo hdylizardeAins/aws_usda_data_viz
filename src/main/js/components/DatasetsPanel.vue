@@ -9,7 +9,7 @@
           <template slot="append"><el-button type="primary" icon="el-icon-search"></el-button></template>
         </el-input>
       </el-row>
-      <el-row>
+      <el-row v-loading="isLoading">
         <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
             <el-table-column type="selection" prop="selected" :selectable="isSelectable" :max="1"/>
             <el-table-column prop="name" label="Name" />
@@ -84,8 +84,6 @@ export default {
     }
   },
   mounted() {
-    EventBus.$emit('columnLoadStart'); //Variables panel displays loading spinner
-    this.updateLoadingOperations(+1);
     this.loadColumns();
   },
   methods: {
@@ -93,17 +91,20 @@ export default {
       return !row.unselectable;
     },
     loadColumns() {
+      EventBus.$emit('columnLoadStart'); //Variables panel displays loading spinner
+      this.updateLoadingOperations(+1);
       this.$store.dispatch("loadAllColumns", {
       failure: function(err) {
         this.updateLoadingOperations(-1);
-        console.log(err); //TODO: debug        
+        console.log(err); //TODO: debug
       }.bind(this),
       success: function() {
         this.updateLoadingOperations(-1);
       }.bind(this),
       allComplete: function(){
         EventBus.$emit('columnLoadStop'); //Variables panel removes loading spinner
-      }
+        this.updateLoadingOperations(-1);
+      }.bind(this)
     });
     },
     updateLoadingOperations(numOperations) {

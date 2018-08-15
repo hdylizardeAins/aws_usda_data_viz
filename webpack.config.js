@@ -68,6 +68,10 @@ module.exports = {
             '/analytics': {
                 target: 'http://localhost:8080/',
                 secure: false
+            },
+            '/datasets': {
+                target: 'http://localhost:8080/',
+                secure: false
             }
         },
         historyApiFallback: {

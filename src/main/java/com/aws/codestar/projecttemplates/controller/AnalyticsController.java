@@ -33,7 +33,7 @@ public class AnalyticsController {
 	private static final String REGRESSION = "regression";
 	private static final String SUMMARY = "summary";
 	private static final String PLOT = "plot";
-	private static final String RSCRIPT = "Rscript ";
+	private static final String RSCRIPT = "/usr/local/bin/Rscript ";
 	
 	private String scriptLoc;
 	

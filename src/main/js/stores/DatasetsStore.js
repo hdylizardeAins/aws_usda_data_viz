@@ -9,6 +9,7 @@ var datasetsStore = {
                 description: "this is a dataset",
                 filePath: "geneticEngineeringAdoption.csv",
                 filetype: "type",
+                mergeable: false,
                 selected: false
             },
             {
@@ -16,14 +17,58 @@ var datasetsStore = {
                 description: "this is a dataset",
                 filePath: "reducedCornCostReturn.csv",
                 filetype: "type",
-                selected: false
+                mergeable: true,
+                selected: false,
+                mergeData: {
+                    filters: {
+                        Region: ["U.S. total"],
+                        Item2: []
+                    },
+                    pivotColumn: "Year",
+                    groupColumn: "Item2",
+                    valueColumn: "Value",
+                    fileName: "CornCostReturnMR.csv"
+                },
+                mergeColumnsPayload: {
+                    "filters": {
+                        "Region": ["U.S. total"]
+                    },
+                    "groupColumn": "Item2",
+                    "fileName": "CornCostReturnMR.csv"
+                },
+                mergeableColumns: {
+                    
+                }
             },
             {
                 name: "All Tables GE Crops",
                 description: "this is a dataset",
                 filePath: "alltablesGEcrops.csv",
                 filetype: "type",
-                selected: false
+                mergeable: true,
+                selected: false,
+                mergeData: {
+                    "filters": {
+                        "State": ["U.S."],
+                        "Variety": [],
+                        "Crop": ["Corn"]
+                    },
+                    "pivotColumn": "Year",
+                    "groupColumn": "Unit",
+                    "valueColumn": "Value",
+                    "fileName": "alltablesGEcrops.csv"
+                },
+                mergeColumnsPayload: {
+                    "filters": {
+                        "State": ["U.S."],
+                        "Crop": ["Corn"]
+                    },
+                    "groupColumn": "Variety",
+                    "fileName": "alltablesGEcrops.csv"
+                },
+                mergeableColumns: {
+
+                }
             }
         ]
     },
@@ -41,7 +86,14 @@ var datasetsStore = {
             let dataset = state.datasets.find(d => d.name === payload.name);
 
             if(dataset !== undefined) {
-                Vue.set(dataset, 'columns',payload.columns);
+                Vue.set(dataset, 'columns', payload.columns);
+            }
+        },
+        updateMergeableColumns: function(state, payload) {
+            let dataset = state.datasets.find(d => d.name === payload.name);
+
+            if(dataset !== undefined) {
+                Vue.set(dataset, 'mergeableColumns', payload.columns);
             }
         }
     },
@@ -67,6 +119,25 @@ var datasetsStore = {
                         }
                     })
             }
+        },
+        loadMergeColumns: function(context, payload) {
+            axios.post('/datasets/columns', payload.dataset.mergeColumnsPayload)
+                .then((response) => {
+                    context.commit("updateMergeableColumns" , {name: payload.dataset.name, columns: response.data})
+                    payload.success();
+                })
+                .catch(() => {
+                    payload.failure();
+                })
+        },
+        mergeDatasets: function(context, payload) {
+            axios.post('/datasets/merge', payload.data)
+                .then((response) => {
+                    payload.success();
+                })
+                .catch(() => {
+                    payload.failure();
+                })
         }
     }
 };

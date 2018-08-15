@@ -21,10 +21,11 @@ var analyticsStore = {
                 selected: false
             },
             {
-                name: "Summary",
-                requiresXY: false,
-                multiSelectX: true,
-                multiSelectY: true,
+                name: "Trend-Line",                
+                requiresXY: true,
+                // These booleans indicate whether the user is allowed to select more than 1 X or Y value
+                multiSelectX: false,
+                multiSelectY: false,
                 selected: false
             },
             {

@@ -47,7 +47,7 @@ if (length(args)==0) {
     abline(linearMod)
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}", collapse = "", sep = ""))
-  } else if(action == "trend"){
+  } else if(action == "trend-line"){
     xName = args[4]
     yName = args[5]
     imgName <- as.character(length(list.files(outputDir)))

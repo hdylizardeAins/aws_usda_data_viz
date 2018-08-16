@@ -81,6 +81,7 @@ public class AnalyticsController {
 	public ResponseEntity boxplot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
 		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+
 		try {
 			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
 			String yFiltered = y.replaceAll(X_Y_FILTER, EMPTY_STRING);

@@ -16,6 +16,17 @@ var analyticsStore = {
                 selected: false
             },
             {
+                displayName: "Box Plot",
+                name: "Boxplot",      
+                description: "This visualization shows the minimum, maximum, median, and quartiles of a variable for different categories.",
+                link: "https://www.rdocumentation.org/packages/graphics/versions/3.5.1/topics/boxplot",
+                requiresXY: true,
+                // These booleans indicate whether the user is allowed to select more than 1 X or Y value
+                multiSelectX: false,
+                multiSelectY: false,
+                selected: false
+            },
+            {
                 displayName: "Linear Regression",
                 name: "Regression",
                 description:"This analytic creates a linear regression, helpful for predicting future trends and relationships between variables.",

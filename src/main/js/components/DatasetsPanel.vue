@@ -1,7 +1,7 @@
 <template>
     <div id="data-set-panel" class="bordered-panel">
       <el-row>
-        <el-col :span="20">1. Choose Dataset</el-col>
+        <el-col :span="20">1. Choose Dataset(s)</el-col>
         <el-col :span="4"><el-button style="width: 100%" disabled>Import</el-button></el-col>
       </el-row>
       <el-row>
@@ -30,11 +30,11 @@
       <el-row>
         <el-col :span="4">
           <el-tooltip class="item" effect="dark" content="Merge two selected files" placement="top-start">
-            <el-button type="primary" style="width: 95%" :disabled="mergeButtonDisabled" @click="handleMerge">Merge</el-button>
+            <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">Merge</el-button>
           </el-tooltip>
         </el-col>
         <el-col :offset="16" :span="4">
-          <el-button type="primary" style="width: 100%" :disabled="nextButtonDisabled" @click="handleNextClick">Next</el-button>
+          <el-button id="dsNextButton" type="primary" :disabled="nextButtonDisabled" @click="handleNextClick">Next</el-button>
         </el-col>
       </el-row>
       <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
@@ -175,3 +175,13 @@ export default {
   }
 };
 </script>
+<style>
+#mergeButton{
+  float: left;
+}
+
+#dsNextButton{
+  float:right;
+}
+
+</style>

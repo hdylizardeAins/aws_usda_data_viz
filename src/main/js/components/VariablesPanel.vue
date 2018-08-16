@@ -33,7 +33,9 @@
                 </el-form-item>
         </el-row>
         <el-row>
-            <el-button type="primary" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
+            <el-col :span="4" :offset="20">
+                <el-button id="runAnalyticBtn" type="primary" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
+            </el-col>
         </el-row>
     </el-form>
 </template>
@@ -125,3 +127,8 @@ export default {
     }
 }
 </script>
+<style>
+#runAnalyticBtn {
+    float:right;
+}
+</style>

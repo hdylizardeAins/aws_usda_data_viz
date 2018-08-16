@@ -46,7 +46,6 @@ export default {
     data(){
         return {
             activeIndex: "2",
-            datasetRawData: "",
             showDatasetViewer: false
         }
     },

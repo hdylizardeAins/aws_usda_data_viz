@@ -37,7 +37,6 @@
           <el-button type="primary" style="width: 100%" :disabled="nextButtonDisabled" @click="handleNextClick">Next</el-button>
         </el-col>
       </el-row>
-      <!-- <csv-viewer :raw-data="datasetRawData" :showTable="showDatasetViewer"/>-->
       <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
       <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
         <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>

@@ -1,7 +1,7 @@
 <template>
     <div v-show="visible" id="analytics-panel" class="bordered-panel">
         <el-container>
-            <el-row>2. Choose Analytics</el-row>
+            <el-row>2. Choose Analytics(s)</el-row>
             <el-row>
                 <el-col>
                     <el-table ref="analyticsTable" :data="analytics" stripe @selection-change="handleSelectionChange">
@@ -17,8 +17,8 @@
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :span="3" :offset="21" >
-                    <el-button class="analytic_next_btn" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">Next</el-button>
+                <el-col :span="4" :offset="20" >
+                    <el-button id="analyticsNextButton" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">Next</el-button>
                 </el-col>
             </el-row>
         </el-container>
@@ -104,7 +104,7 @@ export default {
 };
 </script>
 <style>
-.analytic_next_btn {
-    width: 100%;
+#analyticsNextButton {
+    float: right;
 }
 </style>

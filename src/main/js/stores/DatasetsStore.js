@@ -140,7 +140,7 @@ var datasetsStore = {
             }
         },
         loadDatasetData: function(context, ds) {
-            if (ds.filetype === 'CSV'){
+            if (ds.filetype.trim().toLowerCase() === 'csv'){
                 axios.get('/datasets/data', {
                     params:{
                         file: ds.filePath
@@ -189,7 +189,7 @@ var datasetsStore = {
                 })
         },
         mergeDatasets: function(context, payload) {
-            axios.post('/datasets/merge', payload.data)
+            axios.post('/datasets/merge?name=' + payload.name, payload.data)
                 .then((response) => {
 
                     context.commit("updateSelectedDatasets", []);

@@ -61,8 +61,8 @@ export default {
 </script>
 <style>
 #newWorkDiv {
-    padding-right: 200px;
-    padding-left: 200px;
+    padding-right: 10%;
+    padding-left: 10%;
 }
 
 .responsive-flex-row {
@@ -71,12 +71,12 @@ export default {
 }
 
 .left-panels-flex {
-    min-width: 500px;
+    min-width: 450px;
     max-width: 745px;
 }
 
 .right-panels-flex {
-    min-width: 500px;
+    min-width: 450px;
     max-width: 745px;
     
 }

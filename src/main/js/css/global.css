@@ -238,3 +238,8 @@ div.el-message-box__wrapper {
     padding: 4px;
     margin: 2px;
 }
+
+/* Prevent words from breaking in the middle*/
+.el-table .cell{
+    word-break: normal;
+}

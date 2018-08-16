@@ -1,5 +1,9 @@
 <template>
     <el-container>
+      <el-form :model="formdata" label-position="right" label-width="50px">
+          <el-form-item label="name">
+            <el-input v-model="formdata.name" placeholder="Enter a name for the merged dataset"></el-input>
+          </el-form-item>
         <el-row type="flex">
             <el-col class="bordered-panel dataset-a-flex" id="datasetA" :span="11">
               <h3>{{formdata.datasetA.metadata.name}}</h3>
@@ -32,6 +36,7 @@
             <el-button type="primary" style="width: 100%" @click="submitMerge">Merge</el-button>
           </el-col>
         </el-row>
+      </el-form>
     </el-container>
 </template>
 
@@ -41,6 +46,7 @@ export default {
   data() {
     return {
       formdata: {
+        name: '',
         datasetA: {
           metadata: {},
           selectedColumns: []
@@ -117,6 +123,7 @@ export default {
       dataset2.mergeData.filters[dataset2.mergeColumnsPayload.groupColumn] = this.formdata.datasetB.selectedColumns;
 
       let payload = {
+        name: this.formdata.name,
         data: [dataset1.mergeData, dataset2.mergeData],
         success: function() {
           this.$refs.datasetATable.clearSelection();

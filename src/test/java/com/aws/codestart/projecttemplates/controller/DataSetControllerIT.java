@@ -100,7 +100,7 @@ public class DataSetControllerIT {
 		List<FilteredDataSet> dataSetList = Arrays.asList(dataSet, dataSet1);
 		
 		RequestSpecification given = given().basePath("/datasets").port(this.port).contentType(ContentType.JSON)
-				.body(dataSetList, ObjectMapperType.JACKSON_2);
+				.body(dataSetList, ObjectMapperType.JACKSON_2).queryParam("name", "Test Name");
 
 		Response when = given.when().post("/merge");
 		DataSet mergeDataSet = when.body().as(DataSet.class);

@@ -3,12 +3,13 @@
                 :title="title"
                 width="90%"
                 :visible='showTable' @close="handleClose">
-        <data-tables v-loading="loading" :data='tableData' :pagination-props='paginationDef' >
+        <data-tables :page-size="10" v-loading="loading" :data='tableData' :table-props='tableProps' :pagination-props='paginationDef' >
                     <el-table-column v-for='header in headers'
                                     :key='header.name'
                                     :prop='header.idx'
                                     :label='header.name'
-                                    :sortable='false'>
+                                    :sortable='false'
+                                    >
                     </el-table-column>
         </data-tables>
     </el-dialog>
@@ -39,10 +40,14 @@ export default {
             // Options for how the page should be paginated
             paginationDef: {
                 layout: 'total, sizes, jumper, ->, prev, pager, next',
-                pageSize: 20,
+                pageSize: 10,
                 pageSizes: [5,10,20],
                 small: false,
                 background: true,
+            },
+            tableProps:{
+                maxHeight: "600",
+                border: true
             }
         }
     },

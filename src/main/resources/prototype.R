@@ -34,6 +34,14 @@ if (length(args)==0) {
     plot(filteredData)
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
+  } else if(action == "boxplot"){
+    xName = args[4]
+    yName = args[5]
+    imgName <- as.character(length(list.files(outputDir)))
+    png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
+    boxplot(as.formula(paste(yName, xName, sep= "~")),data=mydata,las=3)
+    invisible(dev.off())
+    cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "summary"){
     summary(mydata)
   } else if(action == "regression"){

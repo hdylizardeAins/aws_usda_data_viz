@@ -46,7 +46,8 @@ export default {
                 background: true,
             },
             tableProps:{
-                maxHeight: "550"
+                maxHeight: "600",
+                border: true
             }
         }
     },

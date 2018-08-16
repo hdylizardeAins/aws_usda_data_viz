@@ -1,9 +1,7 @@
 package com.aws.codestar.projecttemplates;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties
 public class ApplicationProperties {
 

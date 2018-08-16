@@ -23,6 +23,11 @@
                     <p style="text-align:center;">Page Under Construction</p>
                 </el-main>
             </el-container>
+            <el-footer id="pageFooter">
+                <div id="footerLinkDiv">
+                    <a href="https://www.harmonia.com">About Us</a>
+                </div>
+            </el-footer>
         </el-container>
     </div>
 </template>
@@ -79,5 +84,24 @@ export default {
     min-width: 450px;
     max-width: 745px;
     
+}
+
+#pageFooter{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(4, 124, 192);
+    color: white;
+    text-align: center;
+}
+
+#pageFooter a {
+    color: white;
+}
+
+#footerLinkDiv {
+    position: relative;
+    top: calc(50% - 11px);
 }
 </style>

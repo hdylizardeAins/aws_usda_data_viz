@@ -165,14 +165,9 @@ public class DataSetController {
 
 	private String getFileContents(String fileName) {
 		if (fileName.endsWith(".csv")) {
-			String allowedPath = getPathToFile("prototype.R").getAbsolutePath();
-			allowedPath = getPathFromeFilePath(allowedPath);
-			String requestedPath = getPathToFile(fileName).getAbsolutePath();
-			requestedPath = getPathFromeFilePath(requestedPath);
-			if (requestedPath.equals(allowedPath)) {
 				String content;
 				try {
-					Scanner scan = new Scanner(getPathToFile(fileName));
+					Scanner scan = new Scanner(new File(properties.getOutputDir() + fileName));
 					content = scan.useDelimiter("\\Z").next();
 					scan.close();
 					return content;
@@ -180,8 +175,6 @@ public class DataSetController {
 					e.printStackTrace();
 					return null;
 				}
-			}
-			return null;
 		}
 		return null;
 	}

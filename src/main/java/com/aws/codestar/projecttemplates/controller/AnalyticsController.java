@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.aws.codestar.projecttemplates.ApplicationProperties;
 
 /**
  * Basic Spring web service controller that handles all GET requests.
@@ -19,8 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
+	private static final String EMPTY_STRING = "";
+	private static final String BOXPLOT = "boxplot";
+	private static final String PARAM_LIST_FILTER = "[^A-Za-z0-9,.]";
+	private static final String X_Y_FILTER = "[^A-Za-z0-9.]";
+	private static final String APPLICATION_JSON = "application/json";
 	private static final String TREND = "trend-line";
-	private static final String PLOT_OUTPUT_DIR = "/var/www/html/";
 	private static final String PROTOTYPE_R = "prototype.R";
 	private static final String COLUMNS = "columns";
 	private static final String REGRESSION = "regression";
@@ -30,19 +37,23 @@ public class AnalyticsController {
 	
 	private String scriptLoc;
 	
+	@Autowired
+	private ApplicationProperties properties; 
+	
 	public AnalyticsController() {
 		scriptLoc = RSCRIPT + " " + getPathToFile(PROTOTYPE_R);
 	}
 
 	//TODO Add functionality to select multiple data sets that are compatible before running analytics
-	@RequestMapping(path = "plot", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = PLOT, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "columns") String columns) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 		try {
 			//String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
-			String columnsFiltered = columns.replaceAll("[^A-Za-z0-9,.]", "");
-			String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " " + columnsFiltered);
+
+			String columnsFiltered = columns.replaceAll(PARAM_LIST_FILTER, EMPTY_STRING);
+			String response = runR(cmd, PLOT, inputLoc, properties.getRScriptOutputDir() + " " + columnsFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -50,14 +61,15 @@ public class AnalyticsController {
 		}
 	}
 
-	@RequestMapping(path = "regression", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = REGRESSION, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 		try {
-			String xFiltered = x.replaceAll("[^A-Za-z0-9.]", "");
-			String yFiltered = y.replaceAll("[^A-Za-z0-9.]", "");
-			String response = runR(cmd, REGRESSION, inputLoc, PLOT_OUTPUT_DIR + " linear " + xFiltered + " " + yFiltered);
+
+			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
+			String yFiltered = y.replaceAll(X_Y_FILTER, EMPTY_STRING);
+			String response = runR(cmd, REGRESSION, inputLoc, properties.getRScriptOutputDir() + " linear " + xFiltered + " " + yFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -65,14 +77,30 @@ public class AnalyticsController {
 		}
 	}
 	
-	@RequestMapping(path = TREND, method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = BOXPLOT, method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public ResponseEntity boxplot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
+		String cmd = scriptLoc;
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		try {
+			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
+			String yFiltered = y.replaceAll(X_Y_FILTER, EMPTY_STRING);
+			String response = runR(cmd, BOXPLOT, inputLoc, properties.getRScriptOutputDir() + " " + xFiltered + " " + yFiltered);
+			return ResponseEntity.ok(response);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	@RequestMapping(path = TREND, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity trend(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 		try {
-			String xFiltered = x.replaceAll("[^A-Za-z0-9.]", "");
-			String yFiltered = y.replaceAll("[^A-Za-z0-9.]", "");
-			String response = runR(cmd, TREND, inputLoc, PLOT_OUTPUT_DIR + " " + xFiltered + " " + yFiltered);
+
+			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
+			String yFiltered = y.replaceAll(X_Y_FILTER, EMPTY_STRING);
+			String response = runR(cmd, TREND, inputLoc, properties.getRScriptOutputDir() + " " + xFiltered + " " + yFiltered);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -80,12 +108,12 @@ public class AnalyticsController {
 		}
 	}
 
-	@RequestMapping(path = "summary", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = SUMMARY, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity summary(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 		try {
-			String response = runR(cmd, SUMMARY, inputLoc, "");
+			String response = runR(cmd, SUMMARY, inputLoc, EMPTY_STRING);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -93,12 +121,12 @@ public class AnalyticsController {
 		}
 	}
 
-	@RequestMapping(path = "columns", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(path = COLUMNS, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 		try {
-			String response = runR(cmd, COLUMNS, inputLoc, "");
+			String response = runR(cmd, COLUMNS, inputLoc, EMPTY_STRING);
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -113,7 +141,7 @@ public class AnalyticsController {
 		Process pr = run.exec(exec);
 		pr.waitFor();
 		BufferedReader buf = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-		String line = "";
+		String line = EMPTY_STRING;
 		
 		//print errors
 		BufferedReader errBuf = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
@@ -121,7 +149,7 @@ public class AnalyticsController {
 			System.err.println(line);
 		}
 		
-		String data = "";
+		String data = EMPTY_STRING;
 		while ((line = buf.readLine()) != null) {
 			System.out.println(line);
 			data = line.substring(0, line.length());

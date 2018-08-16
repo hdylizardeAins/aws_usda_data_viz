@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aws.codestar.projecttemplates.ApplicationProperties;
 import com.aws.codestar.projecttemplates.api.DataSet;
 import com.aws.codestar.projecttemplates.api.FilteredDataSet;
 import com.aws.codestar.projecttemplates.utils.FileUtils;
@@ -40,16 +42,16 @@ public class DataSetController {
 	private static final String OBJECT_NAME = "dataSet";
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String DELIMITER = ",";
-	private static final String PLOT_OUTPUT_DIR = "/var/www/html/";
 	private static final String CSV_EXTENSION = ".csv";
 	private static final String EXCEL_EXTENTION = ".xlsx";
-	private static final String GENETIC_ENGINEERING_ADOPTION_DISPLAY_PREFIX = "Genetic Engineering Adoption ";
-	private static final String GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX = "geneticEngineeringAdoption-";
 	private static final String GENETIC_ENGINEERING_ADOPTION_FILE_EXT = CSV_EXTENSION;
 	private static final String DEFAULT_SHEET_NAME = "Data Sheet (machine readable)";
 
 	private static final FilteredDataSetValidator VALIDATOR = new FilteredDataSetValidator();
 
+	@Autowired
+	private ApplicationProperties properties; 
+	
 	/**
 	 * Merges the filtered datasets, stores the merged file and returns a handle for
 	 * the file
@@ -58,7 +60,8 @@ public class DataSetController {
 	 * @return the handle for the merged dataset
 	 */
 	@RequestMapping(path = "merge", method = RequestMethod.POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-	public ResponseEntity merge(@RequestBody List<FilteredDataSet> dataSets) {
+	public ResponseEntity merge(@RequestBody List<FilteredDataSet> dataSets, @RequestParam(value = "name") String mergedDatasetName) {
+		mergedDatasetName = mergedDatasetName.trim();
 		try {
 			RowSortedTable<String, String, String> finalGraph = TreeBasedTable.create();
 			String finalPivotColumn = null;
@@ -72,7 +75,7 @@ public class DataSetController {
 				}
 
 				String inputFile = filteredDataSet.getFileName();
-				String inputPath = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+				String inputPath = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 
 				String pivotColumn = filteredDataSet.getPivotColumn();
 				String groupColumn = filteredDataSet.getGroupColumn();
@@ -99,10 +102,12 @@ public class DataSetController {
 
 			StringBuilder generatedCSVFile = FileUtils.graphToCSV(finalPivotColumn, finalGraph);
 			long time = System.nanoTime();
-			String fileName = GENETIC_ENGINEERING_ADOPTION_FILE_PREFIX + time + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
-			String filePath = PLOT_OUTPUT_DIR + fileName;
 
-			String displayName = GENETIC_ENGINEERING_ADOPTION_DISPLAY_PREFIX + time;
+			String fileName = mergedDatasetName + "-" + time + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
+			String filePath =  properties.getOutputDir() + fileName;
+
+
+			String displayName = mergedDatasetName;
 			File file = new File(filePath);
 			Files.asCharSink(file, Charsets.UTF_8).write(generatedCSVFile);
 			DataSet dataSet = new DataSet();
@@ -126,13 +131,13 @@ public class DataSetController {
 		try {
 			Set<String> valueList = Collections.emptySet();
 			String inputFile = dataSet.getFileName();
-			String inputPath = new File(PLOT_OUTPUT_DIR, inputFile).getAbsolutePath();
+			String inputPath = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 			String column = dataSet.getGroupColumn();
 			Map<String, List<String>> filters = dataSet.getFilters();
 			if (inputFile.endsWith(EXCEL_EXTENTION)) {
 				valueList = FileUtils.retrieveExcelColumnValues(inputPath, DEFAULT_SHEET_NAME, column, filters);
 			} else if (inputFile.endsWith(CSV_EXTENSION)) {
-				valueList = FileUtils.retrieveCSVColumnValues(inputFile, column, filters);
+				valueList = FileUtils.retrieveCSVColumnValues(inputPath, column, filters);
 			}
 			return ResponseEntity.ok(valueList);
 		} catch (IOException e) {

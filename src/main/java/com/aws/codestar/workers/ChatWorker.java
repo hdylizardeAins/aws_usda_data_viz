@@ -80,7 +80,8 @@ public class ChatWorker implements Runnable {
 			// Grab message from queue
 			ChatMessage msg;
 			try {
-				msg = queue.take();
+				msg = queue.poll(100, TimeUnit.MILLISECONDS);
+				if (msg == null) continue;
 				lock.lock();
 
 				try {

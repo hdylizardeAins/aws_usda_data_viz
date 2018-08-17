@@ -5,7 +5,7 @@ var analyticsStore = {
     state: {
         analytics: [
             {
-                displayName: "Plot",
+                displayName: "Scatter Plot Matrix",
                 name: "Plot",
                 description:"This visualization uses the R scatter plot function to plot two-dimensional data, as well as matrices of plots for visualizing more dimensions. It can be used to quickly find related features.",
                 link: "https://www.rdocumentation.org/packages/graphics/versions/3.5.1/topics/plot",
@@ -49,7 +49,18 @@ var analyticsStore = {
                 selected: false
             },
             {
-                displayName: "TBD",
+                displayName: "Correlation Heat Map",
+                name: "Correlation",
+                description:"This visualization shows how well pairs of variables are correlated using a heat map.",
+                link: "https://cran.r-project.org/web/packages/ggcorrplot/index.html",
+                requiresXY: false,
+                // These booleans indicate whether the user is allowed to select more than 1 X or Y value
+                multiSelectX: false,
+                multiSelectY: false,
+                selected: false
+            },
+            {
+                displayName: "Custom R Script",
                 name: "TBD",
                 unselectable: true,
                 selected: false

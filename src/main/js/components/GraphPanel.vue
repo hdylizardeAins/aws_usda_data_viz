@@ -1,9 +1,14 @@
 <template>
-    <el-row v-loading="loading">
-
-        <img :src="execution.imagePath"/>
-
-    </el-row>
+	<div>
+		<el-row v-loading="loading">
+		
+		    <img :src="execution.imagePath"/>
+		
+		</el-row>
+		<el-row>
+		    	<span>{{execution.graphText}}</span>
+		</el-row>
+    </div>    
 </template>
 
 <script>

@@ -10,6 +10,7 @@
 #install.packages("caret")
 invisible(library(caret))
 invisible(library(ggplot2))
+invisible(library(ggcorrplot))
 #installOrIncludeLib("caret")
 
 args = commandArgs(trailingOnly=TRUE)
@@ -22,26 +23,19 @@ if (length(args)==0) {
   outputDir <- args[3] #use only for plot and regression plot
   mydata <- read.csv(inputFile)
   attach(mydata)
-  #factors <- c("factor1", "factor2")
-  #as.formula(paste("y~", paste(factors, collapse="+")))
   
   if(action == "plot"){
-    columnsParam <- args[4]
-    columns <- c(unlist(strsplit(columnsParam,",")))
-    filteredData <- mydata[columns]
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
-    plot(filteredData)
+    plot(mydata)
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "boxplot"){
     xName = args[4]
     yName = args[5]
     imgName <- as.character(length(list.files(outputDir)))
-    png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
-    #boxplot(as.formula(paste(yName, xName, sep= "~")),data=mydata,las=3)
-    ggplot(mydata, aes_string(x=xName, y=yName)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    invisible(dev.off())
+    g <- ggplot(mydata, aes_string(x=xName, y=yName)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    ggsave(filename=paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), plot=g)
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "summary"){
     summary(mydata)
@@ -52,10 +46,18 @@ if (length(args)==0) {
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
     linearMod <- lm(as.formula(paste(yName, xName, sep= "~")), data=mydata)
+    lmSummary <- summary(linearMod)
+    stdError <- lmSummary$sigma
     plot(mydata[,xName], mydata[,yName], xlab=xName, ylab=yName)
     abline(linearMod)
     invisible(dev.off())
-    cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"text\": \"slope:", round(linearMod$coefficients[2], 3), " intercept:", round(linearMod$coefficients[1], 3), "\"}", collapse = "", sep = ""))
+    cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"text\": \"Slope:", round(linearMod$coefficients[2], 3), " Intercept: ", round(linearMod$coefficients[1], 3), " Standard error: ", round(stdError, 3), "\"}", collapse = "", sep = ""))
+  } else if(action == "correlation"){
+    imgName <- as.character(length(list.files(outputDir)))
+    corr <- round(cor(mydata), 1)
+    g <- ggcorrplot(corr)
+    ggsave(filename=paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), plot=g)
+    cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "trend-line"){
     xName = args[4]
     yName = args[5]

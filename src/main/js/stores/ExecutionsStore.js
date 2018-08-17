@@ -23,6 +23,7 @@ var executionsStore = {
             }
             else {
                 found.imagePath = execution.imagePath;
+                found.graphText = execution.graphText;
             }
         },
         pruneExecutionsByDatasetNames: function (state, datasetNames){

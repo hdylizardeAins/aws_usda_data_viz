@@ -22,6 +22,7 @@ import com.aws.codestar.projecttemplates.ApplicationProperties;
 @RequestMapping("/analytics")
 public class AnalyticsController {
 
+	private static final String CORRELATION = "correlation";
 	private static final String EMPTY_STRING = "";
 	private static final String BOXPLOT = "boxplot";
 	private static final String PARAM_LIST_FILTER = "[^A-Za-z0-9,.]";
@@ -44,16 +45,25 @@ public class AnalyticsController {
 		scriptLoc = RSCRIPT + " " + getPathToFile(PROTOTYPE_R);
 	}
 
-	//TODO Add functionality to select multiple data sets that are compatible before running analytics
 	@RequestMapping(path = PLOT, method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "columns") String columns) {
+	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
 		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 		try {
-			//String response = runR(cmd, PLOT, inputLoc, PLOT_OUTPUT_DIR + " \"" + columns + "\"");
-
-			String columnsFiltered = columns.replaceAll(PARAM_LIST_FILTER, EMPTY_STRING);
-			String response = runR(cmd, PLOT, inputLoc, properties.getRScriptOutputDir() + " " + columnsFiltered);
+			String response = runR(cmd, PLOT, inputLoc, properties.getRScriptOutputDir());
+			return ResponseEntity.ok(response);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	@RequestMapping(path = CORRELATION, method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public ResponseEntity correlation(@RequestParam(value = "inputFile") String inputFile) {
+		String cmd = scriptLoc;
+		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		try {
+			String response = runR(cmd, CORRELATION, inputLoc, properties.getRScriptOutputDir());
 			return ResponseEntity.ok(response);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();

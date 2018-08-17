@@ -116,7 +116,8 @@ export default {
                         this.$store.commit('updateExecution', {
                             dataset: self.execution.dataset,
                             analytic: self.execution.analytic,
-                            imagePath: path
+                            imagePath: path,
+                            graphText: response.data.text
                         });
                         EventBus.$emit("executionFinished");
                     }.bind(this)

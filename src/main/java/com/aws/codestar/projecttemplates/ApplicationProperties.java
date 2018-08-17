@@ -10,6 +10,8 @@ public class ApplicationProperties {
 	private String rScriptOutputDir;
 
 	private String outputDir;
+	
+	private String chatFilePath;
 
 	public String getRScriptLocation() {
 		return rScriptLocation;
@@ -33,5 +35,13 @@ public class ApplicationProperties {
 
 	public void setOutputDir(String outputDir) {
 		this.outputDir = outputDir;
+	}
+
+	public String getChatFilePath() {
+		return chatFilePath;
+	}
+
+	public void setChatFilePath(String chatFilePath) {
+		this.chatFilePath = chatFilePath;
 	}
 }

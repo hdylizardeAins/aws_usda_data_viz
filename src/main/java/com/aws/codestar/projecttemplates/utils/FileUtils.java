@@ -8,16 +8,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,8 @@ public class FileUtils {
 
 	private static final String EMPTY_STRING = "";
 	private static final String NON_ALPHANUMBERIC_REGEX = "[^A-Za-z0-9]";
-	private static final char OUTPUT_CSV_DELIMITER = ',';
+	private static final char OUTPUT_CSV_COMMA_DELIMITER = ',';
+
 	private final static ByteOrderMark[] EXCLUSION_BOM_ARR = new ByteOrderMark[] { ByteOrderMark.UTF_8,
 			ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE };
 	private static final char LF = '\n';
@@ -91,7 +93,7 @@ public class FileUtils {
 
 		// Build a csv object from the graph
 		final StringBuilder out = new StringBuilder();
-		final CSVPrinter printer = CSVFormat.DEFAULT.withDelimiter(OUTPUT_CSV_DELIMITER).withRecordSeparator(LF)
+		final CSVPrinter printer = CSVFormat.DEFAULT.withDelimiter(OUTPUT_CSV_COMMA_DELIMITER).withRecordSeparator(LF)
 				.print(out);
 
 		// Make header for the csv file
@@ -177,7 +179,6 @@ public class FileUtils {
 
 					// If row is to be kept, add it to the graph
 					if (keepRow) {
-
 						Cell cell = row.getCell(columnId);
 						String cellValue = dataFormatter.formatCellValue(cell);
 						if (StringUtils.isNotBlank(cellValue)) {
@@ -285,6 +286,47 @@ public class FileUtils {
 			}
 		}
 		return graph;
+	}
+
+	/**
+	 * Transforms the content of a excel file into csv format
+	 *
+	 * @param filePath       the path to the excel file
+	 * @param excelSheetName the name of the sheet containing the data to convert
+	 * @return a string builder containing the csv data
+	 * @throws IOException if there is an error reading the excel file
+	 */
+	public static StringBuilder excelToCSV(String filePath, String excelSheetName) throws IOException {
+
+		if (filePath == null) {
+			return null;
+		}
+
+		// Build a csv object from the graph
+		final StringBuilder out = new StringBuilder();
+
+		try (InputStream stream = org.apache.commons.io.FileUtils.openInputStream(new File(filePath));
+				XSSFWorkbook wb = new XSSFWorkbook(stream);
+				CSVPrinter printer = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL)
+						.withDelimiter(OUTPUT_CSV_COMMA_DELIMITER).withNullString(EMPTY_STRING).withRecordSeparator(LF).print(out);) {
+			XSSFSheet sheet = wb.getSheet(excelSheetName);
+			if (sheet == null) {
+				sheet = wb.getSheetAt(0);
+			}
+			DataFormatter dataFormatter = new DataFormatter();
+			for (Row row : sheet) {
+				// Add data to csv
+				List<String> values = new LinkedList<>();
+				for(int cellnum=0; cellnum < row.getLastCellNum(); cellnum++){
+					Cell cell = row.getCell(cellnum);
+					String cellValue = dataFormatter.formatCellValue(cell);
+					values.add(cellValue);
+				}
+
+				printer.printRecord(values);
+			}
+		}
+		return out;
 	}
 
 	/**

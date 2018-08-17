@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,20 +39,22 @@ import com.google.common.io.Files;
 @RequestMapping("/datasets")
 public class DataSetController {
 
+	private static final String DASH = "-";
+	private static final String PERIOD = ".";
 	private static final String TEXT_PLAIN = "text/plain";
 	private static final String OBJECT_NAME = "dataSet";
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String DELIMITER = ",";
-	private static final String CSV_EXTENSION = ".csv";
-	private static final String EXCEL_EXTENTION = ".xlsx";
+	private static final String CSV_EXTENSION = "csv";
+	private static final String EXCEL_EXTENSION = "xlsx";
 	private static final String GENETIC_ENGINEERING_ADOPTION_FILE_EXT = CSV_EXTENSION;
 	private static final String DEFAULT_SHEET_NAME = "Data Sheet (machine readable)";
 
 	private static final FilteredDataSetValidator VALIDATOR = new FilteredDataSetValidator();
 
 	@Autowired
-	private ApplicationProperties properties; 
-	
+	private ApplicationProperties properties;
+
 	/**
 	 * Merges the filtered datasets, stores the merged file and returns a handle for
 	 * the file
@@ -60,7 +63,8 @@ public class DataSetController {
 	 * @return the handle for the merged dataset
 	 */
 	@RequestMapping(path = "merge", method = RequestMethod.POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-	public ResponseEntity merge(@RequestBody List<FilteredDataSet> dataSets, @RequestParam(value = "name") String mergedDatasetName) {
+	public ResponseEntity merge(@RequestBody List<FilteredDataSet> dataSets,
+			@RequestParam(value = "name") String mergedDatasetName) {
 		mergedDatasetName = mergedDatasetName.trim();
 		try {
 			RowSortedTable<String, String, String> finalGraph = TreeBasedTable.create();
@@ -83,10 +87,11 @@ public class DataSetController {
 				Map<String, List<String>> filters = filteredDataSet.getFilters();
 
 				RowSortedTable<String, String, String> dataSetGraph = null;
-				if (inputFile.endsWith(EXCEL_EXTENTION)) {
+				String extenstion = FilenameUtils.getExtension(inputFile);
+				if (EXCEL_EXTENSION.equalsIgnoreCase(extenstion)) {
 					dataSetGraph = FileUtils.excelToGraph(inputPath, DEFAULT_SHEET_NAME, pivotColumn, groupColumn,
 							valueColumn, filters);
-				} else if (inputFile.endsWith(CSV_EXTENSION)) {
+				} else if (CSV_EXTENSION.equalsIgnoreCase(extenstion)) {
 					dataSetGraph = FileUtils.csvToGraph(inputPath, pivotColumn, groupColumn, valueColumn, filters);
 				} else {
 					// TODO return invalid extension message
@@ -103,9 +108,8 @@ public class DataSetController {
 			StringBuilder generatedCSVFile = FileUtils.graphToCSV(finalPivotColumn, finalGraph);
 			long time = System.nanoTime();
 
-			String fileName = mergedDatasetName + "-" + time + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
-			String filePath =  properties.getOutputDir() + fileName;
-
+			String fileName = mergedDatasetName + DASH + time + PERIOD + GENETIC_ENGINEERING_ADOPTION_FILE_EXT;
+			String filePath = properties.getOutputDir() + fileName;
 
 			String displayName = mergedDatasetName;
 			File file = new File(filePath);
@@ -114,6 +118,49 @@ public class DataSetController {
 			dataSet.setFileName(fileName);
 			dataSet.setDisplayName(displayName);
 			return ResponseEntity.ok(dataSet);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Merges the filtered datasets, stores the merged file and returns a handle for
+	 * the file
+	 *
+	 * @param dataSets the datasets to merge
+	 * @return the handle for the merged dataset
+	 */
+	@RequestMapping(path = "convert", method = RequestMethod.POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+	public ResponseEntity convertToCsv(@RequestBody DataSet dataSet) {
+		try {
+			String inputFile = dataSet.getFileName();
+			String fileName = FilenameUtils.getName(inputFile);
+			String extenstion = FilenameUtils.getExtension(fileName);
+			if (EXCEL_EXTENSION.equalsIgnoreCase(extenstion)) {
+				String inputPath = new File(properties.getOutputDir(), fileName).getAbsolutePath();
+
+				StringBuilder generatedFile = FileUtils.excelToCSV(inputPath, DEFAULT_SHEET_NAME);
+				long time = System.nanoTime();
+
+				String fileNameNoExt = FilenameUtils.removeExtension(fileName);
+				String newfileName = fileNameNoExt + DASH + time + PERIOD + CSV_EXTENSION;
+				String filePath = properties.getOutputDir() + newfileName;
+				File file = new File(filePath);
+				Files.asCharSink(file, Charsets.UTF_8).write(generatedFile);
+
+				DataSet newDataSet = new DataSet();
+				String displayName = dataSet.getDisplayName();
+				newDataSet.setFileName(newfileName);
+				newDataSet.setDisplayName(displayName);
+				return ResponseEntity.ok(newDataSet);
+			} else if (CSV_EXTENSION.equalsIgnoreCase(extenstion)) {
+				return ResponseEntity.ok(dataSet);
+			} else {
+				// TODO return invalid conversion message
+				return ResponseEntity.badRequest().build();
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -134,9 +181,11 @@ public class DataSetController {
 			String inputPath = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
 			String column = dataSet.getGroupColumn();
 			Map<String, List<String>> filters = dataSet.getFilters();
-			if (inputFile.endsWith(EXCEL_EXTENTION)) {
+
+			String extenstion = FilenameUtils.getExtension(inputFile);
+			if (EXCEL_EXTENSION.equalsIgnoreCase(extenstion)) {
 				valueList = FileUtils.retrieveExcelColumnValues(inputPath, DEFAULT_SHEET_NAME, column, filters);
-			} else if (inputFile.endsWith(CSV_EXTENSION)) {
+			} else if (CSV_EXTENSION.equalsIgnoreCase(extenstion)) {
 				valueList = FileUtils.retrieveCSVColumnValues(inputPath, column, filters);
 			}
 			return ResponseEntity.ok(valueList);
@@ -165,16 +214,16 @@ public class DataSetController {
 
 	private String getFileContents(String fileName) {
 		if (fileName.endsWith(".csv")) {
-				String content;
-				try {
-					Scanner scan = new Scanner(new File(properties.getOutputDir() + fileName));
-					content = scan.useDelimiter("\\Z").next();
-					scan.close();
-					return content;
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					return null;
-				}
+			String content;
+			try {
+				Scanner scan = new Scanner(new File(properties.getOutputDir() + fileName));
+				content = scan.useDelimiter("\\Z").next();
+				scan.close();
+				return content;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 		return null;
 	}

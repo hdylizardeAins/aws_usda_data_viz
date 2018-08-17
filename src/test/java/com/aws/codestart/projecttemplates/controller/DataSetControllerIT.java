@@ -1,5 +1,6 @@
 package com.aws.codestart.projecttemplates.controller;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.SpringBootConfiguration;
@@ -14,6 +15,7 @@ import com.aws.codestar.projecttemplates.api.FilteredDataSet;
 import com.aws.codestar.projecttemplates.controller.DataSetController;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
@@ -73,6 +75,24 @@ public class DataSetControllerIT {
 		String[] columns = when.body().as(String[].class);
 		assertTrue(columns.length > 0);
 	}
+	
+	@Test
+	public void testConvertEnpointForExcel() {
+		DataSet dataSet = new DataSet();
+		String fileName = "CornCostReturn.xlsx";
+		dataSet.setFileName(fileName);
+		dataSet.setDisplayName("Test Display Name");
+		RequestSpecification given = given().basePath("/datasets").port(this.port).contentType(ContentType.JSON)
+				.body(dataSet, ObjectMapperType.JACKSON_2);
+
+		String baseName = FilenameUtils.removeExtension(fileName);
+		Response when = given.when().post("/convert");
+		DataSet newDataSet = when.body().as(DataSet.class);
+		String newFileName = newDataSet.getFileName();
+		assertTrue(newFileName.endsWith(".csv"));
+		assertTrue(newFileName.startsWith(baseName));
+		assertEquals(dataSet.getDisplayName(), newDataSet.getDisplayName());
+	}
 
 	@Test
 	public void testMergeEnpoint() {
@@ -105,6 +125,7 @@ public class DataSetControllerIT {
 		Response when = given.when().post("/merge");
 		DataSet mergeDataSet = when.body().as(DataSet.class);
 		assertNotNull(mergeDataSet);
+		assertTrue(mergeDataSet.getFileName().endsWith(".csv"));
 	}
 
 }

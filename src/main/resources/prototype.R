@@ -39,7 +39,8 @@ if (length(args)==0) {
     yName = args[5]
     imgName <- as.character(length(list.files(outputDir)))
     png(file = paste(outputDir, "/", imgName, ".png", collapse = "", sep = ""), bg = "transparent")
-    boxplot(as.formula(paste(yName, xName, sep= "~")),data=mydata,las=3)
+    #boxplot(as.formula(paste(yName, xName, sep= "~")),data=mydata,las=3)
+    ggplot(mydata, aes_string(x=xName, y=yName)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
     invisible(dev.off())
     cat(paste("{\"outputFile\":\"", imgName, ".png", "\"}", collapse = "", sep = ""))
   } else if(action == "summary"){
@@ -54,7 +55,7 @@ if (length(args)==0) {
     plot(mydata[,xName], mydata[,yName], xlab=xName, ylab=yName)
     abline(linearMod)
     invisible(dev.off())
-    cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"intercept\":", linearMod$coefficients[1], ",\"slope\":", linearMod$coefficients[2], "}", collapse = "", sep = ""))
+    cat(paste("{\"outputFile\":\"", imgName, ".png", "\", \"text\": \"slope:", round(linearMod$coefficients[2], 3), " intercept:", round(linearMod$coefficients[1], 3), "\"}", collapse = "", sep = ""))
   } else if(action == "trend-line"){
     xName = args[4]
     yName = args[5]

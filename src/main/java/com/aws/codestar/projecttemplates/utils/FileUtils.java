@@ -302,13 +302,31 @@ public class FileUtils {
 			return null;
 		}
 
+		return excelToCSV(org.apache.commons.io.FileUtils.openInputStream(new File(filePath)), excelSheetName);
+	}
+
+	/**
+	 * Transforms the content of a excel file into csv format
+	 *
+	 * @param excelInputStream the input stream containing the excel file
+	 * @param excelSheetName   the name of the sheet containing the data to convert
+	 * @return a string builder containing the csv data
+	 * @throws IOException if there is an error reading the excel file
+	 */
+	public static StringBuilder excelToCSV(InputStream excelInputStream, String excelSheetName) throws IOException {
+
+		if (excelInputStream == null) {
+			return null;
+		}
+
 		// Build a csv object from the graph
 		final StringBuilder out = new StringBuilder();
 
-		try (InputStream stream = org.apache.commons.io.FileUtils.openInputStream(new File(filePath));
+		try (InputStream stream = excelInputStream;
 				XSSFWorkbook wb = new XSSFWorkbook(stream);
 				CSVPrinter printer = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL)
-						.withDelimiter(OUTPUT_CSV_COMMA_DELIMITER).withNullString(EMPTY_STRING).withRecordSeparator(LF).print(out);) {
+						.withDelimiter(OUTPUT_CSV_COMMA_DELIMITER).withNullString(EMPTY_STRING).withRecordSeparator(LF)
+						.print(out);) {
 			XSSFSheet sheet = wb.getSheet(excelSheetName);
 			if (sheet == null) {
 				sheet = wb.getSheetAt(0);
@@ -317,7 +335,7 @@ public class FileUtils {
 			for (Row row : sheet) {
 				// Add data to csv
 				List<String> values = new LinkedList<>();
-				for(int cellnum=0; cellnum < row.getLastCellNum(); cellnum++){
+				for (int cellnum = 0; cellnum < row.getLastCellNum(); cellnum++) {
 					Cell cell = row.getCell(cellnum);
 					String cellValue = dataFormatter.formatCellValue(cell);
 					values.add(cellValue);

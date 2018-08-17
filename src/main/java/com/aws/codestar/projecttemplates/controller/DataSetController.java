@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aws.codestar.projecttemplates.ApplicationProperties;
 import com.aws.codestar.projecttemplates.api.DataSet;
 import com.aws.codestar.projecttemplates.api.FilteredDataSet;
+import com.aws.codestar.projecttemplates.exception.IncompatibleColumnValuesException;
 import com.aws.codestar.projecttemplates.utils.FileUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.RowSortedTable;
@@ -79,7 +80,7 @@ public class DataSetController {
 				}
 
 				String inputFile = filteredDataSet.getFileName();
-				String inputPath = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+				String inputPath = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 
 				String pivotColumn = filteredDataSet.getPivotColumn();
 				String groupColumn = filteredDataSet.getGroupColumn();
@@ -121,6 +122,9 @@ public class DataSetController {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch ( IncompatibleColumnValuesException e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 
@@ -178,7 +182,7 @@ public class DataSetController {
 		try {
 			Set<String> valueList = Collections.emptySet();
 			String inputFile = dataSet.getFileName();
-			String inputPath = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+			String inputPath = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 			String column = dataSet.getGroupColumn();
 			Map<String, List<String>> filters = dataSet.getFilters();
 

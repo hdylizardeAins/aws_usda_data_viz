@@ -48,7 +48,7 @@ public class AnalyticsController {
 	@RequestMapping(path = PLOT, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity plot(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 		try {
 			String response = runR(cmd, PLOT, inputLoc, properties.getRScriptOutputDir());
 			return ResponseEntity.ok(response);
@@ -61,7 +61,7 @@ public class AnalyticsController {
 	@RequestMapping(path = CORRELATION, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity correlation(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 		try {
 			String response = runR(cmd, CORRELATION, inputLoc, properties.getRScriptOutputDir());
 			return ResponseEntity.ok(response);
@@ -74,7 +74,7 @@ public class AnalyticsController {
 	@RequestMapping(path = REGRESSION, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity regression(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 		try {
 
 			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
@@ -90,7 +90,7 @@ public class AnalyticsController {
 	@RequestMapping(path = BOXPLOT, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity boxplot(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 
 		try {
 			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
@@ -106,7 +106,7 @@ public class AnalyticsController {
 	@RequestMapping(path = TREND, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity trend(@RequestParam(value = "inputFile") String inputFile, @RequestParam(value = "x") String x, @RequestParam(value = "y") String y) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 		try {
 
 			String xFiltered = x.replaceAll(X_Y_FILTER, EMPTY_STRING);
@@ -122,7 +122,7 @@ public class AnalyticsController {
 	@RequestMapping(path = SUMMARY, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity summary(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 		try {
 			String response = runR(cmd, SUMMARY, inputLoc, EMPTY_STRING);
 			return ResponseEntity.ok(response);
@@ -135,7 +135,7 @@ public class AnalyticsController {
 	@RequestMapping(path = COLUMNS, method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public ResponseEntity columns(@RequestParam(value = "inputFile") String inputFile) {
 		String cmd = scriptLoc;
-		String inputLoc = new File(properties.getOutputDir(), inputFile).getAbsolutePath();
+		String inputLoc = new File(properties.getInputDir(), inputFile).getAbsolutePath();
 		try {
 			String response = runR(cmd, COLUMNS, inputLoc, EMPTY_STRING);
 			return ResponseEntity.ok(response);

@@ -75,7 +75,7 @@ public class DataSetControllerIT {
 		String[] columns = when.body().as(String[].class);
 		assertTrue(columns.length > 0);
 	}
-	
+
 	@Test
 	public void testConvertEnpointForExcel() {
 		DataSet dataSet = new DataSet();
@@ -116,9 +116,9 @@ public class DataSetControllerIT {
 		excelFilters.put("Region", Arrays.asList("U.S. total"));
 		excelFilters.put("Item2", Arrays.asList("Total, operating costs", "Seed", "Total, gross value of production"));
 		dataSet1.setFilters(excelFilters);
-		
+
 		List<FilteredDataSet> dataSetList = Arrays.asList(dataSet, dataSet1);
-		
+
 		RequestSpecification given = given().basePath("/datasets").port(this.port).contentType(ContentType.JSON)
 				.body(dataSetList, ObjectMapperType.JACKSON_2).queryParam("name", "Test Name");
 
@@ -126,6 +126,74 @@ public class DataSetControllerIT {
 		DataSet mergeDataSet = when.body().as(DataSet.class);
 		assertNotNull(mergeDataSet);
 		assertTrue(mergeDataSet.getFileName().endsWith(".csv"));
+	}
+
+	@Test
+	public void testMergeEnpointValidationExcel() {
+		FilteredDataSet dataSet = new FilteredDataSet();
+		dataSet.setFileName("alltablesGEcrops.csv");
+		dataSet.setPivotColumn("Year");
+		dataSet.setGroupColumn("Unit");
+		dataSet.setValueColumn("Value");
+		Map<String, List<String>> filters = new HashMap<>();
+		filters.put("State", Arrays.asList("U.S."));
+		filters.put("Crop", Arrays.asList("Corn"));
+		filters.put("Variety", Arrays.asList("All GE varieties"));
+
+		FilteredDataSet dataSet1 = new FilteredDataSet();
+		dataSet1.setFileName("CornCostReturnWithErrors.xlsx");
+		dataSet1.setPivotColumn("Year");
+		dataSet1.setGroupColumn("Item2");
+		dataSet1.setValueColumn("Value");
+
+		Map<String, List<String>> excelFilters = new HashMap<>();
+		excelFilters.put("Region", Arrays.asList("U.S. total"));
+		excelFilters.put("Item2", Arrays.asList("Total, operating costs", "Seed", "Total, gross value of production"));
+		dataSet1.setFilters(excelFilters);
+
+		List<FilteredDataSet> dataSetList = Arrays.asList(dataSet, dataSet1);
+
+		RequestSpecification given = given().basePath("/datasets").port(this.port).contentType(ContentType.JSON)
+				.body(dataSetList, ObjectMapperType.JACKSON_2).queryParam("name", "Test Name");
+
+		Response when = given.when().post("/merge");
+		assertEquals(400, when.getStatusCode());
+		assertEquals("The value column contain more than one data type.", when.body().asString());
+
+	}
+	
+	@Test
+	public void testMergeEnpointValidationCsv() {
+		FilteredDataSet dataSet = new FilteredDataSet();
+		dataSet.setFileName("alltablesGEcrops.csv");
+		dataSet.setPivotColumn("Year");
+		dataSet.setGroupColumn("Unit");
+		dataSet.setValueColumn("Value");
+		Map<String, List<String>> filters = new HashMap<>();
+		filters.put("State", Arrays.asList("U.S."));
+		filters.put("Crop", Arrays.asList("Corn"));
+		filters.put("Variety", Arrays.asList("All GE varieties"));
+
+		FilteredDataSet dataSet1 = new FilteredDataSet();
+		dataSet1.setFileName("CornCostReturnMRWithErrors.csv");
+		dataSet1.setPivotColumn("Year");
+		dataSet1.setGroupColumn("Item2");
+		dataSet1.setValueColumn("Value");
+
+		Map<String, List<String>> excelFilters = new HashMap<>();
+		excelFilters.put("Region", Arrays.asList("U.S. total"));
+		excelFilters.put("Item2", Arrays.asList("Total, operating costs", "Seed", "Total, gross value of production"));
+		dataSet1.setFilters(excelFilters);
+
+		List<FilteredDataSet> dataSetList = Arrays.asList(dataSet, dataSet1);
+
+		RequestSpecification given = given().basePath("/datasets").port(this.port).contentType(ContentType.JSON)
+				.body(dataSetList, ObjectMapperType.JACKSON_2).queryParam("name", "Test Name");
+
+		Response when = given.when().post("/merge");
+		assertEquals(400, when.getStatusCode());
+		assertEquals("The pivot column contain more than one data type.", when.body().asString());
+
 	}
 
 }

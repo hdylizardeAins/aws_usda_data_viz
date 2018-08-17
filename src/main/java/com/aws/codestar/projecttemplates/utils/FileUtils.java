@@ -22,6 +22,7 @@ import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -29,6 +30,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.aws.codestar.projecttemplates.exception.IncompatibleColumnValuesException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Sets;
@@ -44,6 +47,8 @@ import java.io.InputStreamReader;
  */
 public class FileUtils {
 
+	private static final String THE_PIVOT_COLUMN_CONTAIN_MORE_THAN_ONE_DATA_TYPE = "The pivot column contain more than one data type.";
+	private static final String THE_VALUE_COLUMN_CONTAIN_MORE_THAN_ONE_DATA_TYPE = "The value column contain more than one data type.";
 	private static final String EMPTY_STRING = "";
 	private static final String NON_ALPHANUMBERIC_REGEX = "[^A-Za-z0-9]";
 	private static final char OUTPUT_CSV_COMMA_DELIMITER = ',';
@@ -232,10 +237,14 @@ public class FileUtils {
 	 * @param valueColumn    the column to use for the value
 	 * @param filters        the filters to apply to the excel file
 	 * @return a filtered Table graph
-	 * @throws IOException if there is an error reading the excel file
+	 * @throws IOException                       if there is an error reading the
+	 *                                           excel file
+	 * @throws IncompatibleColumnValuesException if an multiple value types were
+	 *                                           found for a column
 	 */
 	public static RowSortedTable<String, String, String> excelToGraph(String filePath, String excelSheetName,
-			String rowKey, String columnKey, String valueColumn, Map<String, List<String>> filters) throws IOException {
+			String rowKey, String columnKey, String valueColumn, Map<String, List<String>> filters)
+			throws IOException, IncompatibleColumnValuesException {
 
 		// TODO Determine if the file is excel and if not throw exception
 		final RowSortedTable<String, String, String> graph = TreeBasedTable.create();
@@ -264,6 +273,7 @@ public class FileUtils {
 			int valueId = headerToCol.get(valueColumn);
 
 			// Process each row
+
 			for (int r = firstRowIdx; r <= lastRowIdx; r++) {
 				XSSFRow row = sheet.getRow(r);
 
@@ -284,6 +294,20 @@ public class FileUtils {
 					graph.put(pivotCellStr, columnCellStr, valueCellStr);
 				}
 			}
+
+			for (String column : graph.columnKeySet()) {
+				long valueTypes = graph.column(column).values().stream().map(NumberUtils::isCreatable).distinct()
+						.count();
+				if (valueTypes > 1) {
+					throw new IncompatibleColumnValuesException(THE_VALUE_COLUMN_CONTAIN_MORE_THAN_ONE_DATA_TYPE);
+				}
+			}
+
+			long pivotValueTypes = graph.rowKeySet().stream().map(NumberUtils::isCreatable).distinct().count();
+			if (pivotValueTypes > 1) {
+				throw new IncompatibleColumnValuesException(THE_PIVOT_COLUMN_CONTAIN_MORE_THAN_ONE_DATA_TYPE);
+			}
+
 		}
 		return graph;
 	}
@@ -396,10 +420,14 @@ public class FileUtils {
 	 * @param valueColumn the column to use for the value
 	 * @param filters     the filters to apply to the CSV file
 	 * @return a filtered Table graph
-	 * @throws IOException if there is an error reading the CSV file
+	 * @throws IOException                       if there is an error reading the
+	 *                                           CSV file
+	 * @throws IncompatibleColumnValuesException if an multiple value types were
+	 *                                           found for a column
 	 */
 	public static RowSortedTable<String, String, String> csvToGraph(String filePath, String rowKey, String columnKey,
-			String valueColumn, Map<String, List<String>> filters) throws IOException {
+			String valueColumn, Map<String, List<String>> filters)
+			throws IOException, IncompatibleColumnValuesException {
 		// TODO Determine if the file is csv and if not throw exception
 		final RowSortedTable<String, String, String> graph2 = TreeBasedTable.create();
 		if (filePath == null) {
@@ -423,6 +451,19 @@ public class FileUtils {
 					String valueStr = record.get(valueColumn);
 					graph2.put(pivotStr, columnStr, valueStr);
 				}
+			}
+
+			for (String column : graph2.columnKeySet()) {
+				long valueTypes = graph2.column(column).values().stream().map(NumberUtils::isCreatable).distinct()
+						.count();
+				if (valueTypes > 1) {
+					throw new IncompatibleColumnValuesException(THE_VALUE_COLUMN_CONTAIN_MORE_THAN_ONE_DATA_TYPE);
+				}
+			}
+
+			long pivotValueTypes = graph2.rowKeySet().stream().map(NumberUtils::isCreatable).distinct().count();
+			if (pivotValueTypes > 1) {
+				throw new IncompatibleColumnValuesException(THE_PIVOT_COLUMN_CONTAIN_MORE_THAN_ONE_DATA_TYPE);
 			}
 		}
 		return graph2;

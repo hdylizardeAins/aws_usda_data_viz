@@ -13,6 +13,8 @@ public class ApplicationProperties {
 	
 	private String socialDir;
 	
+	private String inputDir;
+	
 	private String chatFileName;
 	
 	public String getRScriptLocation() {
@@ -53,5 +55,13 @@ public class ApplicationProperties {
 
 	public void setSocialDir(String socialDir) {
 		this.socialDir = socialDir;
+	}
+
+	public String getInputDir() {
+		return inputDir;
+	}
+
+	public void setInputDir(String inputDir) {
+		this.inputDir = inputDir;
 	}
 }

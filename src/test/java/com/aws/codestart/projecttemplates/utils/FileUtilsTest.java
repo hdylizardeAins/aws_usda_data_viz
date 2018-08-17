@@ -1,10 +1,12 @@
 package com.aws.codestart.projecttemplates.utils;
 
+import com.aws.codestar.projecttemplates.exception.IncompatibleColumnValuesException;
 import com.aws.codestar.projecttemplates.utils.FileUtils;
 import com.google.common.collect.RowSortedTable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * Tests for the file utility functions
@@ -29,13 +32,15 @@ public class FileUtilsTest {
 	private static final String EXCEL_SHEET_NAME = "Data Sheet (machine readable)";
 	private static final String EXCEL_FILE = "CornCostReturn.xlsx";
 	private static final String EXCEL_CSV_FILE = "CornCostReturnMR.csv";
+	private static final String ERROR_EXCEL_FILE = "CornCostReturnWithErrors.xlsx";
+	private static final String ERROR_EXCEL_CSV_FILE = "CornCostReturnMRWithErrors.csv";
 	private static final String CSV_FILE = "alltablesGEcrops.csv";
 	private static final String PIVOT_COLUMN = "Year";
 	private static final String EXCEL_GROUP_COLUMN = "Item2";
 	private static final String CSV_GROUP_COLUMN = "Unit";
 	private static final String VALUE_COLUMN = "Value";
 
-	private static final String PLOT_OUTPUT_DIR = "./src/main/resources/";
+	private static final String TEST_OUTPUT_DIR = "./src/test/resources/";
 
 	private static final String LF = "\n";
 
@@ -56,9 +61,9 @@ public class FileUtilsTest {
 	}
 
 	@Test
-	public void testCsvToGraph() throws IOException {
+	public void testCsvToGraph() throws IOException, IncompatibleColumnValuesException {
 
-		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_CSV_FILE).getAbsolutePath();
+		String inputPath = new File(TEST_OUTPUT_DIR, EXCEL_CSV_FILE).getAbsolutePath();
 
 		RowSortedTable<String, String, String> csvToGraph = FileUtils.csvToGraph(inputPath, PIVOT_COLUMN,
 				EXCEL_GROUP_COLUMN, VALUE_COLUMN, EXCEL_FILTERS);
@@ -68,8 +73,8 @@ public class FileUtilsTest {
 	}
 
 	@Test
-	public void testExcelToGraph() throws IOException {
-		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
+	public void testExcelToGraph() throws IOException, IncompatibleColumnValuesException {
+		String inputPath = new File(TEST_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
 
 		RowSortedTable<String, String, String> excelToGraph = FileUtils.excelToGraph(inputPath, EXCEL_SHEET_NAME,
 				PIVOT_COLUMN, EXCEL_GROUP_COLUMN, VALUE_COLUMN, EXCEL_FILTERS);
@@ -79,16 +84,36 @@ public class FileUtilsTest {
 	}
 
 	@Test
+	public void testExcelToGraphValidation() throws IOException {
+		String inputPath = new File(TEST_OUTPUT_DIR, ERROR_EXCEL_FILE).getAbsolutePath();
+
+		Executable codeToTest = () -> FileUtils.excelToGraph(inputPath, EXCEL_SHEET_NAME, PIVOT_COLUMN,
+				EXCEL_GROUP_COLUMN, VALUE_COLUMN, EXCEL_FILTERS);
+		Throwable exception = assertThrows(IncompatibleColumnValuesException.class, codeToTest);
+		assertEquals("The value column contain more than one data type.", exception.getMessage());
+	}
+
+	@Test
+	public void testCsvToGraphValidation() throws IOException {
+		String inputPath = new File(TEST_OUTPUT_DIR, ERROR_EXCEL_CSV_FILE).getAbsolutePath();
+
+		Executable codeToTest = () -> FileUtils.csvToGraph(inputPath, PIVOT_COLUMN, EXCEL_GROUP_COLUMN, VALUE_COLUMN,
+				EXCEL_FILTERS);
+		Throwable exception = assertThrows(IncompatibleColumnValuesException.class, codeToTest);
+		assertEquals("The pivot column contain more than one data type.", exception.getMessage());
+	}
+
+	@Test
 	public void testExcelToCSV() throws IOException {
-		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
+		String inputPath = new File(TEST_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
 
 		StringBuilder csvOutput = FileUtils.excelToCSV(inputPath, EXCEL_SHEET_NAME);
 		assertFalse(csvOutput.toString().isEmpty());
 	}
 
 	@Test
-	public void testGraphToCsv() throws IOException {
-		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
+	public void testGraphToCsv() throws IOException, IncompatibleColumnValuesException {
+		String inputPath = new File(TEST_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
 
 		RowSortedTable<String, String, String> excelToGraph = FileUtils.excelToGraph(inputPath, EXCEL_SHEET_NAME,
 				PIVOT_COLUMN, EXCEL_GROUP_COLUMN, VALUE_COLUMN, EXCEL_FILTERS);
@@ -102,13 +127,13 @@ public class FileUtilsTest {
 	}
 
 	@Test
-	public void testMergeGraphs() throws IOException {
-		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_CSV_FILE).getAbsolutePath();
+	public void testMergeGraphs() throws IOException, IncompatibleColumnValuesException {
+		String inputPath = new File(TEST_OUTPUT_DIR, EXCEL_CSV_FILE).getAbsolutePath();
 
 		RowSortedTable<String, String, String> excelCsvToGraph = FileUtils.csvToGraph(inputPath, PIVOT_COLUMN,
 				EXCEL_GROUP_COLUMN, VALUE_COLUMN, EXCEL_FILTERS);
 
-		String inputPath2 = new File(PLOT_OUTPUT_DIR, CSV_FILE).getAbsolutePath();
+		String inputPath2 = new File(TEST_OUTPUT_DIR, CSV_FILE).getAbsolutePath();
 
 		RowSortedTable<String, String, String> csvToGraph = FileUtils.csvToGraph(inputPath2, PIVOT_COLUMN,
 				CSV_GROUP_COLUMN, VALUE_COLUMN, CSV_FILTERS);
@@ -122,7 +147,7 @@ public class FileUtilsTest {
 
 	@Test
 	public void testRetrievalOfExcelColumns() throws IOException {
-		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
+		String inputPath = new File(TEST_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
 
 		Set<String> columns = FileUtils.retrieveExcelColumnValues(inputPath, EXCEL_SHEET_NAME, EXCEL_GROUP_COLUMN,
 				EXCEL_FILTERS);
@@ -131,7 +156,7 @@ public class FileUtilsTest {
 
 	@Test
 	public void testRetrievalOfCsvColumns() throws IOException {
-		String inputPath = new File(PLOT_OUTPUT_DIR, CSV_FILE).getAbsolutePath();
+		String inputPath = new File(TEST_OUTPUT_DIR, CSV_FILE).getAbsolutePath();
 
 		Set<String> columns = FileUtils.retrieveCSVColumnValues(inputPath, CSV_GROUP_COLUMN, CSV_FILTERS);
 		assertEquals(1, columns.size());

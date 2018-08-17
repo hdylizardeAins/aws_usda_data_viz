@@ -23,7 +23,8 @@
                     <p style="text-align:center;">Page Under Construction</p>
                 </el-main>
             </el-container>
-            <el-footer id="pageFooter">
+            <!-- Disabling fixed footer until it can be implemented as an unfixed footer-->
+            <el-footer v-if="false" id="pageFooter">
                 <div id="footerLinkDiv">
                     <a href="https://www.harmonia.com">About Us</a>
                 </div>

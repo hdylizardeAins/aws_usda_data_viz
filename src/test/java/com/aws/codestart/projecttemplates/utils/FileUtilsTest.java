@@ -34,9 +34,9 @@ public class FileUtilsTest {
 	private static final String EXCEL_GROUP_COLUMN = "Item2";
 	private static final String CSV_GROUP_COLUMN = "Unit";
 	private static final String VALUE_COLUMN = "Value";
-	
+
 	private static final String PLOT_OUTPUT_DIR = "./src/main/resources/";
-	
+
 	private static final String LF = "\n";
 
 	private static final Map<String, List<String>> EXCEL_FILTERS;
@@ -57,7 +57,7 @@ public class FileUtilsTest {
 
 	@Test
 	public void testCsvToGraph() throws IOException {
-		
+
 		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_CSV_FILE).getAbsolutePath();
 
 		RowSortedTable<String, String, String> csvToGraph = FileUtils.csvToGraph(inputPath, PIVOT_COLUMN,
@@ -76,6 +76,14 @@ public class FileUtilsTest {
 		assertFalse(excelToGraph.isEmpty());
 		int numberOfColumns = excelToGraph.columnKeySet().size();
 		assertEquals(3, numberOfColumns);
+	}
+
+	@Test
+	public void testExcelToCSV() throws IOException {
+		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
+
+		StringBuilder csvOutput = FileUtils.excelToCSV(inputPath, EXCEL_SHEET_NAME);
+		assertFalse(csvOutput.toString().isEmpty());
 	}
 
 	@Test
@@ -111,15 +119,16 @@ public class FileUtilsTest {
 		assertTrue(csvToGraph.rowKeySet().containsAll(mergedGraph.rowKeySet()));
 		assertTrue(excelCsvToGraph.rowKeySet().containsAll(mergedGraph.rowKeySet()));
 	}
-	
+
 	@Test
 	public void testRetrievalOfExcelColumns() throws IOException {
 		String inputPath = new File(PLOT_OUTPUT_DIR, EXCEL_FILE).getAbsolutePath();
 
-		Set<String> columns = FileUtils.retrieveExcelColumnValues(inputPath, EXCEL_SHEET_NAME, EXCEL_GROUP_COLUMN, EXCEL_FILTERS);
+		Set<String> columns = FileUtils.retrieveExcelColumnValues(inputPath, EXCEL_SHEET_NAME, EXCEL_GROUP_COLUMN,
+				EXCEL_FILTERS);
 		assertEquals(3, columns.size());
 	}
-	
+
 	@Test
 	public void testRetrievalOfCsvColumns() throws IOException {
 		String inputPath = new File(PLOT_OUTPUT_DIR, CSV_FILE).getAbsolutePath();

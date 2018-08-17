@@ -11,8 +11,10 @@ public class ApplicationProperties {
 
 	private String outputDir;
 	
-	private String chatFilePath;
-
+	private String socialDir;
+	
+	private String chatFileName;
+	
 	public String getRScriptLocation() {
 		return rScriptLocation;
 	}
@@ -37,11 +39,19 @@ public class ApplicationProperties {
 		this.outputDir = outputDir;
 	}
 
-	public String getChatFilePath() {
-		return chatFilePath;
+	public String getChatFileName() {
+		return chatFileName;
 	}
 
-	public void setChatFilePath(String chatFilePath) {
-		this.chatFilePath = chatFilePath;
+	public void setChatFileName(String chatFilePath) {
+		this.chatFileName = chatFilePath;
+	}
+
+	public String getSocialDir() {
+		return socialDir;
+	}
+
+	public void setSocialDir(String socialDir) {
+		this.socialDir = socialDir;
 	}
 }

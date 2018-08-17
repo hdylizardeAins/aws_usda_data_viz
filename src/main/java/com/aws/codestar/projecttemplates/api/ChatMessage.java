@@ -15,6 +15,8 @@ public class ChatMessage implements Serializable {
 	 */
 	private static final long serialVersionUID = 5740689814640982673L;
 
+	private String username;
+	
 	private String imageName;
 
 	private String comment;
@@ -26,6 +28,20 @@ public class ChatMessage implements Serializable {
 	 */
 	public String getImageName() {
 		return imageName;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**

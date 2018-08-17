@@ -1,6 +1,5 @@
 package com.aws.codestar.projecttemplates;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,33 +14,29 @@ import org.springframework.context.annotation.Scope;
 import com.aws.codestar.projecttemplates.api.ChatMessage;
 import com.aws.codestar.workers.ChatWorker;
 
-/** Simple class to start up the application.
+/**
+ * Simple class to start up the application.
  *
  * @SpringBootApplication adds:
- *  @Configuration
- *  @EnableAutoConfiguration
- *  @ComponentScan
+ * @Configuration
+ * @EnableAutoConfiguration
+ * @ComponentScan
  */
 @SpringBootApplication
 @EnableConfigurationProperties(ApplicationProperties.class)
 public class Application extends SpringBootServletInitializer {
-	
+
 	@Autowired
 	ApplicationProperties applicationProperties;
-    
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public BlockingQueue<ChatMessage> chatQueue() {
-    	return new LinkedBlockingQueue<ChatMessage>();
-    }
-    
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public ChatWorker chatWorker() {
-    	return new ChatWorker(chatQueue(), applicationProperties.getChatFilePath());
-    }
-    
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+
+	@Bean
+	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public ChatWorker chatWorker() {
+		return new ChatWorker(new LinkedBlockingQueue<ChatMessage>(),
+				applicationProperties.getSocialDir() + applicationProperties.getChatFileName());
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
 }

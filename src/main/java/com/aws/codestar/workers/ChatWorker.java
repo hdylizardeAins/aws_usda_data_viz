@@ -40,6 +40,8 @@ public class ChatWorker implements Runnable {
 	private final ExecutorService executorSvc;
 
 	private ReentrantLock lock;
+	
+	private boolean shuttingDown = false;
 
 	public ChatWorker(BlockingQueue<ChatMessage> queue, String chatFilePath) {
 		this.queue = queue;
@@ -64,61 +66,75 @@ public class ChatWorker implements Runnable {
 	@PreDestroy
 	public void doPreDestroy() {
 		executorSvc.shutdown();
+		this.shuttingDown = true;
 		try {
 			if (!executorSvc.awaitTermination(5, TimeUnit.SECONDS)) {
 				executorSvc.shutdownNow();
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 			executorSvc.shutdownNow();
 		}
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!shuttingDown) {
 
 			// Grab message from queue
 			ChatMessage msg;
 			try {
 				msg = queue.poll(100, TimeUnit.MILLISECONDS);
 				if (msg == null) continue;
-				lock.lock();
-
-				try {
-					// Set the date time
-					msg.setDateTime(Instant.now().toString());
-
-					// Convert to string
-					ObjectMapper mapper = new ObjectMapper();
-					String json = null;
-					try {
-						json = mapper.writeValueAsString(msg);
-					} catch (JsonProcessingException e) {
-						e.printStackTrace();
-					}
-
-					// Write to file
-					try (BufferedWriter out = new BufferedWriter(
-							new OutputStreamWriter(new FileOutputStream(chatFilePath, true), // true to append
-									StandardCharsets.UTF_8))) {
-						if (json != null) {
-							out.write(json);
-							out.newLine();
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} finally {
-					lock.unlock();
-				}
+				List<ChatMessage> messages = new LinkedList<>();
+				messages.add(msg);
+				writeToFile(messages);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 
 			}
 
 		}
+		List<ChatMessage> messages = new LinkedList<>();
+		queue.drainTo(messages);
+		writeToFile(messages);
 
+	}
+
+	private void writeToFile(List<ChatMessage> messages) {
+		lock.lock();
+		
+		try {
+			List<String> messageStrings = new LinkedList<>();
+			for (ChatMessage msg : messages) {
+				// Set the date time
+				msg.setDateTime(Instant.now().toString());
+	
+				// Convert to string
+				ObjectMapper mapper = new ObjectMapper();
+				String json = null;
+				try {
+					json = mapper.writeValueAsString(msg);
+					messageStrings.add(json);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// Write to file
+			try (BufferedWriter out = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(chatFilePath, true), // true to append
+							StandardCharsets.UTF_8))) {
+				if (!messageStrings.isEmpty()) {
+					for (String json : messageStrings) {
+						out.write(json);
+						out.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public List<ChatMessage> read() {

@@ -5,8 +5,8 @@
         <el-col :span="4"><el-button style="width: 100%" disabled>Import</el-button></el-col>
       </el-row>
       <el-row>
-        <el-input>
-          <template slot="append"><el-button type="primary" icon="el-icon-search"></el-button></template>
+        <el-input v-model="searchText">
+          <template slot="append"><el-button type="primary" icon="el-icon-search" @click="submitSearch"></el-button></template>
         </el-input>
       </el-row>
       <el-row v-loading="isLoading">
@@ -41,6 +41,9 @@
       <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
         <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
       </el-dialog>
+      <el-dialog :visible.sync="searchResultsVisible" title="Search Results">
+        <search-results-panel></search-results-panel>
+      </el-dialog>
     </div>
 </template>
 
@@ -48,11 +51,13 @@
 import MergePanel from "./MergePanel.vue";
 import EventBus from './EventBus.vue';
 import CsvViewer from './CsvViewer.vue';
+import SearchResultsPanel from './SearchResultsPanel.vue';
 
 export default {
   components: {
     CsvViewer,
-    MergePanel
+    MergePanel,
+    SearchResultsPanel
   },
   data() {
     return {
@@ -65,10 +70,12 @@ export default {
       selectedDatasets: [],
       showCsv: false,
       mergeVisible: false,
+      searchResultsVisible: false,
       isLoading: false,
       loadingOperationsCounter: 0,
       showDatasetViewer: false,
-      viewedDataset: {}
+      viewedDataset: {},
+      searchText: ''
     };
   },
   computed: {
@@ -171,6 +178,13 @@ export default {
     handleViewClick(row){
       this.viewedDataset = row;
       this.showDatasetViewer = true;
+    },
+    submitSearch() {
+      let payload = {
+        searchTerm: this.searchText
+      };
+      this.$store.dispatch("searchDatasets", payload);
+      this. searchResultsVisible = true;
     }
   }
 };

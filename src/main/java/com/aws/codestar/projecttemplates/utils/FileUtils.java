@@ -3,6 +3,7 @@ package com.aws.codestar.projecttemplates.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -24,6 +26,8 @@ import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,7 +40,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeBasedTable;
-import java.io.InputStreamReader;
 
 /**
  * Provides utility methods for converting excel and csv files into Guava Tables
@@ -352,6 +355,39 @@ public class FileUtils {
 						.withDelimiter(OUTPUT_CSV_COMMA_DELIMITER).withNullString(EMPTY_STRING).withRecordSeparator(LF)
 						.print(out);) {
 			XSSFSheet sheet = wb.getSheet(excelSheetName);
+			if (sheet == null) {
+				sheet = wb.getSheetAt(0);
+			}
+			DataFormatter dataFormatter = new DataFormatter();
+			for (Row row : sheet) {
+				// Add data to csv
+				List<String> values = new LinkedList<>();
+				for (int cellnum = 0; cellnum < row.getLastCellNum(); cellnum++) {
+					Cell cell = row.getCell(cellnum);
+					String cellValue = dataFormatter.formatCellValue(cell);
+					values.add(cellValue);
+				}
+
+				printer.printRecord(values);
+			}
+		}
+		return out;
+	}
+
+	public static StringBuilder xlsToCSV(InputStream excelInputStream, String excelSheetName) throws IOException {
+		if (excelInputStream == null) {
+			return null;
+		}
+
+		// Build a csv object from the graph
+		final StringBuilder out = new StringBuilder();
+
+		try (InputStream stream = excelInputStream;
+				HSSFWorkbook wb = new HSSFWorkbook(stream);
+				CSVPrinter printer = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL)
+						.withDelimiter(OUTPUT_CSV_COMMA_DELIMITER).withNullString(EMPTY_STRING).withRecordSeparator(LF)
+						.print(out);) {
+			HSSFSheet sheet = wb.getSheet(excelSheetName);
 			if (sheet == null) {
 				sheet = wb.getSheetAt(0);
 			}

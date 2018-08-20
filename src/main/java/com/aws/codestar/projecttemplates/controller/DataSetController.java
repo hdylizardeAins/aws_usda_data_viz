@@ -3,7 +3,9 @@ package com.aws.codestar.projecttemplates.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +13,15 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -22,8 +31,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.aws.codestar.projecttemplates.ApplicationProperties;
+import com.aws.codestar.projecttemplates.api.DataGovModel;
+import com.aws.codestar.projecttemplates.api.DataGovResource;
+import com.aws.codestar.projecttemplates.api.DataGovResult;
 import com.aws.codestar.projecttemplates.api.DataSet;
 import com.aws.codestar.projecttemplates.api.FilteredDataSet;
 import com.aws.codestar.projecttemplates.exception.IncompatibleColumnValuesException;
@@ -122,7 +135,7 @@ public class DataSetController {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		} catch ( IncompatibleColumnValuesException e) {
+		} catch (IncompatibleColumnValuesException e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
@@ -232,15 +245,112 @@ public class DataSetController {
 		return null;
 	}
 
-	private String getPathFromeFilePath(String path) {
-		return path.substring(0, path.lastIndexOf("/") + 1);
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
 	}
 
-	private File getPathToFile(String fileName) {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URL url = classLoader.getResource(fileName);
-		File file = new File(url.getFile());
-		return file;
+	@RequestMapping(path = "search", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public ResponseEntity fetchDataGovPackages(@RequestParam(value = "term") String term) {
+		String url = "https://catalog.data.gov/api/3/action/package_search?q=" + term;
+		RestTemplate rest = new RestTemplate();
+		DataGovModel response = rest.getForObject(url, DataGovModel.class);
+		List<DataGovResource> resources = filterCsv(response);
+		return ResponseEntity.ok(resources);
+	}
+
+	/**
+	 * Retrieves a dataset from the requested URL and returns the filename back to
+	 * the caller.
+	 *
+	 * @param url the URL for the dataset being fetched
+	 * @return the local filename of the dataset
+	 */
+	@RequestMapping(path = "fetch", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public ResponseEntity fetchDataset(@RequestParam(value = "url") String url,
+			@RequestParam(value = "name") String name) {
+		updateTrustStore();
+		try {
+			if (url.endsWith("xls")) {
+				URL oldUrl = new URL(url);
+				URL newUrl = new URL("https", oldUrl.getHost(), oldUrl.getFile());
+
+				InputStream in = newUrl.openStream();
+				StringBuilder generatedFile = FileUtils.xlsToCSV(in, DEFAULT_SHEET_NAME);
+				long time = System.nanoTime();
+
+				String newfileName = properties.getOutputDir() + name + DASH + time + PERIOD + CSV_EXTENSION;
+				File file = new File(newfileName);
+				Files.asCharSink(file, Charsets.UTF_8).write(generatedFile);
+
+				DataSet newDataSet = new DataSet();
+				String displayName = name;
+				newDataSet.setFileName(newfileName);
+				newDataSet.setDisplayName(displayName);
+				return ResponseEntity.ok(newDataSet);
+			} else if (url.endsWith(CSV_EXTENSION)) {
+				URL oldUrl = new URL(url);
+				URL newUrl = new URL("https", oldUrl.getHost(), oldUrl.getFile());
+				String newfileName = properties.getOutputDir() + name + DASH + System.nanoTime() + PERIOD
+						+ CSV_EXTENSION;
+				org.apache.commons.io.FileUtils.copyURLToFile(newUrl, new File(newfileName));
+
+				return ResponseEntity.ok("success");
+			} else {
+				// TODO return invalid conversion message
+				return ResponseEntity.badRequest().build();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 * Filters the data retrieved from the Data.gov API and returns only the
+	 * {@link DataGovResource}s that point to CSV files
+	 * 
+	 * @return Array of resources that point to CSV files
+	 */
+	private List<DataGovResource> filterCsv(DataGovModel data) {
+		List<DataGovResource> resources = new ArrayList<>();
+
+		for (DataGovResult result : data.getResult().getResults()) {
+			for (DataGovResource resource : result.getResources()) {
+				if (resource.getUrl().endsWith(".csv") || resource.getUrl().endsWith(".xls")) {
+					resources.add(resource);
+				}
+			}
+		}
+
+		return resources;
+	}
+
+	/**
+	 * Updates the trust store to trust the certificates.
+	 */
+	private void updateTrustStore() {
+		// Create a new trust manager that trust all certificates
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			}
+
+			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			}
+		} };
+
+		// Activate the new trust manager
+		try {
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (Exception e) {
+		}
 	}
 
 }

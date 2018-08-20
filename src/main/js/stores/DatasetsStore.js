@@ -62,12 +62,14 @@ var datasetsStore = {
 
                 }
             }
-        ]
+        ],
+        searchResults: []
     },
     getters: {
         datasets: state => state.datasets,
         selectedDatasets: state => state.datasets.filter(d => d.selected) || [],
-        getDataset: (state) => (name) => state.datsets.find(d => d.name === name)
+        getDataset: (state) => (name) => state.datsets.find(d => d.name === name),
+        searchResults: state => state.searchResults
     },
     mutations: {
         updateSelectedDatasets: function (state, datasets) {
@@ -114,6 +116,9 @@ var datasetsStore = {
                 selected: true
                 })
             }
+        },
+        updateSearchList: function(state, results) {
+            state.searchResults = results;
         }
     },
     actions: {
@@ -199,6 +204,29 @@ var datasetsStore = {
                 })
                 .catch(() => {
                     payload.failure();
+                })
+        },
+        searchDatasets: function(context, payload) {
+            axios.get('/datasets/search?term=' + payload.searchTerm)
+            .then((response) => {
+                context.commit("updateSearchList", response.data);
+                if(typeof (payload.success) === 'function') {
+                    payload.success();
+                }
+            })
+            .catch((response) => {
+                context.commit("updateSearchList", []);
+                if(typeof (payload.error) === 'function') {
+                    payload.error(response.error);
+                }
+            })
+        },
+        fetchDataset: function(context, payload) {
+            axios.get('/datasets/fetch', {params: {
+                name: payload.name,
+                url: payload.url}})
+                .then((response) => {
+                    context.commit("addDataset", {name: response.data.displayName, filePath: response.data.fileName});
                 })
         }
     }

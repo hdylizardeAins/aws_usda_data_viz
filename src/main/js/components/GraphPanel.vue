@@ -1,10 +1,7 @@
 <template>
 	<div>
 		<el-row v-loading="loading">
-		    <expandable-image :image-url="execution.imagePath" />		
-		</el-row>
-		<el-row>
-		    	<span>{{execution.graphText}}</span>
+		    <expandable-image :image-url="execution.imagePath" :graph-data="execution.graphText" />	
 		</el-row>
     </div>    
 </template>
@@ -31,3 +28,5 @@ export default {
     }
 }
 </script>
+<style>
+</style>

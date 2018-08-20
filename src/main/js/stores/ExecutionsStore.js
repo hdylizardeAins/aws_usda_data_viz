@@ -22,8 +22,8 @@ var executionsStore = {
                 state.executions.push(execution);
             }
             else {
-                found.imagePath = execution.imagePath;
-                found.graphText = execution.graphText;
+                Vue.set(found, "imagePath", execution.imagePath);
+                Vue.set(found, "graphText", execution.graphText);
             }
         },
         pruneExecutionsByDatasetNames: function (state, datasetNames){

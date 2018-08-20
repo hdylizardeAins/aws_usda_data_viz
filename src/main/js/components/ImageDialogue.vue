@@ -1,6 +1,12 @@
 <template>
     <el-dialog :visible="selectedImage.show" @close="handleClose">
-        <img class="resized-image" :src="selectedImage.imgSrc"/>
+        <figure>
+            <img class="resized-image" :src="selectedImage.imgSrc"/>
+            <figcaption>
+                <p>{{ selectedImage.graphData }}</p>
+                <p>{{ selectedImage.caption }}</p>
+            </figcaption>
+        </figure>
     </el-dialog>
 </template>
 <script>

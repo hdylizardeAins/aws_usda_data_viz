@@ -33,9 +33,13 @@
                 </el-form-item>
         </el-row>
         <el-row>
-            <el-col :span="4" :offset="20">
+            <el-col :span="4" :offset="15">
                 <el-button id="runAnalyticBtn" type="primary" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
             </el-col>
+            <el-col :span="4">
+                <el-button id="postImgBtn" type="primary" @click="handlePostClick" :disabled="postButtonDisabled">Post</el-button>
+            </el-col>
+            <post-form :show-dialog="showPostForm" :post-data="postData" @close-post-dialog="showPostForm = false" />
         </el-row>
     </el-form>
 </template>
@@ -44,14 +48,20 @@
 import deepCopy from './DeepCopy.js';
 import EventBus from './EventBus.vue';
 import Constants from './Constants.js';
+import PostForm from './PostForm.vue';
 
 export default {
+    components:{
+        PostForm
+    },
     props: [
         "execution"
     ],
     data() {
         return {
-            executionFormData: this.execution
+            executionFormData: this.execution,
+            showPostForm: false,
+            postData: {}
         }
     },
     computed:{
@@ -72,6 +82,10 @@ export default {
                 return !(this.executionFormData.xVars && this.executionFormData.xVars.length > 0 && this.executionFormData.yVars && this.executionFormData.yVars.length > 0);
             }
             return this.executionFormData.columns.length == 0;
+        },
+        postButtonDisabled: function(){
+            console.log();
+            return typeof this.execution.imagePath !== 'string' || this.execution.imagePath.length  < 1;
         }
     },
     watch: {
@@ -124,6 +138,13 @@ export default {
                 }
             }
             this.$store.dispatch("requestAnalyticExec", payload);
+        },
+        handlePostClick(){
+            this.postData = {
+                imageName: this.execution.imagePath,
+                graphData: this.execution.graphText
+            }
+            this.showPostForm = true;
         }
     }
 }
@@ -131,5 +152,8 @@ export default {
 <style>
 #runAnalyticBtn {
     float:right;
+}
+#postImgBtn {
+    margin-left: 10px;
 }
 </style>

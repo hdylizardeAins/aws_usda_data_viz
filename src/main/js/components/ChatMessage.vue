@@ -3,9 +3,9 @@
         <el-col :offset="8" :span="8">
             <el-card :body-style="{ padding: '0px' }">
                 <span class="username">{{ message.username }}</span> <time class="time">{{ dateTime }}</time>
-                <expandable-image v-if="showImage" :image-url="imgSrc" />
+                <expandable-image class="chat-image" v-if="showImage" :image-url="imgSrc" :caption="message.caption" :graph-data="message.graphData" />
                 <div style="padding: 14px;" >
-                    <span>{{ message.comment }}</span>                    
+                    <p>{{ message.comment }}</p>                    
                 </div>
             </el-card>
         </el-col>
@@ -45,15 +45,11 @@ export default{
     float: left;
 }
 
-.resized-image {
-    display: inline-block;
-    max-width: 90vw;
-    width: auto;
-    padding: 5px;
-    overflow-y: auto;
-}
-
 .chat-row {
     padding-bottom:5px;
+}
+
+.chat-image figcaption {
+    border-bottom: 1px solid black;
 }
 </style>

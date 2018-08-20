@@ -1,9 +1,7 @@
 <template>
 	<div>
 		<el-row v-loading="loading">
-		
-		    <img :src="execution.imagePath"/>
-		
+		    <expandable-image :image-url="execution.imagePath" />		
 		</el-row>
 		<el-row>
 		    	<span>{{execution.graphText}}</span>
@@ -13,8 +11,12 @@
 
 <script>
 import EventBus from './EventBus.vue';
+import ExpandableImage from './ExpandableImage.vue';
 
 export default {
+    components: {
+        ExpandableImage
+    },
     props:[
         "execution"
     ],

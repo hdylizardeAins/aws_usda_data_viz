@@ -1,7 +1,7 @@
 <template>
     <div>
-        <el-container>
-            <el-header height="auto" >
+        <el-container @clicked-image="handleClickedImage" >
+            <el-header id="pageHeader" height="auto" >
                 <custom-header />
                 <custom-nav @nav-select="handleNavSelect" />
             </el-header>
@@ -19,12 +19,16 @@
                         </el-row>
                     </el-main>
                 </div>
+                <el-main v-else-if="activeIndex == 3" key="discussion">
+                    <discussion></discussion>
+                </el-main>
                 <el-main style="flex:1;" v-else key="underConstruction">
                     <p style="text-align:center;">Page Under Construction</p>
                 </el-main>
+                <image-dialogue />
             </el-container>
             <!-- Disabling fixed footer until it can be implemented as an unfixed footer-->
-            <el-footer v-if="false" id="pageFooter">
+            <el-footer v-if="true" id="pageFooter">
                 <div id="footerLinkDiv">
                     <a href="https://www.harmonia.com">About Us</a>
                 </div>
@@ -39,6 +43,8 @@ import CustomHeader from './CustomHeader.vue';
 import CustomNav from './CustomNav.vue';
 import DatasetsPanel from './DatasetsPanel.vue';
 import Visualization from './Visualization.vue';
+import Discussion from './Discussion.vue';
+import ImageDialogue from './ImageDialogue.vue';
 
 
 export default {
@@ -47,7 +53,9 @@ export default {
         CustomNav,
         DatasetsPanel,
         AnalyticsPanel,
-        Visualization
+        Visualization,
+        Discussion,
+        ImageDialogue
     },
     data(){
         return {
@@ -61,6 +69,9 @@ export default {
     methods: {
         handleNavSelect(event){
             this.activeIndex = event.key;
+        },
+        handleClickedImage(event){
+            console.log(event);
         }
     }
 }
@@ -88,9 +99,6 @@ export default {
 }
 
 #pageFooter{
-    position: fixed;
-    left: 0;
-    bottom: 0;
     width: 100%;
     background-color: rgb(4, 124, 192);
     color: white;
@@ -104,5 +112,16 @@ export default {
 #footerLinkDiv {
     position: relative;
     top: calc(50% - 11px);
+}
+
+.body-container{
+    height: calc(100vh - 202px);
+    overflow-y:auto;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+body {
+    overflow: hidden;
 }
 </style>

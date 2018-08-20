@@ -10,7 +10,7 @@
       active-text-color="#fff">
         <el-menu-item index="1">DASHBOARD</el-menu-item>
         <el-menu-item index="2">NEW WORK</el-menu-item>
-        <el-menu-item index="3">MY WORK</el-menu-item>
+        <el-menu-item index="3">COMMUNITY DISCUSSION</el-menu-item>
         <el-menu-item index="4">ANALYTICS and VISUALIZATION LIBRARY</el-menu-item>
         <el-menu-item index="5"><img src="../../webapp/js/images/question.png"></el-menu-item>
       </el-menu>

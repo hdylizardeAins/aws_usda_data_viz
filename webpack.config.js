@@ -65,8 +65,8 @@ module.exports = {
         contentBase: path.resolve(__dirname, './src/main/webapp/'),
         port: 8081,
         proxy: [{
-            context:['/analytics', '/datasets'],
             target: 'http://localhost:8080/',
+            context:['/analytics', '/datasets', '/chat'],
             secure: false
         }],
         historyApiFallback: {

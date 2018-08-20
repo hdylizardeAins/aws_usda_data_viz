@@ -1,10 +1,12 @@
 <template>
-    <el-container>
+    <el-container id="discussionContainer" ref="discussionContainer">
         <chat-message v-for="msg in messages" :key="msg.dateTime" :message="msg"/>
-        <div id="chatInputDiv">
-            <el-input type="textarea" autosize v-model="post"></el-input>
+        <el-row id="chatInputRow">
+            <el-col :offset="8" :span="8">
+                <el-input id="commentArea" type="textarea" placeholder="Please enter a comment" autosize v-model="post"></el-input>
+            </el-col>
             <el-button v-loading="loading" type="primary" :disabled="postDisabled" @click="handlePostClick">Post</el-button>
-        </div>
+        </el-row>
     </el-container>
 </template>
 <script>
@@ -40,7 +42,12 @@ export default{
             let payload = {
                 success: () => {
                     this.$store.dispatch('loadChatMessages', {
-                        success: () => {this.loading = false; this.post=""},
+                        success: () => {
+                            this.loading = false; 
+                            this.post="";
+                            let elem = this.$refs.discussionContainer.$el;
+                            elem.scrollTop = elem.scrollHeight;
+                        },
                         failure: () => this.loading = false //TODO: show error
                     })
                 },
@@ -57,22 +64,26 @@ export default{
 }
 </script>
 <style>
-#chatInputDiv {
+#discussionContainer {
+    height: 100%;
+    overflow-y: auto;
+}
+
+#chatInputRow {
     position:fixed;
-    left: 30vw;
-    width: 50vw;
+    height:auto;
+    width: 100%;
     bottom: 50px;
+    padding-right: 19px;
 }
 
-#chatInputDiv .el-textarea {
-    position: relative;
-    float: left;
-    width: calc(100% - 32px);
-}
-
-#chatInputDiv .el-button {
-    margin:unset;
+#chatInputRow .el-button {
+    margin:0 0 0 4px;
     position: absolute;
     bottom: 0;
+}
+
+#commentArea {
+    border: 2px solid green;
 }
 </style>

@@ -19,7 +19,7 @@
                         </el-row>
                     </el-main>
                 </div>
-                <el-main v-else-if="activeIndex == 3" key="discussion">
+                <el-main class="discussion-container" v-else-if="activeIndex == 3" key="discussion">
                     <discussion></discussion>
                 </el-main>
                 <el-main style="flex:1;" v-else key="underConstruction">
@@ -123,5 +123,9 @@ export default {
 
 body {
     overflow: hidden;
+}
+
+.discussion-container{
+    height: calc(100% - 33px);
 }
 </style>

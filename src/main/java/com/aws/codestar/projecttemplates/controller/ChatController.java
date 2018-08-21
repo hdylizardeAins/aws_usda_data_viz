@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,24 @@ public class ChatController {
 	@RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON)
 	public ResponseEntity write(@RequestBody ChatMessage message) throws InterruptedException {
 		chatWorker.put(message);
-		return ResponseEntity.ok().build();
+		//HACK: block until the write completes by waiting for the date to be set on the message
+		long time = System.currentTimeMillis();
+		long timeout = time + 10000L; //10 second timeout
+		boolean written = false;
+		while (System.currentTimeMillis() < timeout) {
+			if (message.getDateTime() != null 
+					&& message.getDateTime().length() > 0) {
+				written = true;
+				break;
+			}
+			Thread.sleep(100L);
+		}
+		if (written) {
+			return ResponseEntity.ok(message);
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON)

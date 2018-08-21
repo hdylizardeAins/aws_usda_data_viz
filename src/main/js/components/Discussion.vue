@@ -1,44 +1,53 @@
 <template>        
     <el-container id="discussionContainer" ref="discussionContainer">
         <el-row id="topicRow">
+            <!-- TODO: Fixed topic section needs responsivity updates to prevent elements being hidden on horizontal shrink  -->
             <el-col :offset="8" :span="8">
                 <div id="topicSelectLabelDiv">
-                    <span><strong>Topic</strong></span>
+                    <span><strong>Join the Discussion!</strong></span>
                 </div>
                 <div id="topicDiv">
+                    <span>Choose a Topic:</span>
                     <el-select v-model="selectedTopic" placeholder="Select or Enter New Topic" filterable allow-create @change="handleSelectChange">
                         <el-option v-for="item in topics"
                             :key="item"
                             :label="item"
                             :value="item" />
                     </el-select>
+                    <el-button type="primary" @click="followTopicClicked" >Follow</el-button>
                 </div>
             </el-col>
         </el-row>
-        <chat-message v-for="msg in messages" :key="msg.dateTime" :message="msg"/>
+        <chat-message v-for="msg in messages" :key="msg.dateTime" :message="msg" :topic-name="selectedTopic" />
         <el-row id="chatInputRow">
             <el-col :offset="8" :span="8">
                 <el-input id="commentArea" type="textarea" placeholder="Please enter a comment" autosize v-model="post"></el-input>
             </el-col>
             <el-button v-loading="loading" type="primary" :disabled="postDisabled" @click="handlePostClick">Post</el-button>
         </el-row>
+        <el-dialog class="follow-topic-dialog" :visible.sync="showFollowForm" title="Follow this topic" :close-on-click-modal="false">
+            <follow-topic-form :topic-name="selectedTopic" @close="showFollowForm = false" />
+        </el-dialog>
     </el-container>
 </template>
 <script>
 import ChatMessage from './ChatMessage.vue';
 import DeepCopy from './DeepCopy.js';
 import Constants from './Constants.js';
+import FollowTopicForm from './FollowTopicForm.vue';
 
 export default{
     components:{
-        ChatMessage
+        ChatMessage,
+        FollowTopicForm
     },
     data() {
         return {
             showImageModal: false,
             post: "",
             loading: false,
-            selectedTopic: "Visualizations"
+            selectedTopic: "Visualizations",
+            showFollowForm: false
         }
     },
     computed: {
@@ -88,6 +97,9 @@ export default{
         handleSelectChange: function(){
             let elem = this.$refs.discussionContainer.$el;
             elem.scrollTop = -elem.scrollHeight;
+        },
+        followTopicClicked: function(){
+            this.showFollowForm = true;
         }
     }
 }
@@ -102,15 +114,14 @@ export default{
 
 #topicSelectLabelDiv {
     margin: auto;
-    padding-top: 4px;
+    padding-top: 2px;
     width: 50%;
     text-align: center;
 }
 
 #topicDiv {
-    margin: auto;
-    width: 50%;
-    min-width: 314px;
+    text-align: center;
+    padding-top: 2px;
 }
 
 #topicRow{
@@ -137,5 +148,10 @@ export default{
 
 #commentArea {
     border: 2px solid green;
+}
+
+.follow-topic-dialog{
+    width: 50vw;
+    margin: auto;
 }
 </style>

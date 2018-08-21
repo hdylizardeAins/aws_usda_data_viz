@@ -2,7 +2,7 @@
     <el-dialog id="postForm" title="Post to Community Discussion" :visible="showDialog" :close-on-click-modal="false" @close="handleClose">
         <el-form :model="formData">
             <el-form-item label="Topic">
-                <el-select v-model="formData.topic" placeholder="Select or Enter New Topic" filterable allow-create>
+                <el-select v-model="formData.topic" placeholder="Select or Enter a New Topic" filterable allow-create>
                         <el-option v-for="item in topics"
                             :key="item"
                             :label="item"
@@ -65,6 +65,16 @@ export default {
                     this.$store.dispatch('loadChatMessages', {
                         success: () => {
                             this.handleClose();
+                            let msg = 'Posted to topic: ' + chatMessage.topic;
+                            this.$nextTick(() => {
+                                this.$notify.success({
+                                    message: msg,
+                                    customClass: 'success',
+                                    duration: 3000,
+                                    title: 'Success!'
+
+                                })
+                            });
                         },
                         failure: (err) => console.log(err) //TODO: show error
                     })

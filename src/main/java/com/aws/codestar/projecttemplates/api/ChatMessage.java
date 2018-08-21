@@ -18,10 +18,52 @@ public class ChatMessage implements Serializable {
 	private String username;
 	
 	private String imageName;
+	
+	private String graphData;
+	
+	private String caption;
 
 	private String comment;
 	
 	private String dateTime;
+	
+	private String topic;
+
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+	/**
+	 * @return the graphData
+	 */
+	public String getGraphData() {
+		return graphData;
+	}
+
+	/**
+	 * @param graphData the graphData to set
+	 */
+	public void setGraphData(String graphData) {
+		this.graphData = graphData;
+	}
+
+	/**
+	 * @return the caption
+	 */
+	public String getCaption() {
+		return caption;
+	}
+
+	/**
+	 * @param caption the caption to set
+	 */
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
 
 	/**
 	 * @return the imageName

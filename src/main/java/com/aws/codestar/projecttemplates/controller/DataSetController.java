@@ -279,23 +279,28 @@ public class DataSetController {
 				StringBuilder generatedFile = FileUtils.xlsToCSV(in, DEFAULT_SHEET_NAME);
 				long time = System.nanoTime();
 
-				String newfileName = properties.getOutputDir() + name + DASH + time + PERIOD + CSV_EXTENSION;
-				File file = new File(newfileName);
+				String fileName = name + DASH + time + PERIOD + CSV_EXTENSION;
+				String filePath = properties.getOutputDir() + fileName;
+				File file = new File(filePath);
 				Files.asCharSink(file, Charsets.UTF_8).write(generatedFile);
 
 				DataSet newDataSet = new DataSet();
 				String displayName = name;
-				newDataSet.setFileName(newfileName);
+				newDataSet.setFileName(fileName);
 				newDataSet.setDisplayName(displayName);
 				return ResponseEntity.ok(newDataSet);
 			} else if (url.endsWith(CSV_EXTENSION)) {
 				URL oldUrl = new URL(url);
 				URL newUrl = new URL("https", oldUrl.getHost(), oldUrl.getFile());
-				String newfileName = properties.getOutputDir() + name + DASH + System.nanoTime() + PERIOD
-						+ CSV_EXTENSION;
-				org.apache.commons.io.FileUtils.copyURLToFile(newUrl, new File(newfileName));
+				String fileName = name + DASH + System.nanoTime() + PERIOD + CSV_EXTENSION;
+				String filePath = properties.getOutputDir() + fileName;
+				org.apache.commons.io.FileUtils.copyURLToFile(newUrl, new File(filePath));
 
-				return ResponseEntity.ok("success");
+				DataSet newDataSet = new DataSet();
+				String displayName = name;
+				newDataSet.setFileName(fileName);
+				newDataSet.setDisplayName(displayName);
+				return ResponseEntity.ok(newDataSet);
 			} else {
 				// TODO return invalid conversion message
 				return ResponseEntity.badRequest().build();

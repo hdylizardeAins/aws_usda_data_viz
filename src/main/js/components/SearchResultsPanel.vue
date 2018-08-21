@@ -1,6 +1,6 @@
 <template>
 <el-container>
-    <el-row type="flex">
+    <el-row type="flex" v-loading="isLoading">
         <el-col class="search-flex" :span="24">
     <el-table :data="searchResults">
         <el-table-column prop="name" label="name" />
@@ -18,7 +18,9 @@
 
 <script>
 export default {
-    
+    props: [
+        "isLoading"
+    ],
     computed: {
         searchResults: function() {
             return this.$store.getters.searchResults || [];

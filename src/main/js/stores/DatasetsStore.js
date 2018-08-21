@@ -216,8 +216,8 @@ var datasetsStore = {
             })
             .catch((response) => {
                 context.commit("updateSearchList", []);
-                if(typeof (payload.error) === 'function') {
-                    payload.error(response.error);
+                if(typeof (payload.failure) === 'function') {
+                    payload.failure(response.error);
                 }
             })
         },

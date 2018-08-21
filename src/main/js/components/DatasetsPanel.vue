@@ -42,7 +42,7 @@
         <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
       </el-dialog>
       <el-dialog :visible.sync="searchResultsVisible" title="Search Results">
-        <search-results-panel></search-results-panel>
+        <search-results-panel :is-loading="searchResultLoading"></search-results-panel>
       </el-dialog>
     </div>
 </template>
@@ -71,6 +71,7 @@ export default {
       showCsv: false,
       mergeVisible: false,
       searchResultsVisible: false,
+      searchResultLoading: false,
       isLoading: false,
       loadingOperationsCounter: 0,
       showDatasetViewer: false,
@@ -181,8 +182,17 @@ export default {
     },
     submitSearch() {
       let payload = {
-        searchTerm: this.searchText
+        searchTerm: this.searchText,
+        success: function() {
+          console.log("here");
+          this.searchResultLoading = false;
+        }.bind(this),
+        failure: function() {
+          this.searchResultLoading = false;
+        }.bind(this)
       };
+      this.$store.commit("updateSearchList", []);
+      this.searchResultLoading = true;
       this.$store.dispatch("searchDatasets", payload);
       this. searchResultsVisible = true;
     }

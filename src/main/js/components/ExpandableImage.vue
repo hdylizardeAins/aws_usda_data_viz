@@ -2,8 +2,8 @@
     <figure>
         <img class="graph-image" :src="imageUrl" @click="handleImageClick" />
         <figcaption>
-            <p>{{ graphData }}</p>
             <p>{{ caption }}</p>
+            <p>{{ graphData }}</p>
         </figcaption>
     </figure>
     

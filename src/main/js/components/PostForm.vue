@@ -1,6 +1,14 @@
 <template>
     <el-dialog id="postForm" title="Post to Community Discussion" :visible="showDialog" :close-on-click-modal="false" @close="handleClose">
         <el-form :model="formData">
+            <el-form-item label="Topic">
+                <el-select v-model="formData.topic" placeholder="Select or Enter New Topic" filterable allow-create>
+                        <el-option v-for="item in topics"
+                            :key="item"
+                            :label="item"
+                            :value="item" />
+                    </el-select>
+            </el-form-item>
             <el-form-item label="Caption">
                 <el-input v-model="formData.caption"></el-input>
             </el-form-item>
@@ -25,6 +33,11 @@ export default {
             formData: {}
         }
     },
+    computed: {
+        topics: function(){
+            return this.$store.getters.chatTopics;
+        }
+    },
     watch: {
         postData: function(newVal){
             let imageName = new URL(newVal.imageName).pathname.replace(/\//, ""); //TODO: kind of hacky - standardize the image names to avoid this
@@ -32,37 +45,32 @@ export default {
                 imageName: imageName,
                 graphData: newVal.graphData,
                 caption: "",
-                comment: ""
+                comment: "",
+                topic: ""
             }
         }
     },
     methods: {
+        handleCreateTopicClick: function(){
+            //this.addedTopics.push()
+        },
         handleClose: function(){
             this.$emit('close-post-dialog');
         },
         submitForm: function(){
             let chatMessage = DeepCopy(this.formData);
+            chatMessage.username = Constants.username;
             let payload = {
                 success: () => {
                     this.$store.dispatch('loadChatMessages', {
                         success: () => {
                             this.handleClose();
-                            // this.loading = false; 
-                            // this.post="";
-                            // let elem = this.$refs.discussionContainer.$el;
-                            // elem.scrollTop = elem.scrollHeight;
                         },
-                        failure: (err) => console.log(err)//this.loading = false //TODO: show error
+                        failure: (err) => console.log(err) //TODO: show error
                     })
                 },
-                failure: (err) => console.log(err), //this.loading = false, //TODO: show error
-                data: {
-                    username: Constants.username,
-                    comment: chatMessage.comment,
-                    caption: chatMessage.caption,
-                    graphData: chatMessage.graphData,
-                    imageName: chatMessage.imageName
-                }
+                failure: (err) => console.log(err),//TODO: show error
+                data: chatMessage
             }
             this.$store.dispatch('postChatMessage', payload);
         }

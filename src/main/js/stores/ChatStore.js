@@ -5,6 +5,10 @@ var chatStore = {
     state: {
         messages: []
     },
+    getters: {
+        chatTopics: state => [...new Set(state.messages.map(m => m.topic))],
+        chatMessagesByTopic: state => topic => state.messages.filter(m => m.topic === topic)
+    },
     mutations: {
         updateChatMessages: function (state, messages) {
             let count = 0;

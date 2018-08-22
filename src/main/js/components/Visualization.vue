@@ -43,26 +43,47 @@ export default {
     created(){
         EventBus.$on("columnLoadStart", () => this.variablePanelLoading = true);
         EventBus.$on("columnLoadStop", () => this.variablePanelLoading = false);
+        EventBus.$on("analytic-next-click", this.setCurrentTabToFirst);
     },
     computed: {
         selectedAnalytics: function(){
             return this.$store.getters.selectedAnalytics;
         },
+        firstTabName: function(){
+            let first = this.selectedExecutions[0];
+            if (first && first.analytic && first.dataset){
+                if (first.analytic.name && first.dataset.name){
+                    return first.analytic.name + first.dataset.name;
+                }
+            }
+            else{
+                return "";
+            }
+        },
         selectedExecutions: function() {
             return this.$store.getters.executions;
+        },
+        selectedExecutionsLength: function() {
+            return this.$store.getters.executions.length;
         },
         visible: function(){
             return this.selectedExecutions.length > 0;
         },
     },
     watch: {
-        selectedExecutions: function(newExecutions){
-            let first = newExecutions[0];
-            this.currentTab = first ? (first.analytic.name + first.dataset.name) : "";
+        selectedExecutionsLength(newVal){
+            if (newVal == 0){
+                this.currentTab = "";
+            }
+            else{
+                this.setCurrentTabToFirst();
+            }
         }
     },
     methods: {
-        
+        setCurrentTabToFirst: function(){
+            this.currentTab = this.firstTabName;
+        }
     }
 };
 </script>

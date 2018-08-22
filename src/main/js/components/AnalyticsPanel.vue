@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import EventBus from './EventBus.vue'
+
 export default {
     data() {
         return {
@@ -105,6 +107,7 @@ export default {
         handleNextClick(){
             this.updatedAnalyticStore();
             this.updateExecutionsStore();
+            EventBus.$emit('analytic-next-click');
         },
         updatedAnalyticStore(){
             let nodes = this.$refs.analyticsTree.getCheckedNodes();

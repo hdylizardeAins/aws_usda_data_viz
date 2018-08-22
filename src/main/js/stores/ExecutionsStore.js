@@ -17,22 +17,49 @@ var executionsStore = {
     mutations: {
         updateExecution: function (state, execution){
             let found = state.executions.find(e => e.dataset.name === execution.dataset.name && e.analytic.name === execution.analytic.name);
-
             if (!found){
                 state.executions.push(execution);
             }
             else {
-                Vue.set(found, "imagePath", execution.imagePath);
-                Vue.set(found, "graphText", execution.graphText);
+                if (execution.imagePath && execution.imagePath.length > 0){
+                    Vue.set(found, "imagePath", execution.imagePath);
+                }
+                if (execution.graphText && execution.graphText.length > 0){
+                    Vue.set(found, "graphText", execution.graphText);
+                }
             }
         },
         pruneExecutionsByDatasetNames: function (state, datasetNames){
-            let pruned = state.executions.filter(exec => datasetNames.includes(exec.dataset.name));
-            state.executions = pruned;
+            let toRemove = [];
+            for (let idx = 0; idx < state.executions.length; idx++){
+                let exec = state.executions[idx];
+                if (!datasetNames.includes(exec.dataset.name)){
+                    toRemove.push(idx);
+                }
+            }
+            toRemove.sort();
+            let  offset = 0;
+            toRemove.forEach(tr => {
+                let offsetIdx = tr - offset;
+                Vue.delete(state.executions, offsetIdx);
+                offset++;
+            });
         },
         pruneExecutionsByAnalyticNames: function (state, analyticNames){
-            let pruned = state.executions.filter(exec => analyticNames.includes(exec.analytic.name));
-            state.executions = pruned;
+            let toRemove = [];
+            for (let idx = 0; idx < state.executions.length; idx++){
+                let exec = state.executions[idx];
+                if (!analyticNames.includes(exec.analytic.name)){
+                    toRemove.push(idx);
+                }
+            }
+            toRemove.sort();
+            let  offset = 0;
+            toRemove.forEach(tr => {
+                let offsetIdx = tr - offset;
+                Vue.delete(state.executions, offsetIdx);
+                offset++;
+            });
         }
     },
     actions: {

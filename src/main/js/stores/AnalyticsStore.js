@@ -7,7 +7,7 @@ var analyticsStore = {
             {
                 displayName: "Scatter Plot Matrix",
                 name: "Plot",
-                category: "I want to see the data organized",
+                category: "How is the data organized",
                 description:"This visualization uses the R scatter plot function to plot two-dimensional data, as well as matrices of plots for visualizing more dimensions. It can be used to quickly find related features.",
                 link: "https://www.rdocumentation.org/packages/graphics/versions/3.5.1/topics/plot",
                 requiresXY: false,
@@ -19,7 +19,7 @@ var analyticsStore = {
             {
                 displayName: "Box Plot",
                 name: "Boxplot",
-                category: "I want to see the data organized",
+                category: "How is the data organized",
                 description: "This visualization shows the minimum, maximum, median, and quartiles of a variable for different categories.",
                 link: "https://www.rdocumentation.org/packages/graphics/versions/3.5.1/topics/boxplot",
                 requiresXY: true,
@@ -32,7 +32,7 @@ var analyticsStore = {
                 // TODO: update description and link
                 displayName: "Pie Chart",
                 name: "Piechart",
-                category: "I want to see the data organized",
+                category: "How is the data organized",
                 description: "This visualization shows the minimum, maximum, median, and quartiles of a variable for different categories.",
                 link: "https://www.rdocumentation.org/packages/graphics/versions/3.5.1/topics/boxplot",
                 requiresXY: true,
@@ -46,7 +46,7 @@ var analyticsStore = {
             {
                 displayName: "Linear Regression",
                 name: "Regression",
-                category: "I want to see predictions",
+                category: "What predictions can be made",
                 description:"This analytic creates a linear regression, helpful for predicting future trends and relationships between variables.",
                 link: "https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lm",
                 requiresXY: true,
@@ -59,7 +59,7 @@ var analyticsStore = {
                 // TODO: update description and link
                 displayName: "Machine Learning Regression",
                 name: "machinelearningregression",
-                category: "I want to see predictions",
+                category: "What predictions can be made",
                 description:"This analytic creates a linear regression, helpful for predicting future trends and relationships between variables.",
                 link: "https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lm",
                 requiresXY: true,
@@ -74,7 +74,7 @@ var analyticsStore = {
                 // TODO: update description and link
                 displayName: "Classification",
                 name: "classification",
-                category: "I want to see predictions",
+                category: "What predictions can be made",
                 description:"This analytic creates a linear regression, helpful for predicting future trends and relationships between variables.",
                 link: "https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lm",
                 requiresXY: true,
@@ -89,7 +89,7 @@ var analyticsStore = {
                 // TODO: update description and link
                 displayName: "Hypothesis Testing",
                 name: "hypothesistesting",
-                category: "I want to see predictions",
+                category: "What predictions can be made",
                 description:"This analytic creates a linear regression, helpful for predicting future trends and relationships between variables.",
                 link: "https://www.rdocumentation.org/packages/stats/versions/3.5.1/topics/lm",
                 requiresXY: true,
@@ -103,7 +103,7 @@ var analyticsStore = {
             {
                 displayName: "Trend-Line",
                 name: "Trend-Line",
-                category: "I want to see trends in this data",
+                category: "What are the trends",
                 description: "This visualization shows a trend-line on a scatter plot, which shows the average of a trend over time.",
                 link: "https://www.rdocumentation.org/packages/stats/versions/3.4.3/topics/scatter.smooth",
                 requiresXY: true,
@@ -115,7 +115,7 @@ var analyticsStore = {
             {
                 displayName: "Correlation Heat Map",
                 name: "Correlation",
-                category: "I want to see trends in this data",
+                category: "What are the trends",
                 description:"This visualization shows how well pairs of variables are correlated using a heat map.",
                 link: "https://cran.r-project.org/web/packages/ggcorrplot/index.html",
                 requiresXY: false,
@@ -128,7 +128,7 @@ var analyticsStore = {
                 // TODO: update description and link
                 displayName: "Clustering",
                 name: "clustering",
-                category: "I want to see trends in this data",
+                category: "What are the trends",
                 description:"This visualization shows how well pairs of variables are correlated using a heat map.",
                 link: "https://cran.r-project.org/web/packages/ggcorrplot/index.html",
                 requiresXY: false,
@@ -142,7 +142,7 @@ var analyticsStore = {
             {
                 displayName: "Custom R Script",
                 name: "TBD",
-                category: "I need a new type of insight", //TODO: this had <strong> tags around insight, but that was just rendered as plain text
+                category: "Something new (via R statistics)", //TODO: this had <strong> tags around insight, but that was just rendered as plain text
                 unselectable: true,
                 selected: false,
                 disabled: true

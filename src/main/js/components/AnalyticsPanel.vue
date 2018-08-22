@@ -1,7 +1,7 @@
 <template>
     <div v-show="visible" id="analytics-panel" class="bordered-panel">
         <el-container>
-            <el-row>2. Choose Analytics(s)</el-row>
+            <el-row>2. Choose an insight</el-row>
             <el-row>
                 <el-col>
                     <el-tree ref="analyticsTree"

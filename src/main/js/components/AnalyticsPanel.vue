@@ -4,16 +4,14 @@
             <el-row>2. Choose Analytics(s)</el-row>
             <el-row>
                 <el-col>
-                    <el-table ref="analyticsTable" :data="analytics" stripe @selection-change="handleSelectionChange">
-                        <el-table-column :selectable="isSelectable" type="selection" width="30px"/>
-                        <el-table-column property="name" label="Name" >
-                            <template slot-scope="scope">
-                                <strong<a :href="scope.row.link">{{ scope.row.displayName }}</a></strong>
-                                <br/>
-                                <small>{{ scope.row.description }}</small>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+                    <el-tree ref="analyticsTree"
+                        highlight-current
+                        :data="analytics.children"
+                        :render-content="renderTree"
+                        node-key="dislplayName"
+                        :key="analytics.displayName"
+                        show-checkbox
+                        @check-change="updatedAnalyticStore"/>
                 </el-col>
             </el-row>
             <el-row>
@@ -34,13 +32,28 @@ export default {
     },
      computed: {
         analytics: function() {
-            return this.$store.getters.analytics;
+            let analyticList = this.$store.getters.analytics;
+            let formattedAnalytics = [];
+            for(let index in analyticList) {
+                let analytic = analyticList[index];
+                if(formattedAnalytics[analytic.category] !== null && typeof formattedAnalytics[analytic.category] === 'object') {
+                formattedAnalytics[analytic.category].children.push(analytic);
+                } else {
+                    formattedAnalytics[analytic.category] = {
+                        displayName: analytic.category,
+                        children: []
+                    };
+                    formattedAnalytics[analytic.category].children.push(analytic);
+                }
+            }
+
+            return {children: Object.values(formattedAnalytics)};
         },
         selectedAnalyticNames: function() {
             return this.multipleSelection.map(a => a.name);
         },
         nextButtonDisabled: function() {
-            return this.multipleSelection.length < 1;
+            return this.$store.getters.selectedAnalytics.length < 1;
         },
         selectedDatasets: function() {
             return this.$store.getters.selectedDatasets || [];
@@ -50,6 +63,30 @@ export default {
         }
     },
     methods: {
+        renderTree(createElement, component) {
+            if (component.node.level === 1) {
+                    return createElement(
+                        'div', {
+                            attrs: {
+                                class: 'el-tree-node__label'
+                            }
+                        }, [
+                        null,
+                        createElement('span', {}, component.data.displayName),
+                        ]);
+                } else {
+                    return createElement(
+                        'div', {
+                            attrs: {
+                                class: 'el-tree-node__label'
+                            }
+                        }, [
+                            null,
+                            createElement('span', {}, component.data.displayName)
+                        ]
+                    )
+                }
+        },
         toggleSelection(rows) {
             if (rows) {
                 rows.forEach(row => {
@@ -70,7 +107,12 @@ export default {
             this.updateExecutionsStore();
         },
         updatedAnalyticStore(){
-            this.$store.commit('updateAnalyticsSelection', this.selectedAnalyticNames);
+            let nodes = this.$refs.analyticsTree.getCheckedNodes();
+            let names = [];
+            for(let index in nodes) {
+                names.push(nodes[index].name);
+            }
+            this.$store.commit('updateAnalyticsSelection', names);
         },
         /**
          * Create a new set of collections based on the selected analytics and update the store

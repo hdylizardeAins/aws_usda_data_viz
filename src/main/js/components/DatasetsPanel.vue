@@ -1,7 +1,7 @@
 <template>
     <div id="data-set-panel" class="bordered-panel">
       <el-row>
-        <el-col :span="20">1. Choose Dataset(s)</el-col>
+        <el-col :span="20">1. Choose Data</el-col>
         <el-col :span="4"><el-button style="width: 100%" disabled>Import</el-button></el-col>
       </el-row>
       <el-row>

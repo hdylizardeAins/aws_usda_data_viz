@@ -248,3 +248,7 @@ figcaption p {
     font-size: 14px;
     text-align:center;
 }
+
+.el-icon-right {
+    padding-left: 2px;
+}

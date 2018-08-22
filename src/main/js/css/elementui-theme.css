@@ -579,3 +579,7 @@
 .el-progress-bar__inner {
     background-color: #F39C12;  /* Change background color to orange for DCGS-N compliance. Changes all progress bars, but for now we only use this in the Narrative Panel. */
 }
+
+.el-loading-mask {
+    z-index: 2000; /*So that tooltips popups can display on top*/
+}

@@ -2,7 +2,13 @@
     <div id="data-set-panel" class="bordered-panel">
       <el-row>
         <el-col :span="20">1. Choose Data</el-col>
-        <el-col :span="4"><el-button style="width: 100%" disabled>Import</el-button></el-col>
+        <el-col :span="4">
+          <el-button style="width: 100%" disabled>
+            <el-tooltip content="Not yet implemented" placement="top-start">
+              <span>Import<i class="el-icon-information el-icon-right" /> </span>
+            </el-tooltip>
+          </el-button>
+        </el-col>
       </el-row>
       <el-row>
         <el-input v-model="searchText">
@@ -29,12 +35,18 @@
       </el-row>
       <el-row>
         <el-col :span="4">
-          <el-tooltip class="item" effect="dark" content="Merge two selected files" placement="top-start">
-            <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">Merge</el-button>
-          </el-tooltip>
+            <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">
+              <el-tooltip content="Please select two mergeable files" placement="top-start">
+                <span>Merge<i class="el-icon-information el-icon-right" /> </span>
+              </el-tooltip>
+            </el-button>
         </el-col>
         <el-col :offset="16" :span="4">
-          <el-button id="dsNextButton" type="primary" :disabled="nextButtonDisabled" @click="handleNextClick">Next</el-button>
+          <el-button id="dsNextButton" type="primary" :disabled="nextButtonDisabled" @click="handleNextClick">
+            <el-tooltip content="Please select one or more datasets" placement="top-start">
+              <span>Next<i class="el-icon-information el-icon-right" /> </span>
+            </el-tooltip>
+          </el-button>
         </el-col>
       </el-row>
       <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />

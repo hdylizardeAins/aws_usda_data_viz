@@ -6,7 +6,9 @@
                 <custom-nav @nav-select="handleNavSelect" />
             </el-header>
             <el-container class="body-container">
-                <el-main class="discussion-container" v-show="showDiscussionTab" key="discussion">
+                <el-main class="discussion-main" v-show="showDiscussionTab" key="discussion">
+                    <!-- TODO: putting v-loading on discussion, the main containing it, or its containers within -->
+                    <!-- causes the full page to have a loading icon -->
                     <discussion :tab-is-open="showDiscussionTab"></discussion>
                 </el-main>
                 <div id="newWorkDiv" v-show="showAnalyzeTab" key="newWork">
@@ -61,7 +63,8 @@ export default {
     data(){
         return {
             activeIndex: Constants.navIndices.discuss,
-            showDatasetViewer: false
+            showDatasetViewer: false,
+            discussionLoading: false
         }
     },
     computed: {
@@ -75,12 +78,27 @@ export default {
             return this.activeIndex == Constants.navIndices.discuss;
         }
     },
-    mounted() {
-
+    created() {
+        this.loadChatMessages();
     },
     methods: {
         handleNavSelect(event){
             this.activeIndex = event.key;
+            switch (this.activeIndex){
+                case "1":
+                    this.discussionTabSelected();
+                    break;
+                //could add more cases for other tabs
+            }
+        },
+        discussionTabSelected(){
+             this.loadChatMessages();
+        },
+        loadChatMessages(){
+            this.discussionLoading = true;
+             this.$store.dispatch("loadChatMessages", {
+                 success: () => this.discussionLoading = false //currently doesn't affect anything -- see TODO in template above
+             }); //TODO: failure callback
         }
     }
 }
@@ -134,7 +152,7 @@ body {
     overflow: hidden;
 }
 
-.discussion-container{
-    height: calc(100% - 33px);
+.discussion-main{
+    height: 100%;
 }
 </style>

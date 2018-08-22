@@ -1,14 +1,13 @@
-<template>        
-    <el-container id="discussionContainer" ref="discussionContainer">
+<template>  
+    <div id="discussionDiv">
         <el-row id="topicRow">
-            <!-- TODO: Fixed topic section needs responsivity updates to prevent elements being hidden on horizontal shrink  -->
             <el-col :offset="8" :span="8">
                 <div id="topicSelectLabelDiv">
                     <span><strong>Join the Discussion!</strong></span>
                 </div>
                 <div id="topicDiv">
                     <span>Choose a Topic:</span>
-                    <el-select v-model="selectedTopic" placeholder="Select or Enter New Topic" filterable allow-create @change="handleSelectChange">
+                    <el-select v-model="selectedTopic" placeholder="Select or Enter New Topic" filterable allow-create @change="scrollToTop">
                         <el-option v-for="item in Object.keys(topicSummary)"
                             :key="item"
                             :label="item"
@@ -20,7 +19,9 @@
                 </div>
             </el-col>
         </el-row>
-        <chat-message v-for="msg in messages" :key="msg.dateTime" :message="msg" :topic-name="selectedTopic" />
+        <el-container id="chatMessagesContainer" ref="chatMessagesContainer">
+            <chat-message v-for="msg in messages" :key="msg.dateTime" :message="msg" :topic-name="selectedTopic" />
+        </el-container>
         <el-row id="chatInputRow">
             <el-col :offset="8" :span="8">
                 <el-input id="commentArea" type="textarea" placeholder="Please enter a comment" autosize v-model="post"></el-input>
@@ -30,7 +31,7 @@
         <el-dialog class="follow-topic-dialog" :visible.sync="showFollowForm" title="Follow this topic" :close-on-click-modal="false">
             <follow-topic-form :topic-name="selectedTopic" @close="showFollowForm = false" />
         </el-dialog>
-    </el-container>
+    </div>
 </template>
 <script>
 import ChatMessage from './ChatMessage.vue';
@@ -43,7 +44,7 @@ export default{
         ChatMessage,
         FollowTopicForm
     },
-    props: ["tabIsOpen"],
+    props: ["tabIsOpen", "isLoading"],
     data() {
         return {
             showImageModal: false,
@@ -70,14 +71,16 @@ export default{
             this.$store.getters.chatTopics;
         }
     },
-    created(){
-        this.$store.dispatch("loadChatMessages", {});
-    },
     watch: {
         latestSeenMessages: function (newVal){
             let seenIds = newVal.map(msg => msg.id);
             if (seenIds.length > 0){
                 this.$store.commit('updateSeenMessageIds', seenIds);
+            }
+        },
+        tabIsOpen: function(newVal){
+            if (newVal){
+                this.$nextTick(() => this.scrollToTop());
             }
         }
     },
@@ -91,7 +94,7 @@ export default{
                             this.loading = false; 
                             this.post="";
                             this.$nextTick(() => {
-                                let elem = this.$refs.discussionContainer.$el;
+                                let elem = this.$refs.chatMessagesContainer.$el;
                                 elem.scrollTop = elem.scrollHeight;
                             })
                         },
@@ -111,8 +114,8 @@ export default{
         /**
          * Scrolls to the top of the chat stream when a topic is selected
          */
-        handleSelectChange: function(){
-            let elem = this.$refs.discussionContainer.$el;
+        scrollToTop: function(){
+            let elem = this.$refs.chatMessagesContainer.$el;
             elem.scrollTop = -elem.scrollHeight;
         },
         followTopicClicked: function(){
@@ -122,9 +125,16 @@ export default{
 }
 </script>
 <style>
-#discussionContainer {
-    height: calc(100% - 60px);
-    top: 60px;
+#discussionDiv {
+    display:flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+#chatMessagesContainer {
+    height: 100%;
+    flex:1;
     overflow-y: auto;
     position: relative;
 }
@@ -142,18 +152,16 @@ export default{
 }
 
 #topicRow{
-    position:fixed;
-    height:auto;
+    height:200px;
+    padding: 4px 0 4px 0;
     width:100%;
-    top: 142px;
-    
+    flex:0;
 }
 
 #chatInputRow {
-    position:fixed;
-    height:auto;
     width: 100%;
-    bottom: 50px;
+    flex:0;
+    max-height:50px;
     padding-right: 19px;
 }
 

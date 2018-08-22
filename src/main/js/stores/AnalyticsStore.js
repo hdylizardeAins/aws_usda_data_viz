@@ -40,7 +40,8 @@ var analyticsStore = {
                 multiSelectX: false,
                 multiSelectY: false,
                 selected: false,
-                unselectable: true
+                unselectable: true,
+                disabled: true
             },
             {
                 displayName: "Linear Regression",
@@ -66,7 +67,8 @@ var analyticsStore = {
                 multiSelectX: false,
                 multiSelectY: false,
                 unselectable: true,
-                selected: false
+                selected: false,
+                disabled: true
             },
             {
                 // TODO: update description and link
@@ -80,7 +82,8 @@ var analyticsStore = {
                 multiSelectX: false,
                 multiSelectY: false,
                 unselectable: true,
-                selected: false
+                selected: false,
+                disabled: true
             },
             {
                 // TODO: update description and link
@@ -94,7 +97,8 @@ var analyticsStore = {
                 multiSelectX: false,
                 multiSelectY: false,
                 unselectable: true,
-                selected: false
+                selected: false,
+                disabled: true
             },
             {
                 displayName: "Trend-Line",
@@ -132,14 +136,16 @@ var analyticsStore = {
                 multiSelectX: false,
                 multiSelectY: false,
                 unselectable: true,
-                selected: false
+                selected: false,
+                disabled: true
             },
             {
                 displayName: "Custom R Script",
                 name: "TBD",
-                category: "I need a new type of <strong>insight</strong>",
+                category: "I need a new type of insight", //TODO: this had <strong> tags around insight, but that was just rendered as plain text
                 unselectable: true,
-                selected: false
+                selected: false,
+                disabled: true
             }
         ]
     },

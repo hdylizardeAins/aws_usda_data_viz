@@ -50,7 +50,7 @@ export default{
             showImageModal: false,
             post: "",
             loading: false,
-            selectedTopic: "Visualizations",
+            selectedTopic: "Corn Trends",
             showFollowForm: false
         }
     },

@@ -28,6 +28,11 @@ public class ChatMessage implements Serializable {
 	private String dateTime;
 	
 	private String topic;
+	
+	private String id;
+	
+	//Used to indicate when the message has been persisted
+	private boolean written;
 
 	public String getTopic() {
 		return topic;
@@ -35,6 +40,34 @@ public class ChatMessage implements Serializable {
 
 	public void setTopic(String topic) {
 		this.topic = topic;
+	}
+
+	/**
+	 * @return the written
+	 */
+	public boolean getWritten() {
+		return written;
+	}
+
+	/**
+	 * @param written the written to set
+	 */
+	public void setWritten(boolean written) {
+		this.written = written;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**

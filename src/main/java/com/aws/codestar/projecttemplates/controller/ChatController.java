@@ -48,19 +48,16 @@ public class ChatController {
 	@RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON)
 	public ResponseEntity write(@RequestBody ChatMessage message) throws InterruptedException {
 		chatWorker.put(message);
-		//HACK: block until the write completes by waiting for the date to be set on the message
+		//HACK: block until the write completes by waiting for the written field to be set on the message
 		long time = System.currentTimeMillis();
 		long timeout = time + 10000L; //10 second timeout
-		boolean written = false;
 		while (System.currentTimeMillis() < timeout) {
-			if (message.getDateTime() != null 
-					&& message.getDateTime().length() > 0) {
-				written = true;
+			if (message.getWritten()) {
 				break;
 			}
 			Thread.sleep(100L);
 		}
-		if (written) {
+		if (message.getWritten()) {
 			return ResponseEntity.ok(message);
 		}
 		else {

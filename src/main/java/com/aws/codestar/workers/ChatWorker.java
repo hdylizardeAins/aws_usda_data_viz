@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -88,6 +89,7 @@ public class ChatWorker implements Runnable {
 				List<ChatMessage> messages = new LinkedList<>();
 				messages.add(msg);
 				writeToFile(messages);
+				messages.forEach(m -> m.setWritten(true));
 			} catch (InterruptedException e) {
 
 			}
@@ -107,7 +109,10 @@ public class ChatWorker implements Runnable {
 			for (ChatMessage msg : messages) {
 				// Set the date time
 				msg.setDateTime(Instant.now().toString());
-	
+				
+				//Set the id
+				msg.setId(UUID.randomUUID().toString());
+				
 				// Convert to string
 				ObjectMapper mapper = new ObjectMapper();
 				String json = null;

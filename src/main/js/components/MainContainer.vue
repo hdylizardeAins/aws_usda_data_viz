@@ -1,12 +1,15 @@
 <template>
     <div>
-        <el-container @clicked-image="handleClickedImage" >
+        <el-container>
             <el-header id="pageHeader" height="auto" >
                 <custom-header />
                 <custom-nav @nav-select="handleNavSelect" />
             </el-header>
             <el-container class="body-container">
-                <div id="newWorkDiv" v-if="activeIndex == 2" key="newWork">
+                <el-main class="discussion-container" v-show="showDiscussionTab" key="discussion">
+                    <discussion :tab-is-open="showDiscussionTab"></discussion>
+                </el-main>
+                <div id="newWorkDiv" v-show="showAnalyzeTab" key="newWork">
                     <el-main >
                         <el-row class="responsive-flex-row" type="flex" >
                             <el-col class="left-panels-flex" :span="12">
@@ -19,10 +22,7 @@
                         </el-row>
                     </el-main>
                 </div>
-                <el-main class="discussion-container" v-else-if="activeIndex == 3" key="discussion">
-                    <discussion></discussion>
-                </el-main>
-                <el-main style="flex:1;" v-else key="underConstruction">
+                <el-main style="flex:1;" v-show="showVisualizeTab" key="visualize">
                     <p style="text-align:center;">Page Under Construction</p>
                 </el-main>
                 <image-dialogue />
@@ -45,6 +45,7 @@ import DatasetsPanel from './DatasetsPanel.vue';
 import Visualization from './Visualization.vue';
 import Discussion from './Discussion.vue';
 import ImageDialogue from './ImageDialogue.vue';
+import Constants from './Constants.js';
 
 
 export default {
@@ -59,8 +60,19 @@ export default {
     },
     data(){
         return {
-            activeIndex: "2",
+            activeIndex: Constants.navIndices.discuss,
             showDatasetViewer: false
+        }
+    },
+    computed: {
+        showVisualizeTab: function(){
+            return this.activeIndex == Constants.navIndices.visualize;
+        },
+        showAnalyzeTab: function(){
+            return this.activeIndex == Constants.navIndices.analyze;
+        },
+        showDiscussionTab: function(){
+            return this.activeIndex == Constants.navIndices.discuss;
         }
     },
     mounted() {
@@ -69,9 +81,6 @@ export default {
     methods: {
         handleNavSelect(event){
             this.activeIndex = event.key;
-        },
-        handleClickedImage(event){
-            console.log(event);
         }
     }
 }

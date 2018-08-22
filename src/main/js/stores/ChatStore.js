@@ -3,19 +3,45 @@ import axios from 'axios';
 
 var chatStore = {
     state: {
-        messages: []
+        messages: {},
+        seenMessageIds: {}
     },
     getters: {
-        chatTopics: state => [...new Set(state.messages.map(m => m.topic))],
-        chatMessagesByTopic: state => topic => state.messages.filter(m => m.topic === topic)
+        chatMessages: state => Object.values(state.messages),
+        chatTopics: state => [...new Set(Object.values(state.messages).map(m => m.topic))],
+        /**
+         * Gets a summary of the number of unseen messages for each topic
+         */
+        chatTopicUnseenSummary: state => { 
+            let allTopics = [...new Set(Object.values(state.messages).map(m => m.topic))];
+            let unseen = Object.values(state.messages).filter(msg => !Object.keys(state.seenMessageIds).includes(msg.id));
+            let summary = {};
+            allTopics.forEach(topic => summary[topic] = 0);
+            unseen.forEach(msg => summary[msg.topic] += 1);
+            return summary;
+        },
+        chatMessagesByTopic: state => topic => Object.values(state.messages).filter(m => m.topic === topic),
+        unSeenMessages: state => {
+            let seen = Object.keys(state.seenMessageIds);
+            return Object.values(state.messages).filter(msg => !seen.includes(msg.id));
+        },
+        seenMessages: state => {
+            let seen = Object.keys(state.seenMessageIds);
+            return Object.values(state.messages).filter(msg => seen.includes(msg.id));
+        }
     },
     mutations: {
         updateChatMessages: function (state, messages) {
-            let count = 0;
             messages.forEach(element => {
-                Vue.set(state.messages, count, element);
-                count++;
+                Vue.set(state.messages, element.id, element);
             });
+        },
+        updateSeenMessageIds: function (state, ids){
+            ids.forEach((id) => {
+                if (typeof state.seenMessageIds[id] === 'undefined'){
+                    Vue.set(state.seenMessageIds, id, true);
+                }
+            })
         }
     },
     actions: {

@@ -9,10 +9,12 @@
                 <div id="topicDiv">
                     <span>Choose a Topic:</span>
                     <el-select v-model="selectedTopic" placeholder="Select or Enter New Topic" filterable allow-create @change="handleSelectChange">
-                        <el-option v-for="item in topics"
+                        <el-option v-for="item in Object.keys(topicSummary)"
                             :key="item"
                             :label="item"
-                            :value="item" />
+                            :value="item" >
+                            <span>{{ item }}<span style="color: green;" v-show="topicSummary[item]"><strong> ({{ topicSummary[item] }})</strong></span></span>
+                        </el-option>
                     </el-select>
                     <el-button type="primary" @click="followTopicClicked" >Follow</el-button>
                 </div>
@@ -41,6 +43,7 @@ export default{
         ChatMessage,
         FollowTopicForm
     },
+    props: ["tabIsOpen"],
     data() {
         return {
             showImageModal: false,
@@ -54,15 +57,29 @@ export default{
         messages: function(){
             return this.$store.getters.chatMessagesByTopic(this.selectedTopic);
         },
+        latestSeenMessages: function (){
+            return this.tabIsOpen ? this.messages : [];
+        },
         postDisabled: function(){
             return this.post === "";
         },
+        topicSummary: function(){
+            return this.$store.getters.chatTopicUnseenSummary;
+        },
         topics: function(){
-            return this.$store.getters.chatTopics;
+            this.$store.getters.chatTopics;
         }
     },
     created(){
         this.$store.dispatch("loadChatMessages", {});
+    },
+    watch: {
+        latestSeenMessages: function (newVal){
+            let seenIds = newVal.map(msg => msg.id);
+            if (seenIds.length > 0){
+                this.$store.commit('updateSeenMessageIds', seenIds);
+            }
+        }
     },
     methods: {
         handlePostClick: function(){

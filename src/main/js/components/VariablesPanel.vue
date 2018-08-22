@@ -1,5 +1,5 @@
 <template>
-    <el-form :model="executionFormData" label-position="top">
+    <el-form class= "execution-vars-form" :model="executionFormData" label-position="top">
         <h4>3a. Choose Variables</h4>
         <el-row v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
@@ -155,5 +155,19 @@ export default {
 }
 #postImgBtn {
     margin-left: 10px;
+}
+</style>
+<style scope>
+.execution-vars-form  .el-form-item__label {
+    width: 100%;
+    margin: auto;
+    font-weight: bold;
+    text-align: center;
+}
+
+.execution-vars-form .el-select {
+    width: 80%;
+    margin: auto;
+    display: block;
 }
 </style>

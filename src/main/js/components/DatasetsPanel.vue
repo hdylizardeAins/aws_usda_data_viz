@@ -15,8 +15,8 @@
             <el-table-column prop="name" label="Name" />
             <el-table-column prop="mergeable" label="Mergeable">
             <template slot-scope="scope">
-              <p v-if="scope.row.mergeable">yes</p>
-              <p v-else>no</p>
+              <p v-if="scope.row.mergeable">Yes</p>
+              <p v-else>No</p>
             </template>
           </el-table-column>
             <el-table-column align="right">

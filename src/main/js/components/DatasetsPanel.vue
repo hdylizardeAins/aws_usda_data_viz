@@ -36,15 +36,21 @@
       <el-row>
         <el-col :span="4">
             <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">
-              <el-tooltip content="Please select two mergeable files" placement="top-start">
-                <span>Merge<i class="el-icon-information el-icon-right" /> </span>
+              <el-tooltip placement="top-start">
+                <span>Merge<i class="el-icon-information el-icon-right" /></span>
+                <template slot="content">
+                  {{ mergeButtonDisabled ? "Please select two mergeable datasets" : "Click to merge selected datasets" }}
+                </template>
               </el-tooltip>
             </el-button>
         </el-col>
         <el-col :offset="16" :span="4">
           <el-button id="dsNextButton" type="primary" :disabled="nextButtonDisabled" @click="handleNextClick">
-            <el-tooltip content="Please select one or more datasets" placement="top-start">
+            <el-tooltip placement="top-start">
               <span>Next<i class="el-icon-information el-icon-right" /> </span>
+              <template slot="content">
+                  {{ nextButtonDisabled ? "Please select one or more datasets" : "Click to proceed with selected dataset(s)" }}
+                </template>
             </el-tooltip>
           </el-button>
         </el-col>

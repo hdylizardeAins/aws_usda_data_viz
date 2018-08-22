@@ -2,7 +2,7 @@
     <el-row class="chat-row">
         <el-col :offset="8" :span="8">
             <el-card :body-style="{ padding: '0px' }">
-                <div style="text-align:center"><el-button type="primary" @click="followPostClicked">Follow</el-button></div>
+                <div style="text-align:center"><el-button type="primary" @click="followPostClicked">Follow Post</el-button></div>
                 <span class="username">{{ message.username }}</span> <time class="time">{{ dateTime }}</time>
                 <expandable-image class="chat-image" v-if="showImage" :image-url="imgSrc" :caption="message.caption" :graph-data="message.graphData" />
                 <div style="padding: 14px;" >
@@ -52,11 +52,15 @@ export default{
 </script>
 <style>
 .time {
+    padding-right: 14px;
+    font-size: 0.9em;
     position: relative;
     float: right;
 }
 
 .username {
+    padding-left: 14px;
+    font-size: 0.9em;
     position: relative;
     float: left;
 }

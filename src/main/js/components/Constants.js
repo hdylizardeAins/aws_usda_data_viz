@@ -9,6 +9,8 @@ const discussIdx = "1";
 const analyzeIdx = "2";
 const visualizeIdx = "3";
 
+//Default topics
+const topics = ["Corn Trends", "Crop Acreage Reporting", "Payments", "Recently Released Programs"];
 
 export default {
     apachePort: aPort,
@@ -18,5 +20,6 @@ export default {
         discuss: discussIdx,
         analyze: analyzeIdx,
         visualize: visualizeIdx
-    }
+    },
+    topics: topics
 }

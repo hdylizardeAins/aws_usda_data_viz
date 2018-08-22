@@ -15,7 +15,7 @@
                             <span>{{ item }}<span style="color: green;" v-show="topicSummary[item]"><strong> ({{ topicSummary[item] }})</strong></span></span>
                         </el-option>
                     </el-select>
-                    <el-button type="primary" @click="followTopicClicked" >Follow</el-button>
+                    <el-button type="primary" @click="followTopicClicked" >Follow Topic</el-button>
                 </div>
             </el-col>
         </el-row>

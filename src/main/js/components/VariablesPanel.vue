@@ -1,7 +1,7 @@
 <template>
-    <el-form class= "execution-vars-form" :model="executionFormData" label-position="top">
+    <el-form :model="executionFormData" label-position="top">
         <h4>3a. Choose Variables</h4>
-        <el-row v-if="executionFormData.analytic.requiresXY">
+        <el-row class="execution-vars-form" v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
                 <el-form-item prop="xVars" label="X Axis">
                     <el-select v-model="execution.xVars" placeholder="Select X">
@@ -25,7 +25,7 @@
                 </el-form-item>
             </el-col>
         </el-row>
-        <el-row class="bordered-panel" v-else>
+        <el-row class="execution-vars-form bordered-panel" v-else>
             <el-form-item prop="columns" label="Columns">
                     <el-checkbox-group v-model="execution.columns">
                         <el-checkbox v-for="column in executionFormData.dataset.columns" :key="column" :label="column" name="column"></el-checkbox>

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import axios from 'axios';
+import Constants from '../components/Constants.js';
 
 var chatStore = {
     state: {
@@ -8,12 +9,18 @@ var chatStore = {
     },
     getters: {
         chatMessages: state => Object.values(state.messages),
-        chatTopics: state => [...new Set(Object.values(state.messages).map(m => m.topic))],
+        chatTopics: state => {
+            let set = new Set(Object.values(state.messages).map(m => m.topic));
+            Constants.topics.forEach(t => set.add(t)); //add default topics
+            return [...set.values()];
+        },
         /**
          * Gets a summary of the number of unseen messages for each topic
          */
         chatTopicUnseenSummary: state => { 
-            let allTopics = [...new Set(Object.values(state.messages).map(m => m.topic))];
+            let allTopics = new Set(Object.values(state.messages).map(m => m.topic));
+            Constants.topics.forEach(t => allTopics.add(t)); //add default topics
+            allTopics = [...allTopics.values()];
             let unseen = Object.values(state.messages).filter(msg => !Object.keys(state.seenMessageIds).includes(msg.id));
             let summary = {};
             allTopics.forEach(topic => summary[topic] = 0);

@@ -1,6 +1,9 @@
 <template>
     <div id="visualization-panel" v-show="visible">
-        <el-container >
+        <el-row style="height: 20px;">
+            <div class="blue-panel-top" />
+        </el-row>
+        <el-container class="bordered-panel">
             <el-row>3. View and tailor visualization(s)</el-row>
             <el-row>
                 <el-col>
@@ -88,11 +91,11 @@ export default {
 };
 </script>
 <style>
-#visualization-panel {
+/* #visualization-panel .el-container{
     border: solid 1px gray;
     padding: 4px;    
     margin: 2px;
-}
+} */
 </style>
 <style scoped>
 #visualization-panel >>> .el-tabs__item.is-active {

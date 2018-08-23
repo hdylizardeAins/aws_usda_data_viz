@@ -12,7 +12,7 @@
             <el-form-item label="Caption">
                 <el-input v-model="formData.caption"></el-input>
             </el-form-item>
-            <el-form-item label="Comment">
+            <el-form-item label="Insight">
                 <el-input type="textarea" v-model="formData.comment" />
             </el-form-item>
             <el-form-item>

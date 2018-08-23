@@ -1,8 +1,8 @@
 <template>
     <el-form :model="executionFormData" label-position="top">
-        <h4>3a. Choose Columns</h4>
+        <div><span><strong>3a. Choose Columns</strong></span></div>
         <el-row class="execution-vars-form" v-if="executionFormData.analytic.requiresXY">
-            <el-col class="bordered-panel" id="x-axis" :span="11">
+            <el-col class="bordered-panel-top bordered-panel" id="x-axis" :span="11">
                 <el-form-item prop="xVars" label="X Axis">
                     <el-select v-model="execution.xVars" placeholder="Select X">
                         <el-option
@@ -13,7 +13,7 @@
                     </el-select>
                 </el-form-item>
             </el-col>
-            <el-col class="bordered-panel" id="y-axis" :span="11">
+            <el-col class="bordered-panel-top bordered-panel" id="y-axis" :span="11">
                 <el-form-item prop="yVars" label="Y Axis">
                     <el-select v-model="execution.yVars" placeholder="Select Y">
                         <el-option
@@ -25,7 +25,7 @@
                 </el-form-item>
             </el-col>
         </el-row>
-        <el-row class="execution-vars-form bordered-panel" v-else>
+        <el-row class="execution-vars-form bordered-panel bordered-panel-top" v-else>
             <el-form-item prop="columns" label="Columns">
                     <el-checkbox-group v-model="execution.columns">
                         <el-checkbox v-for="column in executionFormData.dataset.columns" :key="column" :label="column" name="column"></el-checkbox>
@@ -152,12 +152,17 @@ export default {
 </script>
 <style>
 #runAnalyticBtn {
-    float:left;
+    float:right;
     position:relative;
 }
 #postImgBtn {
-    float:right;
+    float:left;
     position:relative;
+}
+
+.bordered-panel-top {
+    border-top: solid 1px gray;
+    padding-top: 4px;
 }
 </style>
 <style scope>

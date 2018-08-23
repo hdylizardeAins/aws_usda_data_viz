@@ -1,6 +1,9 @@
 <template>
-    <div v-show="visible" id="analytics-panel" class="bordered-panel">
-        <el-container>
+    <div v-show="visible" id="analytics-panel">
+        <el-row style="height: 20px;">
+            <div class="blue-panel-top" />
+        </el-row>
+        <el-container class="bordered-panel">
             <el-row>2. Choose an insight</el-row>
             <el-row>
                 <el-col>
@@ -16,7 +19,14 @@
             </el-row>
             <el-row>
                 <el-col :span="4" :offset="20" >
-                    <el-button id="analyticsNextButton" class="greenBtn" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">Next</el-button>
+                    <el-button id="analyticsNextButton" class="greenBtn" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">
+                        <el-tooltip placement="top-start">
+                            <span>Next<i class="el-icon-information el-icon-right" /> </span>
+                            <template slot="content">
+                                {{ nextButtonDisabled ? "Please select one or more insights" : "Click to proceed with selected insight(s)" }}
+                            </template>
+                        </el-tooltip>
+                    </el-button>
                 </el-col>
             </el-row>
         </el-container>
@@ -27,11 +37,6 @@
 import EventBus from './EventBus.vue'
 
 export default {
-    data() {
-        return {
-            multipleSelection: []
-        }
-    },
      computed: {
         analytics: function() {
             let analyticList = this.$store.getters.analytics;
@@ -50,9 +55,6 @@ export default {
             }
 
             return {children: Object.values(formattedAnalytics)};
-        },
-        selectedAnalyticNames: function() {
-            return this.multipleSelection.map(a => a.name);
         },
         nextButtonDisabled: function() {
             return this.$store.getters.selectedAnalytics.length < 1;
@@ -97,9 +99,6 @@ export default {
             } else {
                 this.$refs.analyticsTable.clearSelection();
             }
-        },
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
         },
         isSelectable(row){
             return !row.unselectable;

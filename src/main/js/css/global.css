@@ -234,9 +234,11 @@ div.el-message-box__wrapper {
 }
 
 .bordered-panel {
-    border: solid 1px gray;
-    padding: 4px;
-    margin: 2px;
+    border-left: solid 1px gray;
+    border-right: solid 1px gray;
+    border-bottom: solid 1px gray;
+    padding: 0 4px 4px 4px;
+    margin: 0 2px 2px 2px;
 }
 
 /* Prevent words from breaking in the middle*/
@@ -260,3 +262,10 @@ button.greenBtn.el-button--primary{
 button.greenBtn.el-button--primary.is-disabled {
     background-color: #f0f0f0;
 }
+
+div.blue-panel-top {
+    background-color: rgb(4, 124, 192);
+    width: calc(100% - 4px);
+    height: 100%;
+    margin-left:2px;
+  }

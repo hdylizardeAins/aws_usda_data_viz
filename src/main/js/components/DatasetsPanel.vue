@@ -1,67 +1,72 @@
 <template>
-    <div id="data-set-panel" class="bordered-panel">
-      <el-row>
-        <el-col :span="20">1. Choose data</el-col>
-        <el-col :span="4">
-          <el-button id="importBtn" disabled>
-            <el-tooltip content="Not yet implemented" placement="top-start">
-              <span>Import<i class="el-icon-information el-icon-right" /> </span>
-            </el-tooltip>
-          </el-button>
-        </el-col>
+    <div id="data-set-panel">
+      <el-row style="height: 20px;">
+        <div class="blue-panel-top" />
       </el-row>
-      <el-row>
-        <el-input v-model="searchText">
-          <template slot="append"><el-button type="primary" icon="el-icon-search" @click="submitSearch"></el-button></template>
-        </el-input>
-      </el-row>
-      <el-row v-loading="isLoading">
-        <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" prop="selected" :selectable="isSelectable" :max="1"/>
-            <el-table-column prop="name" label="Name" />
-            <el-table-column prop="mergeable" label="Mergeable">
-            <template slot-scope="scope">
-              <p v-if="scope.row.mergeable">Yes</p>
-              <p v-else>No</p>
-            </template>
-          </el-table-column>
-            <el-table-column align="right">
-            <template slot-scope="scope">
-              <el-button @click="handleViewClick(scope.row)">View File</el-button>
-            </template>
-          </el-table-column>
-            <!-- Add "mergeable" column -->
-        </el-table>
-      </el-row>
-      <el-row>
-        <el-col :span="4">
-            <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">
-              <el-tooltip placement="top-start">
-                <span>Merge<i class="el-icon-information el-icon-right" /></span>
-                <template slot="content">
-                  {{ mergeButtonDisabled ? "Please select two mergeable datasets" : "Click to merge selected datasets" }}
-                </template>
+      <div class="bordered-panel">
+        <el-row>
+          <el-col :span="20">1. Choose data</el-col>
+          <el-col :span="4">
+            <el-button id="importBtn" disabled>
+              <el-tooltip content="Not yet implemented" placement="top-start">
+                <span>Import<i class="el-icon-information el-icon-right" /> </span>
               </el-tooltip>
             </el-button>
-        </el-col>
-        <el-col :offset="16" :span="4">
-          <el-button id="dsNextButton" type="primary" class="greenBtn" :disabled="nextButtonDisabled" @click="handleNextClick">
-            <el-tooltip placement="top-start">
-              <span>Next<i class="el-icon-information el-icon-right" /> </span>
-              <template slot="content">
-                  {{ nextButtonDisabled ? "Please select one or more datasets" : "Click to proceed with selected dataset(s)" }}
-                </template>
-            </el-tooltip>
-          </el-button>
-        </el-col>
-      </el-row>
-      <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
-      <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
-        <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
-      </el-dialog>
-      <el-dialog :visible.sync="searchResultsVisible" title="Search Results">
-        <search-results-panel :is-loading="searchResultLoading"></search-results-panel>
-      </el-dialog>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-input v-model="searchText">
+            <template slot="append"><el-button type="primary" icon="el-icon-search" @click="submitSearch"></el-button></template>
+          </el-input>
+        </el-row>
+        <el-row v-loading="isLoading">
+          <el-table ref="datasetsTable" :data="datasets" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" prop="selected" :selectable="isSelectable" :max="1"/>
+              <el-table-column prop="name" label="Name" />
+              <el-table-column prop="mergeable" label="Mergeable">
+              <template slot-scope="scope">
+                <p v-if="scope.row.mergeable">Yes</p>
+                <p v-else>No</p>
+              </template>
+            </el-table-column>
+              <el-table-column align="right">
+              <template slot-scope="scope">
+                <el-button @click="handleViewClick(scope.row)">View File</el-button>
+              </template>
+            </el-table-column>
+              <!-- Add "mergeable" column -->
+          </el-table>
+        </el-row>
+        <el-row>
+          <el-col :span="4">
+              <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">
+                <el-tooltip placement="top-start">
+                  <span>Merge<i class="el-icon-information el-icon-right" /></span>
+                  <template slot="content">
+                    {{ mergeButtonDisabled ? "Please select two mergeable datasets" : "Click to merge selected datasets" }}
+                  </template>
+                </el-tooltip>
+              </el-button>
+          </el-col>
+          <el-col :offset="16" :span="4">
+            <el-button id="dsNextButton" type="primary" class="greenBtn" :disabled="nextButtonDisabled" @click="handleNextClick">
+              <el-tooltip placement="top-start">
+                <span>Next<i class="el-icon-information el-icon-right" /> </span>
+                <template slot="content">
+                    {{ nextButtonDisabled ? "Please select one or more datasets" : "Click to proceed with selected dataset(s)" }}
+                  </template>
+              </el-tooltip>
+            </el-button>
+          </el-col>
+        </el-row>
+        <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
+        <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
+          <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
+        </el-dialog>
+        <el-dialog :visible.sync="searchResultsVisible" title="Search Results">
+          <search-results-panel :is-loading="searchResultLoading"></search-results-panel>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -229,5 +234,4 @@ export default {
 #importBtn{
   float:right;
 }
-
 </style>

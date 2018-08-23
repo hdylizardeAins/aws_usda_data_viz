@@ -373,16 +373,16 @@
 }
 
 .el-notification.success {
-    background-color: #e8f8f5;
+    background-color: #e7f4e4;
     border: 1px solid #18bc9c;
 }
 
 .el-notification.success .el-notification__content {
-    color: #18bc9c;
+    color:black;
 }
 
 .el-notification.success .el-notification__title {
-    color: #18bc9c;
+    color: black;
 }
 
 .el-notification .el-icon-circle-check:before {

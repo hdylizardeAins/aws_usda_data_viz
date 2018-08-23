@@ -1,7 +1,7 @@
 <template>
     <div id="visualization-panel" v-show="visible">
         <el-container >
-            <el-row>3. View and Tailor Visualization(s)</el-row>
+            <el-row>3. View and tailor visualization(s)</el-row>
             <el-row>
                 <el-col>
                     <el-tabs v-model="currentTab" type="border-card">

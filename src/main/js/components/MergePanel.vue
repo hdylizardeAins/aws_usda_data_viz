@@ -1,7 +1,7 @@
 <template>
     <el-container>
       <el-form :model="formdata" label-position="right" label-width="50px">
-          <el-form-item label="name">
+          <el-form-item label="Name">
             <el-input v-model="formdata.name" placeholder="Enter a name for the merged dataset"></el-input>
           </el-form-item>
         <el-row type="flex">
@@ -9,7 +9,7 @@
               <h3>{{formdata.datasetA.metadata.name}}</h3>
                   <el-table ref="datasetATable" :data="formdata.datasetA.metadata.mergeableColumns" :max-height="250" @selection-change="handleDatasetASelection">
                       <el-table-column type="selection"/>
-                      <el-table-column>
+                      <el-table-column label="Column">
                         <template slot-scope="scope">
                           {{scope.row}}
                         </template>
@@ -20,7 +20,7 @@
               <h3>{{formdata.datasetB.metadata.name}}</h3>
                     <el-table ref="datasetBTable" :data="formdata.datasetB.metadata.mergeableColumns" :max-height="300" @selection-change="handleDatasetBSelection">
                       <el-table-column type="selection"/>
-                      <el-table-column>
+                      <el-table-column label="Column">
                         <template slot-scope="scope">
                           {{scope.row}}
                         </template>

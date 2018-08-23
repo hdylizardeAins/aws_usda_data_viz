@@ -16,7 +16,7 @@
             </el-row>
             <el-row>
                 <el-col :span="4" :offset="20" >
-                    <el-button id="analyticsNextButton" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">Next</el-button>
+                    <el-button id="analyticsNextButton" class="greenBtn" type="primary" @click="handleNextClick" :disabled="nextButtonDisabled">Next</el-button>
                 </el-col>
             </el-row>
         </el-container>

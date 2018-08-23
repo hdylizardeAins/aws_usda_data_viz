@@ -252,3 +252,11 @@ figcaption p {
 .el-icon-right {
     padding-left: 2px;
 }
+
+button.greenBtn.el-button--primary{
+    background-color: #2e8540;
+}
+
+button.greenBtn.el-button--primary.is-disabled {
+    background-color: #f0f0f0;
+}

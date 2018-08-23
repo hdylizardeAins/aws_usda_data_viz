@@ -1,9 +1,9 @@
 <template>
     <div id="data-set-panel" class="bordered-panel">
       <el-row>
-        <el-col :span="20">1. Choose Data</el-col>
+        <el-col :span="20">1. Choose data</el-col>
         <el-col :span="4">
-          <el-button style="width: 100%" disabled>
+          <el-button id="importBtn" disabled>
             <el-tooltip content="Not yet implemented" placement="top-start">
               <span>Import<i class="el-icon-information el-icon-right" /> </span>
             </el-tooltip>
@@ -27,7 +27,7 @@
           </el-table-column>
             <el-table-column align="right">
             <template slot-scope="scope">
-              <el-button @click="handleViewClick(scope.row)">View</el-button>
+              <el-button @click="handleViewClick(scope.row)">View File</el-button>
             </template>
           </el-table-column>
             <!-- Add "mergeable" column -->
@@ -45,7 +45,7 @@
             </el-button>
         </el-col>
         <el-col :offset="16" :span="4">
-          <el-button id="dsNextButton" type="primary" :disabled="nextButtonDisabled" @click="handleNextClick">
+          <el-button id="dsNextButton" type="primary" class="greenBtn" :disabled="nextButtonDisabled" @click="handleNextClick">
             <el-tooltip placement="top-start">
               <span>Next<i class="el-icon-information el-icon-right" /> </span>
               <template slot="content">
@@ -223,6 +223,10 @@ export default {
 }
 
 #dsNextButton{
+  float:right;
+}
+
+#importBtn{
   float:right;
 }
 

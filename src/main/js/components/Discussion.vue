@@ -1,10 +1,12 @@
 <template>  
     <div id="discussionDiv">
+        <el-row>
+            <div id="topicSelectLabelDiv" style="word-wrap:none;">
+                <span style="color: green"><strong>Join the discussion!</strong></span>
+            </div>
+        </el-row>
         <el-row id="topicRow">
             <el-col :offset="8" :span="8">
-                <div id="topicSelectLabelDiv">
-                    <span style="color: green"><strong>Join the discussion!</strong></span>
-                </div>
                 <div id="topicDiv">
                     <span>Choose a Topic:</span>
                     <el-select v-model="selectedTopic" placeholder="Select or Enter New Topic" filterable allow-create @change="scrollToTop">
@@ -145,7 +147,9 @@ export default{
     padding-top: 2px;
     width: 50%;
     text-align: center;
+    
 }
+
 
 #topicDiv {
     text-align: center;
@@ -158,6 +162,7 @@ export default{
     width:100%;
     flex:0;
 }
+
 
 #chatInputRow {
     width: 100%;

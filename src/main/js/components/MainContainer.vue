@@ -14,11 +14,13 @@
                 <div id="newWorkDiv" v-show="showAnalyzeTab" key="newWork">
                     <el-main >
                         <el-row class="responsive-flex-row" type="flex" >
-                            <el-col class="left-panels-flex" :span="12">
+                            <el-col class="left-panels-flex" :span="8">
                                 <datasets-panel />
-                                <analytics-panel />
                             </el-col>
-                            <el-col class="right-panels-flex" :span="12">
+                            <el-col class="middle-panels-flex" :span="8">
+                                 <analytics-panel />
+                            </el-col>
+                            <el-col class="right-panels-flex" :span="8">
                                 <visualization />
                             </el-col>
                         </el-row>
@@ -115,13 +117,20 @@ export default {
 
 .left-panels-flex {
     min-width: 450px;
-    max-width: 745px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.middle-panels-flex {
+    min-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .right-panels-flex {
+    margin-left: auto;
+    margin-right: auto;
     min-width: 450px;
-    max-width: 745px;
-    
 }
 
 #pageFooter{

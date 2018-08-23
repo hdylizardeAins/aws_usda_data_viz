@@ -1,6 +1,6 @@
 <template>
     <el-form :model="executionFormData" label-position="top">
-        <h4>3a. Choose Variables</h4>
+        <h4>3a. Choose Columns</h4>
         <el-row class="execution-vars-form" v-if="executionFormData.analytic.requiresXY">
             <el-col class="bordered-panel" id="x-axis" :span="11">
                 <el-form-item prop="xVars" label="X Axis">
@@ -33,10 +33,8 @@
                 </el-form-item>
         </el-row>
         <el-row>
-            <el-col :span="4" :offset="15">
-                <el-button id="runAnalyticBtn" type="primary" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
-            </el-col>
-            <el-col :span="4">
+            <el-col>
+                <el-button id="runAnalyticBtn" type="primary" class="greenBtn" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
                 <el-button id="postImgBtn" type="primary" @click="handlePostClick" :disabled="postButtonDisabled">Post</el-button>
             </el-col>
             <post-form :show-dialog="showPostForm" :post-data="postData" @close-post-dialog="showPostForm = false" />
@@ -61,7 +59,8 @@ export default {
         return {
             executionFormData: this.execution,
             showPostForm: false,
-            postData: {}
+            postData: {},
+            postDisabled: false
         }
     },
     computed:{
@@ -84,8 +83,7 @@ export default {
             return this.executionFormData.columns.length == 0;
         },
         postButtonDisabled: function(){
-            console.log();
-            return typeof this.execution.imagePath !== 'string' || this.execution.imagePath.length  < 1;
+            return this.postDisabled || typeof this.execution.imagePath !== 'string' || this.execution.imagePath.length  < 1;
         }
     },
     watch: {
@@ -96,6 +94,7 @@ export default {
     methods: {
         submitForm() {
             EventBus.$emit("waitForExecution");
+            this.postDisabled = true;
             let executionToSubmit = deepCopy(this.executionFormData);
             let params = {
                 inputFile: executionToSubmit.dataset.filePath,
@@ -119,6 +118,7 @@ export default {
                             duration: 5000,
                             title: "Error"
                         });
+                        this.postDisabled = false;
                         EventBus.$emit("executionFinished");
                     }.bind(this),
                     success: function(response){
@@ -133,6 +133,7 @@ export default {
                             imagePath: path,
                             graphText: response.data.text
                         });
+                        this.postDisabled = false;
                         EventBus.$emit("executionFinished");
                     }.bind(this)
                 }
@@ -151,10 +152,12 @@ export default {
 </script>
 <style>
 #runAnalyticBtn {
-    float:right;
+    float:left;
+    position:relative;
 }
 #postImgBtn {
-    margin-left: 10px;
+    float:right;
+    position:relative;
 }
 </style>
 <style scope>

@@ -9,6 +9,7 @@
                 <el-col>
                     <el-tree ref="analyticsTree"
                         highlight-current
+                        :render-after-expand="false"
                         :data="analytics.children"
                         :render-content="renderTree"
                         node-key="dislplayName"

@@ -34,8 +34,22 @@
         </el-row>
         <el-row>
             <el-col>
-                <el-button id="runAnalyticBtn" type="primary" class="greenBtn" @click="submitForm" :disabled="runButtonDisabled">Run Analytic</el-button>
-                <el-button id="postImgBtn" type="primary" @click="handlePostClick" :disabled="postButtonDisabled">Post</el-button>
+                <el-button id="runAnalyticBtn" type="primary" class="greenBtn" @click="submitForm" :disabled="runButtonDisabled">
+                    <el-tooltip placement="top-start">
+                        <span>Run Analytic<i class="el-icon-information el-icon-right" /> </span>
+                        <template slot="content">
+                            {{ runButtonDisabled ? "Please select column(s)" : "Click to proceed with selected column(s)" }}
+                        </template>
+                    </el-tooltip>
+                </el-button>
+                <el-button id="postImgBtn" type="primary" @click="handlePostClick" :disabled="postButtonDisabled">
+                    <el-tooltip placement="top-start">
+                        <span>Post<i class="el-icon-information el-icon-right" /> </span>
+                        <template slot="content">
+                            {{ postButtonDisabled ? "Please generate a graph" : "Click to post this graph" }}
+                        </template>
+                    </el-tooltip>
+                </el-button>
             </el-col>
             <post-form :show-dialog="showPostForm" :post-data="postData" @close-post-dialog="showPostForm = false" />
         </el-row>

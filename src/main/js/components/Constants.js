@@ -2,6 +2,9 @@ const aPort = "8080";
 const getAUrlPrefix = function(){
       return window.location.protocol + "//" + window.location.hostname + ":" + aPort + "/";
 }
+
+const socialDirResource = "social/";
+
 const username = "Jane Doe";
 
 //nav tab indices
@@ -15,6 +18,7 @@ const topics = ["Corn Trends", "Crop Acreage Reporting", "Payments", "Recently R
 export default {
     apachePort: aPort,
     getApacheUrlPrefix: getAUrlPrefix,
+    socialDirResource: socialDirResource,
     username: username,
     navIndices: {
         discuss: discussIdx,

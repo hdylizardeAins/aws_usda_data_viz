@@ -74,7 +74,7 @@ export default{
             return this.message.imageName && this.message.imageName !== '';
         },
         imgSrc: function(){
-            return Constants.getApacheUrlPrefix() + this.message.imageName;
+            return Constants.getApacheUrlPrefix() + Constants.socialDirResource + this.message.imageName;
         }
     },
     methods: {

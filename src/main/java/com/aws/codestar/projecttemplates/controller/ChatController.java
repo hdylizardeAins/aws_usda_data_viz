@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aws.codestar.projecttemplates.ApplicationProperties;
 import com.aws.codestar.projecttemplates.api.ChatMessage;
 import com.aws.codestar.workers.ChatWorker;
+import com.google.common.io.Files;
 
 /**
  * Web service handling requests to the shared chat
@@ -58,7 +59,19 @@ public class ChatController {
 			Thread.sleep(100L);
 		}
 		if (message.getWritten()) {
-			return ResponseEntity.ok(message);
+			File src = new File(properties.getOutputDir() + message.getImageName());
+			File dest = new File(properties.getSocialDir() + message.getImageName());
+			if (src.exists()) {
+				try {
+					Files.copy(src, dest);
+					return ResponseEntity.ok(message);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); 
+			
 		}
 		else {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

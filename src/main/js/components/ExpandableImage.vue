@@ -1,11 +1,11 @@
 <template>
-    <figure>
+    <div>
         <img class="graph-image" :src="imageUrl" @click="handleImageClick" />
         <figcaption>
             <p>{{ caption }}</p>
             <p>{{ graphData }}</p>
         </figcaption>
-    </figure>
+    </div>
     
 </template>
 <script>
@@ -28,7 +28,6 @@ export default{
 <style>
 .graph-image {
     max-width: 100%;
-    display: block;
 }
 
 .graph-image:hover {

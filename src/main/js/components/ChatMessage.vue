@@ -1,13 +1,48 @@
 <template>
     <el-row class="chat-row">
-        <el-col :offset="8" :span="8">
+        <el-col :offset="2" :span="20">
             <el-card :body-style="{ padding: '0px' }">
-                <div style="text-align:center"><el-button type="primary" @click="followPostClicked">Follow Post</el-button></div>
-                <span class="username">{{ message.username }}</span> <time class="time">{{ dateTime }}</time>
-                <expandable-image class="chat-image" v-if="showImage" :image-url="imgSrc" :caption="message.caption" :graph-data="message.graphData" />
-                <div style="padding: 14px;" >
-                    <p>{{ message.comment }}</p>                    
-                </div>
+                <el-container>
+                    <el-row style="height: 20px; padding-bottom:4px;">
+                        <div style="background-color: rgb(4, 124, 192); width: 100%; height: 100%;" />
+                        
+                    </el-row>
+                    <el-row style="padding-bottom:4px; margin-right: 14px;">
+                        <div style="text-align:right"><el-button type="primary" @click="followPostClicked">Follow Post</el-button></div>
+                    </el-row>
+                    
+                    <el-row type="flex" class="chat-content-row" v-if="showImage" >
+                        <el-col :span="10" class="chat-image-col" >
+                            <expandable-image class="chat-image" :image-url="imgSrc" :caption="message.caption" :graph-data="message.graphData" />
+                        </el-col>
+                        <el-col :span="14" class="chat-comment-col">
+                            <div style="padding: 14px;" >
+                                <!-- <div style="text-align:right"><el-button type="primary" @click="followPostClicked">Follow Post</el-button></div> -->
+                                <h1 style="text-align: center">Insights</h1>
+                                <p>{{ message.comment }}</p>
+                                <div class="username">
+                                    <i>Posted by: {{ message.username }}</i>                               
+                                </div>
+                                <div class="time" >
+                                    <i>Posted on: {{ dateTime }}</i>
+                                </div>               
+                            </div>
+                        </el-col >
+                    </el-row>
+                    <el-row type="flex" class="chat-content-row" v-else>
+                        <el-col :span="24" class="chat-comment-col">
+                            <div style="padding: 14px;" >
+                                <p>{{ message.comment }}</p>
+                                <div class="username">
+                                    <i>Posted by: {{ message.username }}</i>
+                                </div>
+                                <div class="time" >
+                                    <i>Posted on: {{ dateTime }}</i>
+                                </div>               
+                            </div>
+                        </el-col >
+                    </el-row>
+                </el-container>
             </el-card>
         </el-col>
         <el-dialog :visible.sync="showFollowForm" title="Follow this post" :close-on-click-modal="false">
@@ -52,24 +87,33 @@ export default{
 </script>
 <style>
 .time {
-    padding-right: 14px;
-    font-size: 0.9em;
-    position: relative;
-    float: right;
+    text-align: right;
 }
 
 .username {
-    padding-left: 14px;
-    font-size: 0.9em;
-    position: relative;
-    float: left;
+    text-align: right;
 }
 
 .chat-row {
     padding-bottom:5px;
 }
 
-.chat-image figcaption {
-    border-bottom: 1px solid black;
+.chat-content-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.chat-image-col{
+    flex: 0.5;
+    min-width: 290px;
+}
+
+.chat-comment-col{
+    flex:1;
+}
+
+
+.chat-image  {
+    padding-left: 4px;
 }
 </style>

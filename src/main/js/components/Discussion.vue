@@ -3,7 +3,7 @@
         <el-row id="topicRow">
             <el-col :offset="8" :span="8">
                 <div id="topicSelectLabelDiv">
-                    <span><strong>Join the Discussion!</strong></span>
+                    <span style="color: green"><strong>Join the discussion!</strong></span>
                 </div>
                 <div id="topicDiv">
                     <span>Choose a Topic:</span>
@@ -22,13 +22,14 @@
         <el-container id="chatMessagesContainer" ref="chatMessagesContainer">
             <chat-message v-for="msg in messages" :key="msg.dateTime" :message="msg" :topic-name="selectedTopic" />
         </el-container>
-        <el-row id="chatInputRow">
-            <el-col :offset="8" :span="8">
+        <el-row id="chatInputRow responsive-flex-row">
+            <el-col id="commentCol" :offset="2" :span="20">
                 <el-input id="commentArea" type="textarea" placeholder="Please enter a comment" autosize v-model="post"></el-input>
+                <el-button v-loading="loading" type="primary" :disabled="postDisabled" @click="handlePostClick">Post</el-button>
             </el-col>
-            <el-button v-loading="loading" type="primary" :disabled="postDisabled" @click="handlePostClick">Post</el-button>
+            
         </el-row>
-        <el-dialog class="follow-topic-dialog" :visible.sync="showFollowForm" title="Follow this topic" :close-on-click-modal="false">
+        <el-dialog :visible.sync="showFollowForm" title="Follow this topic" :close-on-click-modal="false">
             <follow-topic-form :topic-name="selectedTopic" @close="showFollowForm = false" />
         </el-dialog>
     </div>
@@ -171,12 +172,12 @@ export default{
     bottom: 0;
 }
 
+#commentCol .el-textarea {
+    max-width: calc(100% - 75px);
+}
+
 #commentArea {
     border: 2px solid green;
 }
 
-.follow-topic-dialog{
-    width: 50vw;
-    margin: auto;
-}
 </style>

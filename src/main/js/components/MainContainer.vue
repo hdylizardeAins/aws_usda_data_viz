@@ -29,7 +29,6 @@
                 </el-main>
                 <image-dialogue />
             </el-container>
-            <!-- Disabling fixed footer until it can be implemented as an unfixed footer-->
             <el-footer v-if="true" id="pageFooter">
                 <div id="footerLinkDiv">
                     <a href="https://www.harmonia.com">About Us</a>

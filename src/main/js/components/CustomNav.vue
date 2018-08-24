@@ -11,8 +11,6 @@
         <el-menu-item :index="discussIdx">DISCUSS<span style="color:white; vertical-align:unset;" v-show="alertCount > 0"> ({{ alertCount }})</span></el-menu-item>
         <el-menu-item :index="analyzeIdx">ANALYZE</el-menu-item>
         <el-menu-item :index="visualizeIdx">VISUALIZE</el-menu-item>
-        <!-- TODO: consider removing the help icon altogether -->
-        <!-- <el-menu-item index="5"><img src="../../webapp/js/images/question.png"></el-menu-item> -->
       </el-menu>
     </div> 
 </template>

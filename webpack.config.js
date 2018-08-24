@@ -114,7 +114,6 @@ if (process.env.NODE_ENV === 'production') {
         new webpack.LoaderOptionsPlugin({
             minimize: false
         }),
-        //Auto-generate static html file for use by npm run dev, since we have JSP file by default which isn't supported
         new HtmlWebpackPlugin({
             title: 'USDA Data Vis Dev',
             filename: '../dev.html'

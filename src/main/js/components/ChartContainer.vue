@@ -2,22 +2,23 @@
     <el-container style="width:100%; overflow-x:hidden;">
         <el-row style="padding-top: 10px;">
             <el-col :offset="12">
-                <el-button class="greenBtn" @click="drawDoughnut" >Generate Graph</el-button>
+                <el-button class="greenBtn" @click="drawDoughnut" >Generate Graphs</el-button>
             </el-col>
         </el-row>
         <div class="chart-list" v-if="showCharts">
             <div class="chart">
-                <h2>Corn Cost - Return</h2>
-                <custom-bar-chart ref="bar"></custom-bar-chart>
+                <h2>Land Utilization</h2>
+                <custom-line-graph ref="line"></custom-line-graph>
             </div>
             <div class="chart">
                 <h2>Cropland Utilization - 2012 </h2>
                 <custom-doughnut ref="doughnut"></custom-doughnut>
             </div>
             <div class="chart">
-                <h2>Land Utilization</h2>
-                <custom-line-graph ref="line"></custom-line-graph>
+                <h2>Corn Cost - Return</h2>
+                <custom-bar-chart ref="bar"></custom-bar-chart>
             </div>
+            
         </div>
     </el-container>
 </template>

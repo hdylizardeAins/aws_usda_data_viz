@@ -13,7 +13,7 @@ const analyzeIdx = "2";
 const visualizeIdx = "3";
 
 //Default topics
-const topics = ["Corn Trends", "Crop Acreage Reporting", "Payments", "Recently Released Programs"];
+const topics = ["Corn Trends"];
 
 export default {
     apachePort: aPort,

@@ -27,7 +27,7 @@
                     </el-main>
                 </div>
                 <el-main style="flex:1;" v-show="showVisualizeTab" key="visualize">
-                    <p style="text-align:center;">Page Under Construction</p>
+                    <chart-container></chart-container>
                 </el-main>
                 <image-dialogue />
             </el-container>
@@ -49,6 +49,7 @@ import Visualization from './Visualization.vue';
 import Discussion from './Discussion.vue';
 import ImageDialogue from './ImageDialogue.vue';
 import Constants from './Constants.js';
+import ChartContainer from './ChartContainer.vue';
 
 
 export default {
@@ -59,7 +60,8 @@ export default {
         AnalyticsPanel,
         Visualization,
         Discussion,
-        ImageDialogue
+        ImageDialogue,
+        ChartContainer
     },
     data(){
         return {
@@ -100,7 +102,7 @@ export default {
              this.$store.dispatch("loadChatMessages", {
                  success: () => this.discussionLoading = false //currently doesn't affect anything -- see TODO in template above
              }); //TODO: failure callback
-        }
+        }        
     }
 }
 </script>

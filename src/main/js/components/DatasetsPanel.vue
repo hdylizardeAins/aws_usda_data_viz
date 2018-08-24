@@ -25,7 +25,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-input v-model="searchText">
+          <el-input v-model="searchText" placeholder="Search Data.gov">
             <template slot="append"><el-button type="primary" icon="el-icon-search" @click="submitSearch"></el-button></template>
           </el-input>
         </el-row>

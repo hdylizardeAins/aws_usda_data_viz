@@ -5,6 +5,8 @@ import AnalyticsStore from './AnalyticsStore.js';
 import ExecutionsStore from './ExecutionsStore.js';
 import ChatStore from './ChatStore.js';
 import SelectedImageStore from './SelectedImageStore.js';
+import DoughnutStore from './DoughnutStore.js';
+import BarChartStore from './BarChartStore.js';
 
 Vue.use(Vuex);
 
@@ -14,7 +16,9 @@ var store = new Vuex.Store({
        analyticsStore: AnalyticsStore,
        executionsStore: ExecutionsStore,
        chatStore: ChatStore,
-       selectedImageStore: SelectedImageStore
+       selectedImageStore: SelectedImageStore,
+       doughnutStore: DoughnutStore,
+       barChartStore: BarChartStore
    }
 });
 

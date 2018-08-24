@@ -12,4 +12,10 @@
     background-size: 100% 100%;
     overflow: hidden;
 }
+
+@media screen and (max-width: 1050px) {
+    .logo-banner {
+        background-image: url("../../webapp/js/images/banner-small.png");
+    }
+}
 </style>

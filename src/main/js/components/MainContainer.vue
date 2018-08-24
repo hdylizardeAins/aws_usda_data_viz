@@ -106,8 +106,8 @@ export default {
 </script>
 <style>
 #newWorkDiv {
-    padding-right: 10%;
-    padding-left: 10%;
+    padding-right: 2%;
+    padding-left: 2%;
 }
 
 .responsive-flex-row {
@@ -116,13 +116,13 @@ export default {
 }
 
 .left-panels-flex {
-    min-width: 450px;
+    min-width: 360px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .middle-panels-flex {
-    min-width: 450px;
+    min-width: 360px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -130,8 +130,71 @@ export default {
 .right-panels-flex {
     margin-left: auto;
     margin-right: auto;
-    min-width: 450px;
+    min-width: 360px;
 }
+
+@media only screen and (max-width: 800px) {
+    .left-panels-flex {
+        /* min-width: 450px; */
+        /* min-width: 33vw; */
+        min-width: 100vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .middle-panels-flex {
+        /* min-width: 450px; */
+        /* min-width: 33vw; */
+        min-width: 100vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .right-panels-flex {
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 100vw;
+        /* min-width: 450px; */
+        /* min-width: 33vw; */
+    }
+
+    #newWorkDiv {
+        padding-right: unset;
+        padding-left: unset;
+    }
+} 
+
+@media only screen and (max-width: 1126px) and (min-width: 800px) {
+    .left-panels-flex {
+        /* min-width: 450px; */
+        /* min-width: 33vw; */
+        min-width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .middle-panels-flex {
+        /* min-width: 450px; */
+        /* min-width: 33vw; */
+        min-width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .right-panels-flex {
+        margin-left: auto;
+        margin-right: auto;
+        min-width: 100vw;
+        /* min-width: 450px; */
+        /* min-width: 33vw; */
+    }
+
+    #newWorkDiv {
+        padding-right: unset;
+        padding-left: unset;
+    }
+}
+
 
 #pageFooter{
     width: 100%;

@@ -16,6 +16,11 @@ var doughnutStore = {
                 }
             ]
         }
+    },
+    mutations: {
+        updateDoughnutGraphData: function(state, newData){
+            Vue.set(state, "data", newData);
+        }
     }
 };
 

@@ -1,12 +1,12 @@
 <script>
-import { Bar } from "vue-chartjs";
+import { Line } from "vue-chartjs";
 
 export default {
-  extends: Bar,
+  extends: Line,
 
   computed: {
     chartData: function() {
-      return this.$store.state.barChartStore.data;
+      return this.$store.state.lineGraphStore.data;
     }
   },
   mounted() {},

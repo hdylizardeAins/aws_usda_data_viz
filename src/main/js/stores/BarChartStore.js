@@ -94,7 +94,13 @@ var barChartStore = {
                 }
             ]
         }
+    },
+    mutations: {
+        updateBarChartData: function(state, newData){
+            Vue.set(state, "data", newData);
+        }
     }
+    
 };
 
 export default barChartStore;

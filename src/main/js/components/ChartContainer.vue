@@ -14,17 +14,23 @@
                 <h2>Cropland Utilization - 2012 </h2>
                 <custom-doughnut ref="doughnut"></custom-doughnut>
             </div>
+            <div class="chart">
+                <h2>Land Utilization</h2>
+                <custom-line-graph ref="line"></custom-line-graph>
+            </div>
         </div>
     </el-container>
 </template>
 <script>
 import CustomDoughnut from "./CustomDoughnut.vue";
 import CustomBarChart from "./CustomBarChart.vue";
+import CustomLineGraph from './CustomLineGraph.vue'; 
 
 export default {
   components: {
     CustomDoughnut,
-    CustomBarChart
+    CustomBarChart,
+    CustomLineGraph
   },
   data() {
     return {
@@ -37,6 +43,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.doughnut.drawChart();
         this.$refs.bar.drawChart();
+        this.$refs.line.drawChart();
       });
     }
   }

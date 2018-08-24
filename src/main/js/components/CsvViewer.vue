@@ -3,12 +3,14 @@
                 :title="title"
                 width="90%"
                 :visible='showTable' @close="handleClose">
-        <data-tables :page-size="10" v-loading="loading" :data='tableData' :table-props='tableProps' :pagination-props='paginationDef' >
+        <data-tables style="width:100%" :page-size="10" v-loading="loading" :data='tableData' :table-props='tableProps' :pagination-props='paginationDef' >
                     <el-table-column v-for='header in headers'
                                     :key='header.name'
                                     :prop='header.idx'
                                     :label='header.name'
                                     :sortable='false'
+                                    :resizable="true"
+                                    :show-overflow-tooltip="true"
                                     >
                     </el-table-column>
         </data-tables>
@@ -121,5 +123,9 @@ export default {
 #datasetViewer >>> input.el-pagination__editor{
   min-width:35px;
   width:35px;
+}
+
+#datasetViewer .el_table {
+    overflow-x: auto;
 }
 </style>

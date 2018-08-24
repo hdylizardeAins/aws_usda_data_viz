@@ -1,40 +1,45 @@
 <template>
     <el-container>
+      <el-row style="padding-bottom: 6px;">
+        <i><span style="font-size: 1em;">This dialog allow you to merge 2 datasets and shows you the variables contained in each dataset. Select one or more variables
+          from each dataset below and those variables will be merged into a single new dataset.</span>
+        </i>
+      </el-row>
       <el-form :model="formdata" label-position="right" label-width="50px">
           <el-form-item label="Name">
             <el-input v-model="formdata.name" placeholder="Enter a name for the merged dataset"></el-input>
           </el-form-item>
-        <el-row type="flex">
-            <el-col class="bordered-panel dataset-a-flex" id="datasetA" :span="11">
-              <h3>{{formdata.datasetA.metadata.name}}</h3>
-                  <el-table ref="datasetATable" :data="formdata.datasetA.metadata.mergeableColumns" :max-height="250" @selection-change="handleDatasetASelection">
-                      <el-table-column type="selection"/>
-                      <el-table-column label="Column">
-                        <template slot-scope="scope">
-                          {{scope.row}}
-                        </template>
-                      </el-table-column>
-                  </el-table>
+        <el-row type="flex" class="responsive-flex-row">
+            <el-col class="dataset-a-flex" id="datasetA" :span="12">
+              <div class="bordered-panel bordered-panel-top">
+                <h3>{{formdata.datasetA.metadata.name}}</h3>
+                <el-table ref="datasetATable" :data="formdata.datasetA.metadata.mergeableColumns" :max-height="250" @selection-change="handleDatasetASelection">
+                    <el-table-column type="selection"/>
+                    <el-table-column label="Column">
+                      <template slot-scope="scope">
+                        {{scope.row}}
+                      </template>
+                    </el-table-column>
+                </el-table>
+              </div>
             </el-col>
-            <el-col class="bordered-panel dataset-b-flex" id="datasetB" :span="11">
-              <h3>{{formdata.datasetB.metadata.name}}</h3>
-                    <el-table ref="datasetBTable" :data="formdata.datasetB.metadata.mergeableColumns" :max-height="300" @selection-change="handleDatasetBSelection">
-                      <el-table-column type="selection"/>
-                      <el-table-column label="Column">
-                        <template slot-scope="scope">
-                          {{scope.row}}
-                        </template>
-                      </el-table-column>
-                  </el-table>
+            <el-col class="dataset-b-flex" id="datasetB" :span="12">
+              <div class="bordered-panel bordered-panel-top">
+                <h3>{{formdata.datasetB.metadata.name}}</h3>
+                <el-table ref="datasetBTable" :data="formdata.datasetB.metadata.mergeableColumns" :max-height="300" @selection-change="handleDatasetBSelection">
+                  <el-table-column type="selection"/>
+                  <el-table-column label="Column">
+                    <template slot-scope="scope">
+                      {{scope.row}}
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
             </el-col>
         </el-row>
-        <el-row>
-          <el-col :offset="16" :span="4">
-            <el-button style="width: 95%" @click="closeMerge">Cancel</el-button>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" style="width: 100%" @click="submitMerge">Merge</el-button>
-          </el-col>
+        <el-row class="merge-modal-btns-row">
+            <el-button class="float-left" @click="closeMerge">Cancel</el-button>
+            <el-button class="float-right" type="primary" @click="submitMerge">Merge</el-button>
         </el-row>
       </el-form>
     </el-container>
@@ -147,19 +152,19 @@ export default {
 </script>
 
 <style>
-.responsive-flex-row {
-    flex-wrap: wrap;
-    flex-direction: row;
+.dataset-a-flex, .dataset-b-flex {
+    min-width: 200px;
+    max-width: 700px;
+    padding: 2px;
+    margin: auto;
 }
 
-.dataset-a-flex {
-    min-width: 250px;
-    max-width: 500px;
+.float-left {
+  float: left;  
 }
 
-.dataset-b-flex {
-    min-width: 250px;
-    max-width: 500px;
-    
+.float-right {
+  float: right;
 }
+
 </style>

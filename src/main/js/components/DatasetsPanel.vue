@@ -5,13 +5,23 @@
       </el-row>
       <div class="bordered-panel">
         <el-row>
-          <el-col :span="20">1. Choose data</el-col>
-          <el-col :span="4">
+          <el-col :span="12">1. Choose data</el-col>
+          <el-col :span="6">
             <el-button id="importBtn" disabled>
               <el-tooltip content="Not yet implemented" placement="top-start">
                 <span>Import<i class="el-icon-information el-icon-right" /> </span>
               </el-tooltip>
             </el-button>
+          </el-col>
+          <el-col :span="6">
+              <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">
+                <el-tooltip placement="top-start">
+                  <span>Merge<i class="el-icon-information el-icon-right" /></span>
+                  <template slot="content">
+                    {{ mergeButtonDisabled ? "Please select two mergeable datasets" : "Click to merge selected datasets" }}
+                  </template>
+                </el-tooltip>
+              </el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -38,17 +48,7 @@
           </el-table>
         </el-row>
         <el-row>
-          <el-col :span="4">
-              <el-button id="mergeButton" type="primary" :disabled="mergeButtonDisabled" @click="handleMerge">
-                <el-tooltip placement="top-start">
-                  <span>Merge<i class="el-icon-information el-icon-right" /></span>
-                  <template slot="content">
-                    {{ mergeButtonDisabled ? "Please select two mergeable datasets" : "Click to merge selected datasets" }}
-                  </template>
-                </el-tooltip>
-              </el-button>
-          </el-col>
-          <el-col :offset="16" :span="4">
+          <el-col :offset="20" :span="4">
             <el-button id="dsNextButton" type="primary" class="greenBtn" :disabled="nextButtonDisabled" @click="handleNextClick">
               <el-tooltip placement="top-start">
                 <span>Next<i class="el-icon-information el-icon-right" /> </span>
@@ -60,7 +60,7 @@
           </el-col>
         </el-row>
         <csv-viewer :dataset="viewedDataset" :showTable="showDatasetViewer" @csv-viewer-closed="showDatasetViewer = false" />
-        <el-dialog :visible.sync="mergeVisible" title="Merge Datasets">
+        <el-dialog id="mergeDialog" :visible.sync="mergeVisible" title="Merge Datasets">
           <merge-panel @hideMergeDialog="hideMergeDialog" @reloadColumns="loadColumns"></merge-panel>
         </el-dialog>
         <el-dialog :visible.sync="searchResultsVisible" title="Search Results">
@@ -224,7 +224,8 @@ export default {
 </script>
 <style>
 #mergeButton{
-  float: left;
+  float: right;
+  position:relative
 }
 
 #dsNextButton{
@@ -232,6 +233,11 @@ export default {
 }
 
 #importBtn{
-  float:right;
+   float:right;
+   position:relative; 
+}
+
+#mergeDialog .el-dialog {
+  width: 75%;
 }
 </style>

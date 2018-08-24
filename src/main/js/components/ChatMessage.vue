@@ -5,20 +5,17 @@
                 <el-container>
                     <el-row style="height: 20px; padding-bottom:4px;">
                         <div style="background-color: rgb(4, 124, 192); width: 100%; height: 100%;" />
-                        
                     </el-row>
                     <el-row style="padding-bottom:4px; margin-right: 14px;">
                         <div style="text-align:right"><el-button type="primary" @click="followPostClicked">Follow Post</el-button></div>
                     </el-row>
-                    
                     <el-row type="flex" class="chat-content-row" v-if="showImage" >
                         <el-col :span="10" class="chat-image-col" >
                             <expandable-image class="chat-image" :image-url="imgSrc" :caption="message.caption" :graph-data="message.graphData" />
                         </el-col>
                         <el-col :span="14" class="chat-comment-col">
                             <div style="padding: 14px;" >
-                                <!-- <div style="text-align:right"><el-button type="primary" @click="followPostClicked">Follow Post</el-button></div> -->
-                                <h1 style="text-align: center">Insights</h1>
+                                <p style="text-align: center"><strong>Insights</strong></p>
                                 <p>{{ message.comment }}</p>
                                 <div class="username">
                                     <i>Posted by: {{ message.username }}</i>                               
